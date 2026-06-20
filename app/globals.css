@@ -1,0 +1,141 @@
+@import "tailwindcss";
+
+:root {
+  --komma-yellow: #f5dd00;
+  --komma-pink: #ff1493;
+  --komma-black: #000000;
+}
+
+@theme inline {
+  --color-komma-yellow: #f5dd00;
+  --color-komma-pink: #ff1493;
+  --color-komma-black: #000000;
+  --font-sans: var(--font-outfit);
+}
+
+body {
+  background-color: var(--komma-yellow);
+  color: var(--komma-black);
+  font-family: var(--font-outfit), system-ui, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes float-delayed {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(1deg);
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float-delayed 5s ease-in-out infinite 0.8s;
+}
+
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite 1.2s;
+}
+
+@keyframes bubble-select {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(0.92) translateY(-6px);
+  }
+  70% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes panel-arrive {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-bubble-select {
+  animation: bubble-select 0.45s ease-out;
+}
+
+.animate-panel-arrive {
+  animation: panel-arrive 0.45s ease-out;
+}
+
+.hand-drawn-shape {
+  position: relative;
+}
+
+.hand-drawn-shape::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border: 2px solid #000;
+  border-radius: inherit;
+  opacity: 0.22;
+  transform: rotate(2deg);
+  pointer-events: none;
+}
+
+.hand-drawn-bubble {
+  border: 4px solid var(--komma-black);
+  background: #fff;
+  box-shadow: 3px 4px 0 0 #000;
+}
+
+.hand-drawn-center {
+  border: 5px solid var(--komma-black);
+  background: #fff;
+  box-shadow: 4px 5px 0 0 #000;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.potgooi-diagram .potgooi-connector-path {
+  transition: stroke 0.2s ease;
+}
+
+.potgooi-diagram:has(.potgooi-col-0:hover) .potgooi-connector-path-0,
+.potgooi-diagram:has(.potgooi-col-1:hover) .potgooi-connector-path-1,
+.potgooi-diagram:has(.potgooi-col-2:hover) .potgooi-connector-path-2,
+.potgooi-diagram:has(.potgooi-col-3:hover) .potgooi-connector-path-3 {
+  stroke: var(--komma-pink);
+}

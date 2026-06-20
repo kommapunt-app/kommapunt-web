@@ -1,0 +1,9 @@
+export const MAX_BUBBLES = 12;
+export const MIN_SELECTED_BUBBLES = 12;
+export const TOTAL_FLOW_STEPS = 4;
+export const COMPARISON_COUNT = 25;
+export const STORAGE_KEY_SELECTED_BUBBLES = "komma_selected_bubbles";
+export const STORAGE_KEY_MANUAL_SORTED_BUBBLES = "komma_manual_sorted_bubbles";
+export const STORAGE_KEY_BUBBLE_SCORES = "komma_bubble_scores";
+export const STORAGE_KEY_COMPARE_PROGRESS = "komma_compare_progress";
+export const STORAGE_KEY_RANKED_BUBBLES = "komma_ranked_bubbles";
