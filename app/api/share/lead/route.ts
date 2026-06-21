@@ -74,6 +74,8 @@ export async function POST(request: Request) {
       message: "Besonderhede gestoor.",
     } satisfies ShareLeadResponse);
   } catch (error) {
+    console.error("[POST /api/share/lead] insert failed", error);
+
     const message =
       error instanceof Error && error.message === "Database is not configured."
         ? "Kon nie jou besonderhede stoor nie. Probeer later weer."

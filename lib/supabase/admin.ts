@@ -1,4 +1,5 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import type { BubbleProfileRequest } from "@/lib/bubble-profile/types";
 import type { ShareLeadBubbleResult } from "@/lib/share-leads";
 
 export type ShareLeadRecord = {
@@ -46,4 +47,49 @@ export async function insertShareLead(record: ShareLeadRecord) {
   if (error) {
     throw error;
   }
+}
+
+export type BubbleProfileInsertRecord = {
+  name: string;
+  email: string;
+  age_group: string;
+  race: string;
+  province: string;
+  ranked_values: BubbleProfileRequest["rankedValues"];
+  top_5_values: string[];
+  top_10_values: string[];
+  scores: Record<string, number> | null;
+};
+
+export async function insertBubbleProfile(
+  record: BubbleProfileInsertRecord,
+): Promise<string> {
+  const supabase = getSupabaseAdmin();
+
+  if (!supabase) {
+    throw new Error("Database is not configured.");
+  }
+
+  const { data, error } = await supabase
+    .from("bubble_profiles")
+    .insert({
+      name: record.name,
+      email: record.email,
+      age_group: record.age_group,
+      race: record.race,
+      province: record.province,
+      ranked_values: record.ranked_values,
+      top_5_values: record.top_5_values,
+      top_10_values: record.top_10_values,
+      scores: record.scores,
+    })
+    .select("id")
+    .single();
+
+  if (error) {
+    console.error("[insertBubbleProfile] Supabase insert error", error);
+    throw error;
+  }
+
+  return data.id;
 }

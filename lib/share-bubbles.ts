@@ -78,11 +78,57 @@ function dataUrlToBlob(dataUrl: string): Blob {
   return new Blob([bytes], { type: mime });
 }
 
+async function prepareHtmlImagesForExport(
+  element: HTMLElement,
+): Promise<() => void> {
+  const images = element.querySelectorAll("img");
+  const restores: Array<() => void> = [];
+
+  await Promise.all(
+    Array.from(images).map(async (image) => {
+      const img = image as HTMLImageElement;
+      const originalSrc = img.getAttribute("src");
+
+      if (!originalSrc || originalSrc.startsWith("data:")) {
+        return;
+      }
+
+      try {
+        const absoluteSrc = originalSrc.startsWith("/")
+          ? `${window.location.origin}${originalSrc}`
+          : originalSrc;
+        const response = await fetch(absoluteSrc);
+        const blob = await response.blob();
+        const dataUrl = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = () => reject(reader.error);
+          reader.readAsDataURL(blob);
+        });
+
+        img.setAttribute("src", dataUrl);
+        restores.push(() => {
+          if (originalSrc) {
+            img.setAttribute("src", originalSrc);
+          }
+        });
+      } catch {
+        // Keep original src if inlining fails.
+      }
+    }),
+  );
+
+  return () => {
+    restores.forEach((restore) => restore());
+  };
+}
+
 export async function exportBubbleVisualAsPng(
   element: HTMLElement,
   photoUrl?: string | null,
 ): Promise<Blob> {
-  const restoreImages = await prepareSvgImagesForExport(element, photoUrl);
+  const restoreSvgImages = await prepareSvgImagesForExport(element, photoUrl);
+  const restoreHtmlImages = await prepareHtmlImagesForExport(element);
 
   try {
     await document.fonts.ready;
@@ -91,11 +137,13 @@ export async function exportBubbleVisualAsPng(
       pixelRatio: 2,
       cacheBust: true,
       skipFonts: false,
+      backgroundColor: "#F5DD00",
     });
 
     return dataUrlToBlob(dataUrl);
   } finally {
-    restoreImages();
+    restoreHtmlImages();
+    restoreSvgImages();
   }
 }
 

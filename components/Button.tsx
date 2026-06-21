@@ -5,6 +5,8 @@ type ButtonVariant = "primary" | "secondary";
 interface ButtonProps extends ComponentPropsWithoutRef<"button"> {
   variant?: ButtonVariant;
   href?: string;
+  target?: string;
+  rel?: string;
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
@@ -17,6 +19,8 @@ const variantClasses: Record<ButtonVariant, string> = {
 export function Button({
   variant = "primary",
   href,
+  target,
+  rel,
   className = "",
   children,
   type = "button",
@@ -26,7 +30,7 @@ export function Button({
 
   if (href) {
     return (
-      <a href={href} className={classes}>
+      <a href={href} target={target} rel={rel} className={classes}>
         {children}
       </a>
     );

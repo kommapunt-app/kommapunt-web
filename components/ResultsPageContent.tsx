@@ -2,18 +2,24 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { BubbleProfileGateModal } from "@/components/BubbleProfileGateModal";
 import { BubblesHeader } from "@/components/BubblesHeader";
 import { Button } from "@/components/Button";
 import { FullFeedbackModal } from "@/components/FullFeedbackModal";
+import { KommaPuntProfileCard } from "@/components/KommaPuntProfileCard";
+import { LockedProfilePlaceholder } from "@/components/LockedProfilePlaceholder";
 import { PageContainer } from "@/components/PageContainer";
 import { PhotoUploadSection } from "@/components/PhotoUploadSection";
+import { ProfileActionButtons } from "@/components/ProfileActionButtons";
 import { RankedBubbleListItem } from "@/components/RankedBubbleListItem";
 import { ReflectionSection } from "@/components/ReflectionSection";
-import { ShareBubblesModal } from "@/components/ShareBubblesModal";
-import { TopFiveBubbleVisual } from "@/components/TopFiveBubbleVisual";
-import { saveLeadAndDownloadBubbles } from "@/lib/share-download-flow";
-import { loadShareContactFromSession } from "@/lib/share-contact-session";
-import { STORAGE_KEY_SHARE_CONTACT } from "@/lib/share-leads";
+import {
+  downloadBubbleVisual,
+  shareBubbleVisualFromRef,
+} from "@/lib/bubble-profile/export-actions";
+import { loadBubbleProfileFromSession } from "@/lib/bubble-profile/session";
+import { STORAGE_KEY_BUBBLE_PROFILE } from "@/lib/bubble-profile/types";
+import type { BubbleProfileContact } from "@/lib/bubble-profile/types";
 import { clearKommaSession, loadResultsFromStorage, type RankedBubbleResult } from "@/lib/results";
 import { TOTAL_FLOW_STEPS } from "@/lib/constants";
 
@@ -22,14 +28,20 @@ export function ResultsPageContent() {
   const [hydrated, setHydrated] = useState(false);
   const [results, setResults] = useState<RankedBubbleResult[] | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
-  const [shareOpen, setShareOpen] = useState(false);
+  const [profileContact, setProfileContact] = useState<BubbleProfileContact | null>(
+    null,
+  );
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
-  const [isShareBusy, setIsShareBusy] = useState(false);
-  const [shareError, setShareError] = useState<string | null>(null);
+  const [isActionBusy, setIsActionBusy] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
   const exportRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const savedProfile = loadBubbleProfileFromSession();
     setResults(loadResultsFromStorage());
+    setProfileContact(savedProfile);
+    setProfileModalOpen(savedProfile === null);
     setHydrated(true);
   }, []);
 
@@ -55,45 +67,58 @@ export function ResultsPageContent() {
     clearKommaSession();
 
     if (typeof window !== "undefined") {
-      sessionStorage.removeItem(STORAGE_KEY_SHARE_CONTACT);
+      sessionStorage.removeItem(STORAGE_KEY_BUBBLE_PROFILE);
     }
 
     router.push("/bubbles");
   }
 
-  async function handleShareClick() {
-    if (!results) {
+  function handleProfileSaved(contact: BubbleProfileContact) {
+    setProfileContact(contact);
+    setProfileModalOpen(false);
+    setActionError(null);
+  }
+
+  async function handleDownload() {
+    if (!profileContact) {
       return;
     }
 
-    setShareError(null);
-    const savedContact = loadShareContactFromSession();
+    setActionError(null);
+    setIsActionBusy(true);
 
-    if (savedContact) {
-      setIsShareBusy(true);
+    try {
+      await downloadBubbleVisual(exportRef, photoUrl);
+    } catch (error) {
+      setActionError(
+        error instanceof Error
+          ? error.message
+          : "Kon nie jou profiel af laai nie. Probeer weer.",
+      );
+    } finally {
+      setIsActionBusy(false);
+    }
+  }
 
-      try {
-        await saveLeadAndDownloadBubbles({
-          contact: savedContact,
-          rankedBubbles: results,
-          exportRef,
-          photoUrl,
-          skipLeadSave: true,
-        });
-      } catch (error) {
-        setShareError(
-          error instanceof Error
-            ? error.message
-            : "Kon nie jou Bubbles af laai nie. Probeer weer.",
-        );
-      } finally {
-        setIsShareBusy(false);
-      }
-
+  async function handleShare() {
+    if (!profileContact) {
       return;
     }
 
-    setShareOpen(true);
+    setActionError(null);
+    setIsActionBusy(true);
+
+    try {
+      await shareBubbleVisualFromRef(exportRef, photoUrl);
+    } catch (error) {
+      setActionError(
+        error instanceof Error
+          ? error.message
+          : "Kon nie jou profiel deel nie. Probeer weer.",
+      );
+    } finally {
+      setIsActionBusy(false);
+    }
   }
 
   if (!hydrated) {
@@ -130,6 +155,7 @@ export function ResultsPageContent() {
   }
 
   const topTen = results.slice(0, 10);
+  const profileSaved = profileContact !== null;
 
   return (
     <>
@@ -142,92 +168,99 @@ export function ResultsPageContent() {
               Jou Bubbles
             </h1>
             <p className="mt-3 max-w-md text-base font-semibold text-komma-black/75 sm:text-lg">
-              Dit is wat vir jou die meeste gewig dra.
+              {profileSaved
+                ? "Dit is wat vir jou die meeste gewig dra."
+                : "Jou profiel wag — voltooi die vorm om dit te sien."}
             </p>
           </div>
 
-          <PhotoUploadSection
-            photoUrl={photoUrl}
-            onPhotoChange={handlePhotoChange}
-          />
-
-          <div className="relative z-0 mb-6 flex flex-col items-center gap-6 overflow-visible sm:mb-8">
-            <div
-              ref={exportRef}
-              className="inline-block w-full max-w-3xl overflow-visible p-2 sm:p-3"
-            >
-              <div className="w-full overflow-visible rounded-[2rem] border-4 border-komma-black bg-komma-yellow p-4 shadow-[6px_6px_0_0_#000] sm:p-6">
-                <TopFiveBubbleVisual
-                  rankedBubbles={results}
-                  photoUrl={photoUrl}
-                  colorScheme="demo"
-                  frameless
-                  className="max-w-none"
+          <div className="relative z-0 mb-8 flex flex-col items-center gap-6 overflow-visible sm:mb-10">
+            <div className="inline-block w-full max-w-3xl overflow-visible p-2 sm:p-3">
+              {profileSaved ? (
+                <>
+                  <PhotoUploadSection
+                    photoUrl={photoUrl}
+                    onPhotoChange={handlePhotoChange}
+                  />
+                  <div className="mt-6">
+                    <KommaPuntProfileCard
+                      ref={exportRef}
+                      personName={profileContact.name}
+                      rankedBubbles={results}
+                      photoUrl={photoUrl}
+                    />
+                  </div>
+                </>
+              ) : (
+                <LockedProfilePlaceholder
+                  onUnlock={() => setProfileModalOpen(true)}
                 />
+              )}
+            </div>
+          </div>
+
+          <div className="mb-6 flex justify-center sm:mb-8">
+            <ProfileActionButtons
+              profileSaved={profileSaved}
+              isBusy={isActionBusy}
+              onDownload={handleDownload}
+              onShare={handleShare}
+              actionError={actionError}
+            />
+          </div>
+
+          {profileSaved ? (
+            <>
+              <div className="mb-14 flex justify-center sm:mb-16">
+                <Button
+                  variant="secondary"
+                  onClick={() => setFeedbackOpen(true)}
+                  className="w-full max-w-3xl px-8 py-4 text-base sm:text-lg"
+                >
+                  Volledige terugvoer
+                </Button>
               </div>
-            </div>
 
-            <div className="flex w-full max-w-3xl flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-4">
-              <Button
-                onClick={handleShareClick}
-                disabled={isShareBusy}
-                className="w-full px-8 py-4 text-base sm:w-auto sm:text-lg"
-              >
-                {isShareBusy ? "Laai tans af…" : "Deel my Bubbles"}
-              </Button>
+              <FullFeedbackModal
+                open={feedbackOpen}
+                onClose={() => setFeedbackOpen(false)}
+                rankedBubbles={results}
+                exportRef={exportRef}
+                photoUrl={photoUrl}
+              />
 
-              <Button
-                variant="secondary"
-                onClick={() => setFeedbackOpen(true)}
-                className="w-full px-8 py-4 text-base sm:w-auto sm:text-lg"
-              >
-                Volledige terugvoer
-              </Button>
-            </div>
+              <section className="relative z-0 mb-14 sm:mb-16">
+                <h2 className="mb-6 text-2xl font-extrabold tracking-tight sm:mb-8 sm:text-3xl">
+                  Jou Top 10
+                </h2>
+                <ol className="flex flex-col gap-4 sm:gap-5">
+                  {topTen.map((item) => (
+                    <RankedBubbleListItem key={item.id} item={item} />
+                  ))}
+                </ol>
+              </section>
 
-            {shareError ? (
-              <p className="max-w-3xl text-center text-sm font-semibold text-komma-pink">
-                {shareError}
-              </p>
-            ) : null}
-          </div>
-
-          <ShareBubblesModal
-            open={shareOpen}
-            onClose={() => setShareOpen(false)}
-            exportRef={exportRef}
-            rankedBubbles={results}
-            photoUrl={photoUrl}
-          />
-
-          <FullFeedbackModal
-            open={feedbackOpen}
-            onClose={() => setFeedbackOpen(false)}
-            rankedBubbles={results}
-            exportRef={exportRef}
-            photoUrl={photoUrl}
-          />
-
-          <section className="relative z-0 mb-14 sm:mb-16">
-            <h2 className="mb-6 text-2xl font-extrabold tracking-tight sm:mb-8 sm:text-3xl">
-              Jou Top 10
-            </h2>
-            <ol className="flex flex-col gap-4 sm:gap-5">
-              {topTen.map((item) => (
-                <RankedBubbleListItem key={item.id} item={item} />
-              ))}
-            </ol>
-          </section>
-
-          <div className="mb-14 sm:mb-16">
-            <ReflectionSection />
-          </div>
+              <div className="mb-14 sm:mb-16">
+                <ReflectionSection />
+              </div>
+            </>
+          ) : null}
 
           <div className="flex border-t-4 border-komma-black pt-10">
             <Button onClick={handleStartOver}>Begin oor</Button>
           </div>
         </PageContainer>
       </main>
+
+      {!profileSaved ? (
+        <BubbleProfileGateModal
+          open={profileModalOpen}
+          onClose={() => setProfileModalOpen(false)}
+          onSaved={handleProfileSaved}
+          rankedBubbles={results}
+          initialContact={profileContact}
+        />
+      ) : null}
     </>
   );
 }

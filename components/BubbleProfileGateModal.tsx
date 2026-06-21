@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type RefObject } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/Button";
 import { buildBubbleProfileRequest } from "@/lib/bubble-profile/build-payload";
 import { saveBubbleProfile } from "@/lib/bubble-profile/api";
@@ -10,40 +10,36 @@ import {
   RACE_OPTIONS,
 } from "@/lib/bubble-profile/demographics";
 import {
+  inputClassName,
+  selectClassName,
+} from "@/lib/bubble-profile/form-styles";
+import {
   saveBubbleProfileToSession,
   validateBubbleProfileContact,
 } from "@/lib/bubble-profile/session";
 import type { BubbleProfileContact } from "@/lib/bubble-profile/types";
-import { downloadBubbleVisual } from "@/lib/bubble-profile/export-actions";
 import type { RankedBubbleResult } from "@/lib/results";
 
-interface ShareBubblesModalProps {
+interface BubbleProfileGateModalProps {
   open: boolean;
   onClose: () => void;
-  exportRef: RefObject<HTMLElement | null>;
+  onSaved: (contact: BubbleProfileContact) => void;
   rankedBubbles: RankedBubbleResult[];
-  photoUrl?: string | null;
-  onSaved?: (contact: BubbleProfileContact) => void;
+  initialContact?: BubbleProfileContact | null;
 }
 
-const inputClassName =
-  "w-full rounded-2xl border-4 border-komma-black bg-white px-4 py-3 text-base font-semibold shadow-[3px_3px_0_0_#000] outline-none transition-shadow placeholder:text-komma-black/40 focus:shadow-[4px_4px_0_0_#FF1493] sm:px-5 sm:py-3.5";
-
-const selectClassName = `${inputClassName} appearance-none pr-12`;
-
-export function ShareBubblesModal({
+export function BubbleProfileGateModal({
   open,
   onClose,
-  exportRef,
-  rankedBubbles,
-  photoUrl = null,
   onSaved,
-}: ShareBubblesModalProps) {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [ageGroup, setAgeGroup] = useState("");
-  const [race, setRace] = useState("");
-  const [province, setProvince] = useState("");
+  rankedBubbles,
+  initialContact = null,
+}: BubbleProfileGateModalProps) {
+  const [name, setName] = useState(initialContact?.name ?? "");
+  const [email, setEmail] = useState(initialContact?.email ?? "");
+  const [ageGroup, setAgeGroup] = useState(initialContact?.ageGroup ?? "");
+  const [race, setRace] = useState(initialContact?.race ?? "");
+  const [province, setProvince] = useState(initialContact?.province ?? "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -70,11 +66,6 @@ export function ShareBubblesModal({
 
   useEffect(() => {
     if (!open) {
-      setName("");
-      setEmail("");
-      setAgeGroup("");
-      setRace("");
-      setProvince("");
       setErrorMessage(null);
       setIsSubmitting(false);
     }
@@ -114,15 +105,13 @@ export function ShareBubblesModal({
       };
 
       saveBubbleProfileToSession(savedContact);
-      onSaved?.(savedContact);
-      await downloadBubbleVisual(exportRef, photoUrl);
-      onClose();
+      onSaved(savedContact);
     } catch (error) {
-      console.error("[ShareBubblesModal] save failed", error);
+      console.error("[BubbleProfileGateModal] save failed", error);
       setErrorMessage(
         error instanceof Error
           ? error.message
-          : "Kon nie jou Bubbles af laai nie. Probeer weer.",
+          : "Kon nie jou profiel stoor nie. Probeer weer.",
       );
     } finally {
       setIsSubmitting(false);
@@ -137,7 +126,7 @@ export function ShareBubblesModal({
     <div className="fixed inset-0 z-[100] flex items-end justify-center px-4 py-6 sm:items-center sm:px-6 sm:py-8">
       <button
         type="button"
-        className="absolute inset-0 bg-komma-black/45"
+        className="absolute inset-0 bg-komma-black/50 backdrop-blur-sm"
         aria-label="Sluit modal"
         onClick={isSubmitting ? () => {} : onClose}
       />
@@ -145,52 +134,54 @@ export function ShareBubblesModal({
       <div
         role="dialog"
         aria-modal="true"
-        aria-labelledby="share-bubbles-modal-title"
-        className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-[2rem] border-4 border-komma-black bg-komma-yellow p-5 shadow-[6px_6px_0_0_#000] sm:p-7"
+        aria-labelledby="bubble-profile-gate-title"
+        className="relative z-10 max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-[2rem] border-4 border-komma-black bg-komma-yellow p-5 shadow-[6px_6px_0_0_#FF1493] sm:p-7"
       >
         {!isSubmitting ? (
           <button
             type="button"
             onClick={onClose}
             aria-label="Sluit"
-            className="absolute right-4 top-4 flex size-10 items-center justify-center rounded-full border-4 border-komma-black bg-[#F5F5F0] text-xl font-extrabold shadow-[3px_3px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_#FF1493] sm:right-5 sm:top-5"
+            className="absolute right-4 top-4 flex size-10 items-center justify-center rounded-full border-4 border-komma-black bg-white text-xl font-extrabold shadow-[3px_3px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_#FF1493] sm:right-5 sm:top-5"
           >
             ×
           </button>
         ) : null}
 
-        <h2
-          id="share-bubbles-modal-title"
-          className="mb-2 pr-12 text-2xl font-extrabold tracking-tight sm:text-3xl"
-        >
-          Deel my Bubbles
-        </h2>
+        <div className="mb-5 flex items-start gap-4 pr-10">
+          <div className="flex size-14 shrink-0 items-center justify-center rounded-full border-4 border-komma-black bg-komma-pink text-xl font-extrabold shadow-[3px_3px_0_0_#000] sm:size-16 sm:text-2xl">
+            i
+          </div>
+          <div>
+            <h2
+              id="bubble-profile-gate-title"
+              className="text-2xl font-extrabold tracking-tight sm:text-3xl"
+            >
+              Eers &apos;n vinnige vorm
+            </h2>
+            <p className="mt-1 text-sm font-semibold leading-relaxed text-komma-black/70 sm:text-base">
+              Voordat jy jou Bubbles kan sien, aflaai of deel, het ons net &apos;n
+              paar minimumbesonderhede nodig.
+            </p>
+          </div>
+        </div>
 
         {isSubmitting ? (
           <div className="py-8 text-center">
             <div className="mx-auto mb-6 flex size-16 items-center justify-center rounded-full border-4 border-komma-black bg-komma-pink shadow-[4px_4px_0_0_#000]">
               <span className="size-8 animate-pulse rounded-full border-4 border-komma-black bg-white" />
             </div>
-            <p className="text-lg font-extrabold sm:text-xl">
-              Jou Bubbles word voorberei…
-            </p>
-            <p className="mt-2 text-sm font-semibold text-komma-black/65 sm:text-base">
-              Ons stoor jou profiel en laai jou Bubbles af.
-            </p>
+            <p className="text-lg font-extrabold sm:text-xl">Stoor tans jou profiel…</p>
           </div>
         ) : (
-          <>
-            <p className="mb-6 text-sm font-semibold leading-relaxed text-komma-black/70 sm:text-base">
-              Vul die vorm in om jou profiel te stoor en af te laai.
-            </p>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label htmlFor="share-name" className="mb-1.5 block text-sm font-extrabold">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="sm:col-span-2">
+                <label htmlFor="gate-name" className="mb-1.5 block text-sm font-extrabold">
                   Naam
                 </label>
                 <input
-                  id="share-name"
+                  id="gate-name"
                   type="text"
                   required
                   autoComplete="name"
@@ -201,12 +192,12 @@ export function ShareBubblesModal({
                 />
               </div>
 
-              <div>
-                <label htmlFor="share-email" className="mb-1.5 block text-sm font-extrabold">
+              <div className="sm:col-span-2">
+                <label htmlFor="gate-email" className="mb-1.5 block text-sm font-extrabold">
                   E-pos
                 </label>
                 <input
-                  id="share-email"
+                  id="gate-email"
                   type="email"
                   required
                   autoComplete="email"
@@ -219,11 +210,11 @@ export function ShareBubblesModal({
               </div>
 
               <div>
-                <label htmlFor="share-age" className="mb-1.5 block text-sm font-extrabold">
+                <label htmlFor="gate-age" className="mb-1.5 block text-sm font-extrabold">
                   Ouderdom
                 </label>
                 <select
-                  id="share-age"
+                  id="gate-age"
                   required
                   value={ageGroup}
                   onChange={(event) => setAgeGroup(event.target.value)}
@@ -241,11 +232,11 @@ export function ShareBubblesModal({
               </div>
 
               <div>
-                <label htmlFor="share-race" className="mb-1.5 block text-sm font-extrabold">
+                <label htmlFor="gate-race" className="mb-1.5 block text-sm font-extrabold">
                   Bevolkingsgroep
                 </label>
                 <select
-                  id="share-race"
+                  id="gate-race"
                   required
                   value={race}
                   onChange={(event) => setRace(event.target.value)}
@@ -262,12 +253,12 @@ export function ShareBubblesModal({
                 </select>
               </div>
 
-              <div>
-                <label htmlFor="share-province" className="mb-1.5 block text-sm font-extrabold">
+              <div className="sm:col-span-2">
+                <label htmlFor="gate-province" className="mb-1.5 block text-sm font-extrabold">
                   Provinsie
                 </label>
                 <select
-                  id="share-province"
+                  id="gate-province"
                   required
                   value={province}
                   onChange={(event) => setProvince(event.target.value)}
@@ -283,19 +274,19 @@ export function ShareBubblesModal({
                   ))}
                 </select>
               </div>
+            </div>
 
-              {errorMessage ? (
-                <p className="text-sm font-bold text-komma-pink">{errorMessage}</p>
-              ) : null}
+            {errorMessage ? (
+              <p className="text-sm font-bold text-komma-pink">{errorMessage}</p>
+            ) : null}
 
-              <Button
-                type="submit"
-                className="w-full px-6 py-4 text-base sm:text-lg"
-              >
-                Laai my Bubbles af
-              </Button>
-            </form>
-          </>
+            <Button
+              type="submit"
+              className="w-full px-6 py-4 text-base sm:text-lg"
+            >
+              Stoor en ontsluit
+            </Button>
+          </form>
         )}
       </div>
     </div>

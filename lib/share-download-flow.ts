@@ -1,39 +1,34 @@
 import type { RefObject } from "react";
+import { buildBubbleProfileRequest } from "@/lib/bubble-profile/build-payload";
+import { saveBubbleProfile } from "@/lib/bubble-profile/api";
+import { saveBubbleProfileToSession } from "@/lib/bubble-profile/session";
+import type { BubbleProfileContact } from "@/lib/bubble-profile/types";
 import {
   BUBBLE_EXPORT_FILENAME,
   downloadBlob,
   exportBubbleVisualAsPng,
 } from "@/lib/share-bubbles";
-import {
-  saveShareContactToSession,
-  saveShareLead,
-  toShareLeadBubbleResults,
-} from "@/lib/share-contact-session";
-import type { ShareContact } from "@/lib/share-leads";
 import type { RankedBubbleResult } from "@/lib/results";
 
-type ShareDownloadOptions = {
-  contact: ShareContact;
+type ProfileDownloadOptions = {
+  contact: BubbleProfileContact;
   rankedBubbles: RankedBubbleResult[];
   exportRef: RefObject<HTMLElement | null>;
   photoUrl?: string | null;
-  skipLeadSave?: boolean;
+  skipProfileSave?: boolean;
 };
 
-export async function saveLeadAndDownloadBubbles({
+export async function saveProfileAndDownloadBubbles({
   contact,
   rankedBubbles,
   exportRef,
   photoUrl = null,
-  skipLeadSave = false,
-}: ShareDownloadOptions): Promise<void> {
-  if (!skipLeadSave) {
-    await saveShareLead({
-      name: contact.name,
-      email: contact.email,
-      bubbleResults: toShareLeadBubbleResults(rankedBubbles),
-    });
-    saveShareContactToSession(contact);
+  skipProfileSave = false,
+}: ProfileDownloadOptions): Promise<void> {
+  if (!skipProfileSave) {
+    const payload = buildBubbleProfileRequest(rankedBubbles, contact);
+    await saveBubbleProfile(payload);
+    saveBubbleProfileToSession(contact);
   }
 
   const element = exportRef.current;
@@ -45,3 +40,6 @@ export async function saveLeadAndDownloadBubbles({
   const blob = await exportBubbleVisualAsPng(element, photoUrl);
   downloadBlob(blob, BUBBLE_EXPORT_FILENAME);
 }
+
+/** @deprecated Use saveProfileAndDownloadBubbles */
+export const saveLeadAndDownloadBubbles = saveProfileAndDownloadBubbles;

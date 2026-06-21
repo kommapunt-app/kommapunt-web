@@ -57,6 +57,7 @@ export function toShareLeadBubbleResults(
   }));
 }
 
+/** Lightweight name/email capture — separate from full bubble profile save. */
 export async function saveShareLead(
   payload: ShareLeadRequest,
 ): Promise<ShareLeadResponse> {
@@ -69,6 +70,10 @@ export async function saveShareLead(
   const data = (await response.json()) as ShareLeadResponse;
 
   if (!response.ok || !data.ok) {
+    console.error("[saveShareLead] request failed", {
+      status: response.status,
+      body: data,
+    });
     throw new Error(data.message ?? "Kon nie jou besonderhede stoor nie.");
   }
 
