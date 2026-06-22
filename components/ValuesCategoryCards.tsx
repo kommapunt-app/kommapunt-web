@@ -1,10 +1,20 @@
+"use client";
+
 import Link from "next/link";
 import {
   VALUE_GUIDE_CATEGORIES,
   getValueGuideById,
 } from "@/lib/values-guide";
+import { hasValuePoster } from "@/lib/value-poster-map";
 
-export function ValuesCategoryCards() {
+interface ValuesCategoryCardsProps {
+  onOpenPoster?: (valueId: string) => void;
+}
+
+const chipClassName =
+  "rounded-full border-4 border-komma-black bg-[#F5F5F0] px-3 py-1.5 text-sm font-extrabold shadow-[3px_3px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:bg-komma-yellow hover:shadow-[4px_4px_0_0_#FF1493] sm:px-4 sm:py-2";
+
+export function ValuesCategoryCards({ onOpenPoster }: ValuesCategoryCardsProps) {
   return (
     <div className="mb-12 grid gap-5 sm:mb-16 sm:grid-cols-2 lg:gap-6">
       {VALUE_GUIDE_CATEGORIES.map((category) => (
@@ -31,11 +41,24 @@ export function ValuesCategoryCards() {
                 return null;
               }
 
+              if (hasValuePoster(value.id) && onOpenPoster) {
+                return (
+                  <button
+                    key={value.id}
+                    type="button"
+                    onClick={() => onOpenPoster(value.id)}
+                    className={chipClassName}
+                  >
+                    {value.nameAf}
+                  </button>
+                );
+              }
+
               return (
                 <Link
                   key={value.id}
                   href={`/waardes/${value.id}`}
-                  className="rounded-full border-4 border-komma-black bg-[#F5F5F0] px-3 py-1.5 text-sm font-extrabold shadow-[3px_3px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:bg-komma-yellow hover:shadow-[4px_4px_0_0_#FF1493] sm:px-4 sm:py-2"
+                  className={chipClassName}
                 >
                   {value.nameAf}
                 </Link>

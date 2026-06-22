@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Header } from "@/components/Header";
 import { PageContainer } from "@/components/PageContainer";
-import { ValuesCategoryCards } from "@/components/ValuesCategoryCards";
-import { ValuesGuideBrowse } from "@/components/ValuesGuideBrowse";
+import { WaardesPageContent } from "@/components/WaardesPageContent";
 import { ValuesGuideIntro } from "@/components/ValuesGuideIntro";
 
 export const metadata: Metadata = {
@@ -29,9 +28,7 @@ export default function WaardesPage() {
 
           <ValuesGuideIntro />
 
-          <ValuesCategoryCards />
-
-          <ValuesGuideBrowse />
+          <WaardesPageContent />
         </PageContainer>
       </main>
     </>

@@ -10,7 +10,11 @@ import {
   type ValueGuideCategoryFilter,
 } from "@/lib/values-guide";
 
-export function ValuesGuideBrowse() {
+interface ValuesGuideBrowseProps {
+  onOpenPoster?: (valueId: string) => void;
+}
+
+export function ValuesGuideBrowse({ onOpenPoster }: ValuesGuideBrowseProps) {
   const [query, setQuery] = useState("");
   const [categoryFilter, setCategoryFilter] =
     useState<ValueGuideCategoryFilter>("all");
@@ -89,7 +93,11 @@ export function ValuesGuideBrowse() {
 
               <div className="flex flex-wrap justify-center gap-4 sm:gap-5">
                 {values.map((value) => (
-                  <ValueGuideBubbleCard key={value.id} value={value} />
+                  <ValueGuideBubbleCard
+                    key={value.id}
+                    value={value}
+                    onOpenPoster={onOpenPoster}
+                  />
                 ))}
               </div>
             </section>
