@@ -72,8 +72,20 @@ const GUIDE_ID_OVERRIDES: Record<string, BubbleCategoryId> = {
   authority: "waarheid-beginsels",
   beauty: "ek-identiteit",
   commitment: "mense-verhoudings",
+  diens: "bydrae-verandering",
+  doelgerigheid: "bydrae-verandering",
+  gemeenskap: "mense-verhoudings",
+  integriteit: "mense-verhoudings",
+  leer: "prestasie-groei",
+  nederigheid: "waarheid-beginsels",
   ontdekking: "prestasie-groei",
+  prestasie: "prestasie-groei",
   privacy: "ek-identiteit",
+  verantwoordelikheid: "mense-verhoudings",
+  regverdigheid: "orde-stabiliteit",
+  selfbeheersing: "prestasie-groei",
+  stabiliteit: "orde-stabiliteit",
+  status: "prestasie-groei",
 };
 
 export function getValueGuideBubbleCategory(

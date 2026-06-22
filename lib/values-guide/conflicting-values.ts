@@ -331,4 +331,64 @@ export const CONFLICTING_VALUES: Record<string, ValueConflict[]> = {
     { name: "Geregtigheid", reason: "Verdraagsaamheid luister; geregtigheid konfronteer onreg." },
     { name: "Geloof", reason: "Verdraagsaamheid omarm verskil; geloof hou vas aan oortuiging." },
   ],
+  "regverdigheid": [
+    { name: "Lojaliteit", reason: "Regverdigheid vra wat reg is vir almal; lojaliteit beskerm soms net jou mense." },
+    { name: "Vryheid", reason: "Regverdigheid wil gelyke reëls; vryheid wil ruimte om self te kies." },
+    { name: "Vergeefnis", reason: "Regverdigheid vra wat iemand verdien; vergeefnis kies genade bo verdiens." },
+  ],
+  "nederigheid": [
+    { name: "Status", reason: "Nederigheid erken ander; status wil erkenning en posisie." },
+    { name: "Prestasie", reason: "Nederigheid bly leerbaar; prestasie wil uitblink en uitlig." },
+    { name: "Vryheid van mening", reason: "Nederigheid luister; vryheid van mening wil duidelik staan." },
+  ],
+  "doelgerigheid": [
+    { name: "Vryheid", reason: "Doelgerigtheid hou fokus; vryheid wil spontaan en oop wees." },
+    { name: "Veiligheid", reason: "Doelgerigtheid jaag groot doelwitte; veiligheid soek sekerheid en gemak." },
+    { name: "Verhoudings", reason: "Doelgerigtheid vra tyd vir doel; verhoudings vra tyd vir mense." },
+  ],
+  "status": [
+    { name: "Egtheid", reason: "Status wil indruk maak; egtheid wil getrou bly aan wie jy is." },
+    { name: "Gemeenskap", reason: "Status wil uitstaan; gemeenskap wil gelyk en saam behoort." },
+    { name: "Nederigheid", reason: "Status soek erkenning; nederigheid dien sonder erkenning te soek." },
+  ],
+  "stabiliteit": [
+    { name: "Avontuur", reason: "Stabiliteit soek roetine; avontuur soek risiko en verandering." },
+    { name: "Vernuwing", reason: "Stabiliteit hou aan wat werk; vernuwing soek nuwe paaie." },
+    { name: "Groei", reason: "Stabiliteit wil veilig bly; groei vra beweging en ontwikkeling." },
+  ],
+  "diens": [
+    { name: "Egtheid", reason: "Diens vra uitreik na ander; egtheid vra getrou bly aan jouself." },
+    { name: "Vryheid", reason: "Diens vra toewyding; vryheid vra om jou eie pad te kies." },
+    { name: "Prestasie", reason: "Diens fokus op ander; prestasie fokus op jou eie bereiking." },
+  ],
+  "leer": [
+    { name: "Status", reason: "Leer soek begrip; status soek erkenning en applous." },
+    { name: "Prestasie", reason: "Leer waardeer die reis; prestasie jaag na resultate." },
+    { name: "Gemeenskap", reason: "Leer soek eie waarheid; gemeenskap vra aanpas en behoort." },
+  ],
+  "selfbeheersing": [
+    { name: "Vryheid", reason: "Selfbeheersing stel grense; vryheid wil keuse en spontaniteit." },
+    { name: "Vertroue", reason: "Selfbeheersing fokus op jouself; vertroue gee beheer aan ander of die proses." },
+    { name: "Aanpasbaarheid", reason: "Selfbeheersing hou koers; aanpasbaarheid vra buigsaamheid." },
+  ],
+  "verantwoordelikheid": [
+    { name: "Vryheid", reason: "Verantwoordelikheid vra pligte; vryheid wil ruimte om te kies." },
+    { name: "Spontaniteit", reason: "Verantwoordelikheid vra beplanning; spontaniteit leef in die oomblik." },
+    { name: "Self-sorg", reason: "Verantwoordelikheid vir ander kan self-sorg verdring." },
+  ],
+  "prestasie": [
+    { name: "Welstand", reason: "Prestasie jaag resultate; welstand vra rus en herstel." },
+    { name: "Familie", reason: "Prestasie vra tyd vir doelwitte; familie vra tyd vir mense." },
+    { name: "Aanvaarding", reason: "Prestasie streef na uitnemendheid; aanvaarding omheem wat is." },
+  ],
+  "gemeenskap": [
+    { name: "Onafhanklikheid", reason: "Gemeenskap vra bydrae; onafhanklikheid kies jou eie pad." },
+    { name: "Egtheid", reason: "Gemeenskap vra inpas; egtheid vra om jouself te wees." },
+    { name: "Privaatheid", reason: "Gemeenskap vra beskikbaarheid; privaatheid vra spasie en rus." },
+  ],
+  "integriteit": [
+    { name: "Lojaliteit", reason: "Integriteit vra regverdigheid; lojaliteit kan kant kies bo waarheid." },
+    { name: "Deernis", reason: "Integriteit vra waarheid; deernis vra sagtheid en begrip." },
+    { name: "Praktiese gerief", reason: "Integriteit hou vas aan beginsels; praktiese gerief soek vinnige oplossings." },
+  ],
 };

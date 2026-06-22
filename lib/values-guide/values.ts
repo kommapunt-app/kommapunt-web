@@ -753,6 +753,197 @@ const VALUE_GUIDE_ENTRIES: ValueGuideEntryInput[] = [
     overdoneRiskAf: "As dit grensloos raak, word belangrike waarheid en grense vaag. Dan noem jy alles aanvaarbaar al is dit skadelik.",
     reflectionQuestionAf: "Hoe kan ek verskil met respek sonder om my kernwaardes te verloën?",
   },
+  {
+    id: "regverdigheid",
+    nameAf: "Regverdigheid",
+    nameEn: "Fairness",
+    category: "safety-security",
+    definitionAf:
+      "Regverdigheid is om mense billik, eerlik en met waardigheid te behandel. Dit gee elkeen 'n eerlike kans.",
+    significanceAf:
+      "Regverdigheid bou vertroue en vrede in verhoudings en gemeenskappe. Mense floreer waar hulle met respek behandel word.",
+    healthyExpressionAf:
+      "Jy maak onbevooroordeelde besluite en luister na alle kante. Jy streef na billikheid, nie net na gemak nie.",
+    overdoneRiskAf:
+      "As regverdigheid te rigied raak, word reëls belangriker as mense. Dan mis jy genade, konteks en verhouding.",
+    reflectionQuestionAf:
+      "Neem ek besluite op grond van wat reg en billik is vir almal, of op grond van wat vir my of my mense maklik is?",
+  },
+  {
+    id: "nederigheid",
+    nameAf: "Nederigheid",
+    nameEn: "Humility",
+    category: "growth",
+    definitionAf:
+      "Nederigheid is om jou plek te ken, ander te erken en met 'n oop hart te leer. Dit sien elke mens se waardigheid.",
+    significanceAf:
+      "Nederigheid bou vertroue, hou jou leerbaar en help jou om foute te erken. Dit maak ware leierskap en verbinding moontlik.",
+    healthyExpressionAf:
+      "Jy gee erkenning, luister meer as wat jy praat, en behandel almal met respek. Jy bly dankbaar en leerbaar.",
+    overdoneRiskAf:
+      "As nederigheid te ver gaan, ontken jy jou eie waarde of laat ander oor jou loop. Dan verloor jy stem en moed.",
+    reflectionQuestionAf:
+      "Hoe kan ek nederiger wees sonder om my waarde of stem te verloor?",
+  },
+  {
+    id: "doelgerigheid",
+    nameAf: "Doelgerigtheid",
+    nameEn: "Purposefulness",
+    category: "self-actualisation",
+    definitionAf:
+      "Doelgerigtheid is om met bedoeling te leef, te weet wat vir jou saak maak, en na 'n doel groter as jouself te streef.",
+    significanceAf:
+      "Doelgerigtheid gee rigting aan jou keuses en betekenis aan jou dae. Dit help jou om gefokus en volhardend te bly.",
+    healthyExpressionAf:
+      "Jy weet wat die belangrikste is en neem daaglikse stappe daarnaartoe. Jy bly trou aan jou hoekom, ook wanneer dit moeilik is.",
+    overdoneRiskAf:
+      "As doelgerigtheid obsessief raak, verwaarloos jy verhoudings en rus. Dan word jy te hard op jouself en verloor balans.",
+    reflectionQuestionAf: "Wat is my hoekom — en leef ek vandag daarna?",
+  },
+  {
+    id: "status",
+    nameAf: "Status",
+    nameEn: "Status",
+    category: "esteem",
+    definitionAf:
+      "Status is die erkenning en posisie wat jy in 'n groep, gemeenskap of samelewing het. Dit gaan oor hoe ander jou sien en die respek wat daarmee gepaard gaan.",
+    significanceAf:
+      "Status kan waardigheid, invloed en geleenthede bring. Dit motiveer jou om uit te blink en 'n plek in die wêreld te vind.",
+    healthyExpressionAf:
+      "Jy is trots, maar bly nederig. Jy gebruik jou posisie om 'n positiewe verskil te maak en erken ander se bydrae ook.",
+    overdoneRiskAf:
+      "As status te belangrik word, raak jy arrogant, vergelykend of oneg. Dan word erkenning belangriker as karakter.",
+    reflectionQuestionAf:
+      "Waar laat ek toe dat die behoefte aan status my besluite beïnvloed — en waar kan ek eerder getrou en nederig bly?",
+  },
+  {
+    id: "stabiliteit",
+    nameAf: "Stabiliteit",
+    nameEn: "Stability",
+    category: "safety-security",
+    definitionAf:
+      "Stabiliteit is die waarde van konsekwentheid, balans en standvastigheid. Dit bou 'n stewige fondament waarop jy en ander veilig kan groei.",
+    significanceAf:
+      "Stabiliteit bring gemoedsrus, fokus en vertroue. Dit verminder stres en skep ruimte vir herstel en groei.",
+    healthyExpressionAf:
+      "Jy het roetines en grense wat werk. Jy bly konsekwent in woorde en dade, ook wanneer verandering kom.",
+    overdoneRiskAf:
+      "As stabiliteit te rigied raak, weerstaan jy nodige verandering en raak beheer obsessief. Dan word veiligheid 'n tronk.",
+    reflectionQuestionAf:
+      "Waar in my lewe soek ek meer stabiliteit — en waar kan ek buigsaamheid toelaat om te groei?",
+  },
+  {
+    id: "diens",
+    nameAf: "Diens",
+    nameEn: "Service",
+    category: "self-actualisation",
+    definitionAf:
+      "Diens is om jou tyd, talente en hulp bewustelik aan ander en die groter gemeenskap te gee. Dit maak 'n verskil deur mense te ondersteun.",
+    significanceAf:
+      "Diens bou sterker gemeenskappe, gee lewe betekenis en kweek empatie. Klein dade kan groot impak hê.",
+    healthyExpressionAf:
+      "Jy sien behoeftes en reageer met waardigheid. Jy dien sonder om erkenning te soek en dink aan die groter prentjie.",
+    overdoneRiskAf:
+      "As diens te ver gaan, put jy jouself uit, ignoreer jy eie behoeftes of probeer jy ander red. Dan word gee 'n las.",
+    reflectionQuestionAf:
+      "Waar en hoe kan ek my tyd, talente en hulp gebruik om 'n verskil te maak — sonder om myself te verloor?",
+  },
+  {
+    id: "leer",
+    nameAf: "Leer",
+    nameEn: "Learning",
+    category: "growth",
+    definitionAf:
+      "Leer is die waarde van nuuskierigheid, kennis en begrip. Dit gaan oor nuwe dinge ontdek en jou denke elke dag te verbreed.",
+    significanceAf:
+      "Leer voed nuuskierigheid, verbeter besluite en bou selfvertroue. Dit hou jou denke oop en help jou om jou potensiaal te bereik.",
+    healthyExpressionAf:
+      "Jy vra vrae, is oop vir nuwe idees en leer uit foute. Jy deel wat jy leer en help ander ook om te groei.",
+    overdoneRiskAf:
+      "As leer uit balans is, kan dit lei tot analise-paralise, perfeksionisme of konstante ontevredenheid oor wat jy nie weet nie.",
+    reflectionQuestionAf:
+      "Wat wil ek leer, en hoe kan ek leer op 'n manier wat my én ander help om te groei?",
+  },
+  {
+    id: "selfbeheersing",
+    nameAf: "Selfbeheersing",
+    nameEn: "Self-Control",
+    category: "growth",
+    definitionAf:
+      "Selfbeheersing is om jouself te rig en te beheer sodat jy jou doelwitte bereik. Dit gaan oor deursettingsvermoë, fokus en selfbeheer — ook wanneer dit moeilik is.",
+    significanceAf:
+      "Selfbeheersing help jou om vandag die regte dinge te doen sodat jy môre die lewe kan hê wat jy wil hê. Dit bou karakter en goeie gewoontes.",
+    healthyExpressionAf:
+      "Jy dink voor jy handel, sê nee tot afleidings en bly kalm onder druk. Jy bly op koers sonder om jouself te hard te wees.",
+    overdoneRiskAf:
+      "As selfbeheersing te streng raak, word jy te hard op jouself, onderdruk emosies of verloor vreugde en spontaniteit.",
+    reflectionQuestionAf:
+      "Wat wil ek beheer — my impulse of my toekoms?",
+  },
+  {
+    id: "verantwoordelikheid",
+    nameAf: "Verantwoordelikheid",
+    nameEn: "Responsibility",
+    category: "love-belonging",
+    definitionAf:
+      "Verantwoordelikheid is om eienaarskap te neem vir jou keuses, pligte en die impak van jou woorde en dade. Dit maak jou betroubaar en betrokke.",
+    significanceAf:
+      "Verantwoordelikheid bou vertroue en stabiliteit in verhoudings en gemeenskappe. Dit help jou om doelgerig en betroubaar te leef.",
+    healthyExpressionAf:
+      "Jy neem eienaarskap, hou jou woord en leer uit foute. Jy dink aan hoe jou keuses ander raak.",
+    overdoneRiskAf:
+      "As verantwoordelikheid te ver gaan, blameer jy jouself vir alles, raak jy uitgeput of probeer jy alles beheer.",
+    reflectionQuestionAf:
+      "Waar in my lewe kan ek meer eienaarskap neem — met balans en wysheid?",
+  },
+  {
+    id: "prestasie",
+    nameAf: "Prestasie",
+    nameEn: "Achievement",
+    category: "esteem",
+    definitionAf:
+      "Prestasie is die strewe om doelwitte te bereik, hoë standaarde te handhaaf en meetbare resultate te lewer. Dit gaan oor jou vermoëns ten volle te gebruik.",
+    significanceAf:
+      "Prestasie gee rigting en dryfkrag. Dit help jou om te groei, by te dra en jou potensiaal te verwesenlik.",
+    healthyExpressionAf:
+      "Jy stel uitdagende maar realistiese doelwitte, fokus goed en vier vordering. Jy gee jou beste sonder om jouself te verloor.",
+    overdoneRiskAf:
+      "As prestasie alles oorneem, kan dit lei tot uitbranding, perfeksionisme, verwaarlosing van verhoudings en vrees vir mislukking.",
+    reflectionQuestionAf:
+      "Watter doelwitte is vir my regtig die moeite werd — en wat is ek bereid om prys te gee om dit te bereik?",
+  },
+  {
+    id: "gemeenskap",
+    nameAf: "Gemeenskap",
+    nameEn: "Community",
+    category: "love-belonging",
+    definitionAf:
+      "Gemeenskap is die mense rondom ons met wie ons verbondenheid, ondersteuning en 'n gedeelde doel het. Dit is waar ons saamleef en mekaar help.",
+    significanceAf:
+      "Gemeenskap gee behoort, veiligheid en geleenthede om saam iets groters te bou. Mense floreer waar hulle ondersteun word.",
+    healthyExpressionAf:
+      "Jy neem deel, wys omgee en respekteer verskille. Jy dra by tot die welstand van jou gemeenskap en bou vertroue.",
+    overdoneRiskAf:
+      "As gemeenskap te ver gaan, kan groepsdruk, verlies van eie stem of uitputting deur te veel verantwoordelikheid vir ander volg.",
+    reflectionQuestionAf:
+      "Hoe dra ek by tot my gemeenskap — en hoe bly ek steeds myself terwyl ek deel van iets groters is?",
+  },
+  {
+    id: "integriteit",
+    nameAf: "Integriteit",
+    nameEn: "Integrity",
+    category: "love-belonging",
+    definitionAf:
+      "Integriteit is om in lyn te leef met jou waardes en oortuigings, ook wanneer niemand kyk nie. Dit is eerlik, regverdig en konsekwent wees.",
+    significanceAf:
+      "Integriteit bou vertroue in jouself en by ander. Dit gee karakter en rigting in 'n komplekse wêreld.",
+    healthyExpressionAf:
+      "Jy doen die regte ding, hou jou beloftes en is eerlik en deursigtig. Jy behandel ander regverdig en neem verantwoordelikheid.",
+    overdoneRiskAf:
+      "As integriteit te rigied raak, word reëls belangriker as mense. Dan mis jy buigsaamheid, genade en kompromie.",
+    reflectionQuestionAf:
+      "Waar in my lewe wil ek getrou bly aan wat ek reg dink — ook wanneer dit moeilik is?",
+  },
 ];
 
 export const VALUE_GUIDE: ValueGuideEntry[] = VALUE_GUIDE_ENTRIES.map((entry) => ({
