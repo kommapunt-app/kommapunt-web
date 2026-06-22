@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/Button";
-import { buildBubbleProfileRequest } from "@/lib/bubble-profile/build-payload";
-import { saveBubbleProfile } from "@/lib/bubble-profile/api";
+import { persistBubbleProfile } from "@/lib/bubble-profile/persist";
 import {
   AGE_GROUP_OPTIONS,
   PROVINCE_OPTIONS,
@@ -13,7 +12,6 @@ import {
   selectClassName,
 } from "@/lib/bubble-profile/form-styles";
 import {
-  saveBubbleProfileToSession,
   validateBubbleProfileContact,
 } from "@/lib/bubble-profile/session";
 import type { BubbleProfileContact } from "@/lib/bubble-profile/types";
@@ -22,7 +20,10 @@ import type { RankedBubbleResult } from "@/lib/results";
 interface BubbleProfileGateModalProps {
   open: boolean;
   onClose: () => void;
-  onSaved: (contact: BubbleProfileContact) => void;
+  onSaved: (
+    contact: BubbleProfileContact,
+    result?: { serverSynced: boolean; serverMessage?: string },
+  ) => void;
   rankedBubbles: RankedBubbleResult[];
   initialContact?: BubbleProfileContact | null;
 }
@@ -90,9 +91,6 @@ export function BubbleProfileGateModal({
     setIsSubmitting(true);
 
     try {
-      const payload = buildBubbleProfileRequest(rankedBubbles, contact);
-      await saveBubbleProfile(payload);
-
       const savedContact: BubbleProfileContact = {
         name: contact.name.trim(),
         email: contact.email.trim(),
@@ -100,8 +98,11 @@ export function BubbleProfileGateModal({
         province: contact.province,
       };
 
-      saveBubbleProfileToSession(savedContact);
-      onSaved(savedContact);
+      const result = await persistBubbleProfile(rankedBubbles, savedContact);
+      onSaved(result.contact, {
+        serverSynced: result.serverSynced,
+        serverMessage: result.serverMessage,
+      });
     } catch (error) {
       console.error("[BubbleProfileGateModal] save failed", error);
       setErrorMessage(

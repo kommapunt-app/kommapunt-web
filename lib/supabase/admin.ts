@@ -76,7 +76,7 @@ export async function insertBubbleProfile(
       name: record.name,
       email: record.email,
       age_group: record.age_group,
-      race: record.race ?? null,
+      race: record.race?.trim() ? record.race : "",
       province: record.province,
       ranked_values: record.ranked_values,
       top_5_values: record.top_5_values,

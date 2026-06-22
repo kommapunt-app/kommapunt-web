@@ -34,6 +34,7 @@ export function ResultsPageContent() {
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [isActionBusy, setIsActionBusy] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [syncWarning, setSyncWarning] = useState<string | null>(null);
   const exportRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -72,10 +73,18 @@ export function ResultsPageContent() {
     router.push("/bubbles");
   }
 
-  function handleProfileSaved(contact: BubbleProfileContact) {
+  function handleProfileSaved(
+    contact: BubbleProfileContact,
+    result?: { serverSynced: boolean; serverMessage?: string },
+  ) {
     setProfileContact(contact);
     setProfileModalOpen(false);
     setActionError(null);
+    setSyncWarning(
+      result?.serverSynced === false
+        ? "Jou profiel is ontsluit. Ons kon dit nie op die bediener stoor nie — jy kan steeds aflaai en deel."
+        : null,
+    );
   }
 
   async function handleDownload() {
@@ -201,6 +210,12 @@ export function ResultsPageContent() {
               actionError={actionError}
             />
           </div>
+
+          {syncWarning ? (
+            <p className="mx-auto mb-6 max-w-3xl text-center text-sm font-semibold text-komma-black/70">
+              {syncWarning}
+            </p>
+          ) : null}
 
           {profileSaved ? (
             <>

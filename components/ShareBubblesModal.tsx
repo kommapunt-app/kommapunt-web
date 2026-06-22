@@ -2,14 +2,12 @@
 
 import { useEffect, useState, type RefObject } from "react";
 import { Button } from "@/components/Button";
-import { buildBubbleProfileRequest } from "@/lib/bubble-profile/build-payload";
-import { saveBubbleProfile } from "@/lib/bubble-profile/api";
+import { persistBubbleProfile } from "@/lib/bubble-profile/persist";
 import {
   AGE_GROUP_OPTIONS,
   PROVINCE_OPTIONS,
 } from "@/lib/bubble-profile/demographics";
 import {
-  saveBubbleProfileToSession,
   validateBubbleProfileContact,
 } from "@/lib/bubble-profile/session";
 import type { BubbleProfileContact } from "@/lib/bubble-profile/types";
@@ -98,9 +96,6 @@ export function ShareBubblesModal({
     setIsSubmitting(true);
 
     try {
-      const payload = buildBubbleProfileRequest(rankedBubbles, contact);
-      await saveBubbleProfile(payload);
-
       const savedContact: BubbleProfileContact = {
         name: contact.name.trim(),
         email: contact.email.trim(),
@@ -108,7 +103,7 @@ export function ShareBubblesModal({
         province: contact.province,
       };
 
-      saveBubbleProfileToSession(savedContact);
+      await persistBubbleProfile(rankedBubbles, savedContact);
       onSaved?.(savedContact);
       await downloadBubbleVisual(exportRef, photoUrl);
       onClose();
