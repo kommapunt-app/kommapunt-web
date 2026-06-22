@@ -78,11 +78,11 @@ export function PlakkatePageContent() {
 
         <div className="mt-5">
           <Link
-            href="/waardes#die-bubbles"
+            href="/waardes"
             onClick={() => trackEvent({ name: "cta_plakkate_to_waardes" })}
             className="inline-flex items-center justify-center rounded-full border-4 border-komma-black bg-white px-6 py-3 text-base font-extrabold shadow-[4px_4px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:bg-komma-yellow hover:shadow-[5px_5px_0_0_#FF1493] sm:px-8 sm:py-3.5 sm:text-lg"
           >
-            Verken die Waardekaart
+            Terug na Bubbles Bib
           </Link>
         </div>
 

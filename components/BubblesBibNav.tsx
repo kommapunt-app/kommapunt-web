@@ -1,12 +1,23 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import {
+  BUBBLES_BIB_SCROLL_SECTIONS,
   BUBBLES_BIB_SECTIONS,
-  type BubblesBibSectionId,
+  type BubblesBibScrollSectionId,
 } from "@/lib/bubbles-bib";
 
-function scrollToSection(id: BubblesBibSectionId) {
+const PILL_BASE_CLASS =
+  "shrink-0 rounded-full border-4 border-komma-black px-4 py-2.5 text-sm font-extrabold shadow-[3px_3px_0_0_#000] transition-all sm:px-5 sm:py-3 sm:text-base";
+
+const PILL_ACTIVE_CLASS =
+  "bg-komma-pink text-white shadow-[4px_4px_0_0_#000]";
+
+const PILL_INACTIVE_CLASS =
+  "bg-white hover:-translate-y-0.5 hover:bg-komma-yellow hover:shadow-[4px_4px_0_0_#FF1493]";
+
+function scrollToSection(id: BubblesBibScrollSectionId) {
   const element = document.getElementById(id);
 
   if (!element) {
@@ -18,10 +29,10 @@ function scrollToSection(id: BubblesBibSectionId) {
 
 export function BubblesBibNav() {
   const [activeSection, setActiveSection] =
-    useState<BubblesBibSectionId>("wat-is-bubbles");
+    useState<BubblesBibScrollSectionId>("wat-is-bubbles");
 
   const observeSections = useCallback(() => {
-    const sectionElements = BUBBLES_BIB_SECTIONS.map((section) =>
+    const sectionElements = BUBBLES_BIB_SCROLL_SECTIONS.map((section) =>
       document.getElementById(section.id),
     ).filter((element): element is HTMLElement => element !== null);
 
@@ -38,7 +49,7 @@ export function BubblesBibNav() {
         const topEntry = visible[0];
 
         if (topEntry?.target.id) {
-          setActiveSection(topEntry.target.id as BubblesBibSectionId);
+          setActiveSection(topEntry.target.id as BubblesBibScrollSectionId);
         }
       },
       {
@@ -67,6 +78,18 @@ export function BubblesBibNav() {
       >
         <div className="flex gap-2 overflow-x-auto overscroll-x-contain py-1 pr-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {BUBBLES_BIB_SECTIONS.map((section) => {
+            if ("href" in section) {
+              return (
+                <Link
+                  key={section.id}
+                  href={section.href}
+                  className={`${PILL_BASE_CLASS} ${PILL_INACTIVE_CLASS}`}
+                >
+                  {section.label}
+                </Link>
+              );
+            }
+
             const isActive = activeSection === section.id;
 
             return (
@@ -75,12 +98,9 @@ export function BubblesBibNav() {
                 type="button"
                 onClick={() => scrollToSection(section.id)}
                 aria-current={isActive ? "true" : undefined}
-                className={[
-                  "shrink-0 rounded-full border-4 border-komma-black px-4 py-2.5 text-sm font-extrabold shadow-[3px_3px_0_0_#000] transition-all sm:px-5 sm:py-3 sm:text-base",
-                  isActive
-                    ? "bg-komma-pink text-white shadow-[4px_4px_0_0_#000]"
-                    : "bg-white hover:-translate-y-0.5 hover:bg-komma-yellow hover:shadow-[4px_4px_0_0_#FF1493]",
-                ].join(" ")}
+                className={`${PILL_BASE_CLASS} ${
+                  isActive ? PILL_ACTIVE_CLASS : PILL_INACTIVE_CLASS
+                }`}
               >
                 {section.label}
               </button>

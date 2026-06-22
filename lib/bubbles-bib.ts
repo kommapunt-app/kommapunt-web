@@ -1,9 +1,16 @@
 export const BUBBLES_BIB_SECTIONS = [
   { id: "wat-is-bubbles", label: "Wat is Bubbles" },
   { id: "die-bubbles", label: "Die Bubbles" },
+  { id: "bubbleblaaie", label: "Bubbleblaaie", href: "/plakkate" },
 ] as const;
 
-export type BubblesBibSectionId = (typeof BUBBLES_BIB_SECTIONS)[number]["id"];
+export type BubblesBibScrollSectionId = "wat-is-bubbles" | "die-bubbles";
+
+export const BUBBLES_BIB_SCROLL_SECTIONS = BUBBLES_BIB_SECTIONS.filter(
+  (section): section is (typeof BUBBLES_BIB_SECTIONS)[number] & {
+    id: BubblesBibScrollSectionId;
+  } => !("href" in section),
+);
 
 export const BUBBLES_BIB_IMAGES = {
   watIsBubbles: {
