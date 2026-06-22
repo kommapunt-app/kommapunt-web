@@ -12,8 +12,11 @@ import {
   type ValueGuideEntry,
 } from "@/lib/values-guide";
 import {
+  formatValueCount,
+  getCategoryOrbitRadius,
+  getExplorerMinHeight,
   getOrbitOffset,
-  getOrbitRadius,
+  getValueOrbitPosition,
 } from "@/lib/waardes-explorer-layout";
 
 type ExplorerPhase = "hub" | "groups" | "values";
@@ -24,6 +27,29 @@ interface WaardesBubbleExplorerProps {
 }
 
 const GROUPED_VALUES = groupValuesGuideByCategory(VALUE_GUIDE);
+
+function CentreCategory({
+  category,
+  valueCount,
+}: {
+  category: ValueGuideCategory;
+  valueCount: number;
+}) {
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <ExplorerBubble
+        label={category.labelAf}
+        size="group"
+        active
+        interactive={false}
+        ariaLabel={category.labelAf}
+      />
+      <p className="text-sm font-bold text-komma-black/70 sm:text-base">
+        {formatValueCount(valueCount)}
+      </p>
+    </div>
+  );
+}
 
 export function WaardesBubbleExplorer({
   searchQuery,
@@ -46,13 +72,9 @@ export function WaardesBubbleExplorer({
     [selectedCategoryId],
   );
 
-  const visibleValues = isSearchActive
-    ? searchResults
-    : selectedGroup?.values ?? [];
-
-  const activeCategory: ValueGuideCategory | null = isSearchActive
-    ? null
-    : selectedGroup?.category ?? null;
+  const activeCategory = selectedGroup?.category ?? null;
+  const categoryValues = selectedGroup?.values ?? [];
+  const visibleValues = isSearchActive ? searchResults : categoryValues;
 
   function handleHubClick() {
     if (isSearchActive) {
@@ -61,12 +83,6 @@ export function WaardesBubbleExplorer({
 
     if (phase === "hub") {
       setPhase("groups");
-      return;
-    }
-
-    if (phase === "values") {
-      setPhase("groups");
-      setSelectedCategoryId(null);
       return;
     }
 
@@ -83,24 +99,27 @@ export function WaardesBubbleExplorer({
     setPhase("values");
   }
 
+  function handleBackToGroups() {
+    setPhase("groups");
+    setSelectedCategoryId(null);
+  }
+
   function handleValueClick(value: ValueGuideEntry) {
     onValueSelect(value.id);
   }
 
-  const showGroups =
-    !isSearchActive && (phase === "groups" || phase === "values");
-  const showValues =
-    (isSearchActive && searchResults.length > 0) || phase === "values";
+  const showHubCentre =
+    phase === "hub" ||
+    phase === "groups" ||
+    isSearchActive;
+  const showCategoryOrbit = phase === "groups" && !isSearchActive;
+  const showValueOrbit =
+    (phase === "values" && !isSearchActive) ||
+    (isSearchActive && searchResults.length > 0);
 
-  const orbitGroups =
-    phase === "values" && selectedCategoryId
-      ? VALUE_GUIDE_CATEGORIES.filter(
-          (category) => category.id !== selectedCategoryId,
-        )
-      : VALUE_GUIDE_CATEGORIES;
-
-  const desktopMinHeight =
-    visibleValues.length > 12 ? "min-h-[680px]" : "min-h-[540px]";
+  const levelKey = isSearchActive
+    ? `search-${normalizedQuery}`
+    : `${phase}-${selectedCategoryId ?? "none"}`;
 
   const hintText = isSearchActive
     ? searchResults.length > 0
@@ -114,59 +133,54 @@ export function WaardesBubbleExplorer({
           ? `Waardes in ${activeCategory.labelAf}`
           : "";
 
+  const desktopMinHeight = getExplorerMinHeight(visibleValues.length);
+
   return (
-    <section
-      aria-label="Bubble verkenner"
-      className="pb-8 sm:pb-12"
-    >
+    <section aria-label="Bubble verkenner" className="pb-8 sm:pb-12">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm font-semibold text-komma-black/70 sm:text-base">
           {hintText}
         </p>
 
-        {!isSearchActive && phase !== "hub" ? (
+        {phase === "values" && !isSearchActive ? (
           <button
             type="button"
-            onClick={() => {
-              setPhase("groups");
-              setSelectedCategoryId(null);
-            }}
+            onClick={handleBackToGroups}
             className="rounded-full border-4 border-komma-black bg-white px-4 py-1.5 text-sm font-extrabold shadow-[3px_3px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_#FF1493]"
           >
-            ← Alle groepe
+            ← Terug na Groepe
           </button>
         ) : null}
       </div>
 
-      <div className="mx-auto w-full max-w-5xl">
-        {/* Mobile + values/search: stacked layout */}
+      <div
+        key={levelKey}
+        className="explorer-level-transition mx-auto w-full max-w-5xl"
+      >
+        {/* Mobile */}
         <div className="flex flex-col items-center gap-8 sm:hidden">
           {phase === "values" && activeCategory && !isSearchActive ? (
-            <ExplorerBubble
-              label={activeCategory.labelAf}
-              size="group"
-              active
-              onClick={handleHubClick}
-              ariaLabel={`${activeCategory.labelAf} — aktiewe groep`}
+            <CentreCategory
+              category={activeCategory}
+              valueCount={categoryValues.length}
             />
-          ) : (
+          ) : showHubCentre ? (
             <ExplorerBubble
               label="Die Bubbles"
               size="hub"
               active={phase !== "hub" || isSearchActive}
-              onClick={handleHubClick}
+              onClick={isSearchActive ? undefined : handleHubClick}
               ariaLabel="Die Bubbles — sentrum"
             />
-          )}
+          ) : null}
 
-          {showGroups && phase !== "values" ? (
+          {showCategoryOrbit ? (
             <div className="grid w-full max-w-md grid-cols-2 gap-4 px-2">
               {VALUE_GUIDE_CATEGORIES.map((category, index) => (
                 <ExplorerBubble
                   key={category.id}
                   label={category.labelAf}
                   size="group"
-                  active={selectedCategoryId === category.id}
                   onClick={() => handleGroupClick(category.id)}
                   animationDelayMs={index * 45}
                 />
@@ -174,7 +188,7 @@ export function WaardesBubbleExplorer({
             </div>
           ) : null}
 
-          {showValues ? (
+          {showValueOrbit ? (
             <div className="flex w-full flex-wrap justify-center gap-3 px-2 pb-4">
               {visibleValues.map((value, index) => (
                 <ExplorerBubble
@@ -197,37 +211,37 @@ export function WaardesBubbleExplorer({
           ) : null}
         </div>
 
-        {/* Desktop: orbital layout */}
+        {/* Desktop */}
         <div
           className={`relative mx-auto hidden w-full sm:block ${desktopMinHeight}`}
         >
           <div className="absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
             {phase === "values" && activeCategory && !isSearchActive ? (
-              <ExplorerBubble
-                label={activeCategory.labelAf}
-                size="group"
-                active
-                onClick={handleHubClick}
-                ariaLabel={`${activeCategory.labelAf} — aktiewe groep`}
+              <CentreCategory
+                category={activeCategory}
+                valueCount={categoryValues.length}
               />
-            ) : (
+            ) : showHubCentre ? (
               <ExplorerBubble
                 label="Die Bubbles"
                 size="hub"
                 active={phase !== "hub" || isSearchActive}
-                onClick={handleHubClick}
+                onClick={isSearchActive ? undefined : handleHubClick}
                 ariaLabel="Die Bubbles — sentrum"
               />
-            )}
+            ) : null}
           </div>
 
-          {showGroups ? (
+          {showCategoryOrbit ? (
             <div className="pointer-events-none absolute inset-0">
-              {orbitGroups.map((category, index) => {
+              {VALUE_GUIDE_CATEGORIES.map((category, index) => {
+                const radius = getCategoryOrbitRadius(
+                  VALUE_GUIDE_CATEGORIES.length,
+                );
                 const { x, y } = getOrbitOffset(
                   index,
-                  orbitGroups.length,
-                  getOrbitRadius(orbitGroups.length, phase === "values" ? 230 : 200),
+                  VALUE_GUIDE_CATEGORIES.length,
+                  radius,
                 );
 
                 return (
@@ -241,8 +255,6 @@ export function WaardesBubbleExplorer({
                     <ExplorerBubble
                       label={category.labelAf}
                       size="group"
-                      active={selectedCategoryId === category.id}
-                      dimmed={phase === "values"}
                       onClick={() => handleGroupClick(category.id)}
                       animationDelayMs={index * 50}
                     />
@@ -252,17 +264,12 @@ export function WaardesBubbleExplorer({
             </div>
           ) : null}
 
-          {showValues ? (
+          {showValueOrbit ? (
             <div className="pointer-events-none absolute inset-0">
               {visibleValues.map((value, index) => {
-                const radius = getOrbitRadius(
-                  visibleValues.length,
-                  isSearchActive ? 230 : 270,
-                );
-                const { x, y } = getOrbitOffset(
+                const { x, y } = getValueOrbitPosition(
                   index,
                   visibleValues.length,
-                  radius,
                 );
 
                 return (

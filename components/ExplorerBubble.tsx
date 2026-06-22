@@ -17,6 +17,7 @@ interface ExplorerBubbleProps {
   style?: React.CSSProperties;
   animationDelayMs?: number;
   ariaLabel?: string;
+  interactive?: boolean;
 }
 
 const sizeClasses: Record<ExplorerBubbleSize, string> = {
@@ -38,36 +39,65 @@ export function ExplorerBubble({
   style,
   animationDelayMs = 0,
   ariaLabel,
+  interactive = true,
 }: ExplorerBubbleProps) {
   const lines = formatBubbleLabel(label);
   const fontSizeClass = size === "value" ? getBubbleFontSize(label) : "";
+
+  const bubbleClassName = [
+    "bubble-pop-in flex shrink-0 flex-col items-center justify-center rounded-full border-4 border-komma-black px-2 py-2 text-center font-extrabold shadow-[4px_4px_0_0_#000] transition-all duration-200",
+    sizeClasses[size],
+    size === "hub"
+      ? "bg-komma-yellow hover:-translate-y-1 hover:shadow-[5px_5px_0_0_#FF1493]"
+      : "bg-[#F5F5F0] hover:-translate-y-0.5 hover:bg-white hover:shadow-[5px_5px_0_0_#FF1493]",
+    active
+      ? "scale-105 border-komma-pink bg-komma-yellow shadow-[5px_5px_0_0_#FF1493]"
+      : "",
+    highlighted
+      ? "ring-4 ring-komma-pink ring-offset-2 ring-offset-komma-yellow"
+      : "",
+    dimmed ? "opacity-40 saturate-50" : "",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const bubbleStyle: React.CSSProperties = {
+    ...style,
+    animationDelay: `${animationDelayMs}ms`,
+  };
+
+  if (!interactive) {
+    return (
+      <div
+        aria-label={ariaLabel ?? label}
+        style={bubbleStyle}
+        className={bubbleClassName.replace(/hover:[^\s]+/g, "")}
+      >
+        {lines.map((line) => (
+          <span
+            key={line}
+            className={`block text-komma-black ${fontSizeClass}`}
+          >
+            {line}
+          </span>
+        ))}
+        {sublabel ? (
+          <span className="mt-1 block text-[9px] font-semibold uppercase tracking-wide text-komma-black/45 sm:text-[10px]">
+            {sublabel}
+          </span>
+        ) : null}
+      </div>
+    );
+  }
 
   return (
     <button
       type="button"
       onClick={onClick}
       aria-label={ariaLabel ?? label}
-      style={{
-        ...style,
-        animationDelay: `${animationDelayMs}ms`,
-      }}
-      className={[
-        "bubble-pop-in flex shrink-0 flex-col items-center justify-center rounded-full border-4 border-komma-black px-2 py-2 text-center font-extrabold shadow-[4px_4px_0_0_#000] transition-all duration-200",
-        sizeClasses[size],
-        size === "hub"
-          ? "bg-komma-yellow hover:-translate-y-1 hover:shadow-[5px_5px_0_0_#FF1493]"
-          : "bg-[#F5F5F0] hover:-translate-y-0.5 hover:bg-white hover:shadow-[5px_5px_0_0_#FF1493]",
-        active
-          ? "scale-105 border-komma-pink bg-komma-yellow shadow-[5px_5px_0_0_#FF1493]"
-          : "",
-        highlighted
-          ? "ring-4 ring-komma-pink ring-offset-2 ring-offset-komma-yellow"
-          : "",
-        dimmed ? "opacity-40 saturate-50" : "",
-        className,
-      ]
-        .filter(Boolean)
-        .join(" ")}
+      style={bubbleStyle}
+      className={bubbleClassName}
     >
       {lines.map((line) => (
         <span
