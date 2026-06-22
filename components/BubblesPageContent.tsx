@@ -1,8 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BubbleCategorySection } from "@/components/BubbleCategorySection";
+import {
+  BubblesMobileScrollCues,
+  BubblesScrollArrowCue,
+  BubblesScrollHintPill,
+} from "@/components/BubblesMobileScrollCues";
 import { BubblesHeader } from "@/components/BubblesHeader";
 import { Button } from "@/components/Button";
 import { IntroBubbleCard } from "@/components/IntroBubbleCard";
@@ -21,6 +26,7 @@ import {
   TOTAL_FLOW_STEPS,
 } from "@/lib/constants";
 import { PAGE_CONTAINER_CLASS, PAGE_GUTTER_CLASS } from "@/lib/page-layout";
+import { useBubblesScrollCuesActive } from "@/lib/use-bubbles-scroll-cues";
 
 export function BubblesPageContent() {
   const router = useRouter();
@@ -32,6 +38,7 @@ export function BubblesPageContent() {
   const [lastAddedId, setLastAddedId] = useState<string | null>(null);
   const [activeInfoId, setActiveInfoId] = useState<string | null>(null);
   const [showCompleteModal, setShowCompleteModal] = useState(false);
+  const categoryScrollRef = useRef<HTMLDivElement>(null);
 
   const selectedBubbles = useMemo(
     () => getBubblesByIds(selectedIds),
@@ -76,6 +83,26 @@ export function BubblesPageContent() {
 
     return () => window.clearTimeout(timer);
   }, [lastAddedId]);
+
+  useEffect(() => {
+    if (!activeInfoId) {
+      return;
+    }
+
+    function handleScroll() {
+      setActiveInfoId(null);
+    }
+
+    const scrollContainer = categoryScrollRef.current;
+
+    scrollContainer?.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll, true);
+
+    return () => {
+      scrollContainer?.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("scroll", handleScroll, true);
+    };
+  }, [activeInfoId]);
 
   function handleToggle(id: string) {
     setSelectedIds((current) => {
@@ -131,6 +158,11 @@ export function BubblesPageContent() {
   const canProceed = selectedIds.length >= MIN_SELECTED_BUBBLES;
   const selectedCount = selectedIds.length;
   const isSelectionComplete = selectedCount === MAX_BUBBLES;
+  const showScrollCues = useBubblesScrollCuesActive(
+    showSelection,
+    isSelectionComplete,
+    categoryGroups.length > 0,
+  );
 
   return (
     <>
@@ -191,23 +223,31 @@ export function BubblesPageContent() {
                       Geen Bubbles gevind vir &ldquo;{searchQuery}&rdquo;.
                     </p>
                   ) : (
-                    <div className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 sm:gap-5 lg:mx-0 lg:grid lg:snap-none lg:grid-cols-3 lg:gap-6 lg:overflow-visible lg:px-0 lg:pb-0 xl:grid-cols-6">
-                      {categoryGroups.map(({ category, bubbles }) => (
-                        <BubbleCategorySection
-                          key={category.id}
-                          category={category}
-                          bubbles={bubbles}
-                          selectedIds={selectedIds}
-                          animatingId={animatingId}
-                          activeInfoId={activeInfoId}
-                          atLimit={isSelectionComplete}
-                          onAtLimitAttempt={handleAtLimitAttempt}
-                          onInfoOpen={setActiveInfoId}
-                          onInfoClose={() => setActiveInfoId(null)}
-                          onToggle={handleToggle}
-                        />
-                      ))}
-                    </div>
+                    <>
+                      <BubblesScrollHintPill active={showScrollCues} />
+                      <BubblesMobileScrollCues active={showScrollCues}>
+                        <div
+                          ref={categoryScrollRef}
+                          className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 sm:gap-5 lg:mx-0 lg:grid lg:snap-none lg:grid-cols-3 lg:gap-6 lg:overflow-visible lg:px-0 lg:pb-0 xl:grid-cols-6"
+                        >
+                          {categoryGroups.map(({ category, bubbles }) => (
+                            <BubbleCategorySection
+                              key={category.id}
+                              category={category}
+                              bubbles={bubbles}
+                              selectedIds={selectedIds}
+                              animatingId={animatingId}
+                              activeInfoId={activeInfoId}
+                              atLimit={isSelectionComplete}
+                              onAtLimitAttempt={handleAtLimitAttempt}
+                              onInfoOpen={setActiveInfoId}
+                              onInfoClose={() => setActiveInfoId(null)}
+                              onToggle={handleToggle}
+                            />
+                          ))}
+                        </div>
+                      </BubblesMobileScrollCues>
+                    </>
                   )}
                 </div>
               </div>
@@ -262,6 +302,8 @@ export function BubblesPageContent() {
           </div>
         </div>
       )}
+
+      <BubblesScrollArrowCue active={showSelection && showScrollCues} />
 
       <SelectionCompleteModal
         open={showCompleteModal}

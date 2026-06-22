@@ -100,6 +100,20 @@ a {
   animation: panel-arrive 0.45s ease-out;
 }
 
+@keyframes bounce-down {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+}
+
+.animate-bounce-down {
+  animation: bounce-down 1.15s ease-in-out infinite;
+}
+
 .hand-drawn-shape {
   position: relative;
 }

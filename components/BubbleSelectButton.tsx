@@ -56,6 +56,25 @@ function useSupportsHover() {
   return supportsHover;
 }
 
+function useMobileViewport() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 639px)");
+
+    function update() {
+      setIsMobile(media.matches);
+    }
+
+    update();
+    media.addEventListener("change", update);
+
+    return () => media.removeEventListener("change", update);
+  }, []);
+
+  return isMobile;
+}
+
 export function BubbleSelectButton({
   bubble,
   selected,
@@ -69,19 +88,20 @@ export function BubbleSelectButton({
 }: BubbleSelectButtonProps) {
   const fontSize = getBubbleFontSize(bubble.nameAf);
   const supportsHover = useSupportsHover();
+  const isMobileViewport = useMobileViewport();
   const wrapperRef = useRef<HTMLDivElement>(null);
   const tooltipId = useId();
   const [awaitingSelection, setAwaitingSelection] = useState(false);
   const [placement, setPlacement] = useState<"top" | "bottom">("top");
 
   useLayoutEffect(() => {
-    if (!infoOpen || !wrapperRef.current) {
+    if (!infoOpen || !wrapperRef.current || isMobileViewport) {
       return;
     }
 
     const rect = wrapperRef.current.getBoundingClientRect();
     setPlacement(rect.top < 200 ? "bottom" : "top");
-  }, [infoOpen]);
+  }, [infoOpen, isMobileViewport]);
 
   useEffect(() => {
     if (!infoOpen) {
@@ -90,11 +110,15 @@ export function BubbleSelectButton({
   }, [infoOpen]);
 
   useEffect(() => {
-    if (supportsHover || !infoOpen) {
+    if (!infoOpen || supportsHover) {
       return;
     }
 
     function handlePointerDown(event: PointerEvent) {
+      if (isMobileViewport) {
+        return;
+      }
+
       if (
         wrapperRef.current &&
         !wrapperRef.current.contains(event.target as Node)
@@ -107,7 +131,39 @@ export function BubbleSelectButton({
     document.addEventListener("pointerdown", handlePointerDown);
 
     return () => document.removeEventListener("pointerdown", handlePointerDown);
-  }, [infoOpen, onInfoClose, supportsHover]);
+  }, [infoOpen, isMobileViewport, onInfoClose, supportsHover]);
+
+  useEffect(() => {
+    if (!infoOpen) {
+      return;
+    }
+
+    function handleScroll() {
+      onInfoClose();
+      setAwaitingSelection(false);
+    }
+
+    window.addEventListener("scroll", handleScroll, true);
+
+    return () => window.removeEventListener("scroll", handleScroll, true);
+  }, [infoOpen, onInfoClose]);
+
+  useEffect(() => {
+    if (!infoOpen || !isMobileViewport) {
+      return;
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        onInfoClose();
+        setAwaitingSelection(false);
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [infoOpen, isMobileViewport, onInfoClose]);
 
   function handleSelectClick() {
     if (selectionDisabled) {
@@ -143,6 +199,11 @@ export function BubbleSelectButton({
     }
   }
 
+  function handleInfoClose() {
+    onInfoClose();
+    setAwaitingSelection(false);
+  }
+
   return (
     <div ref={wrapperRef} className="relative flex flex-col items-center">
       {infoOpen && (
@@ -150,6 +211,9 @@ export function BubbleSelectButton({
           bubble={bubble}
           id={tooltipId}
           placement={placement}
+          mobile={isMobileViewport}
+          onClose={handleInfoClose}
+          anchorRef={wrapperRef}
         />
       )}
 
@@ -206,8 +270,14 @@ export function BubbleSelectButton({
         )}
       </button>
 
-      {!supportsHover && infoOpen && awaitingSelection && (
+      {!supportsHover && infoOpen && awaitingSelection && !isMobileViewport && (
         <p className="absolute top-[calc(100%+0.25rem)] w-28 text-center text-[10px] font-semibold leading-tight text-komma-black/55">
+          Tik weer om te kies
+        </p>
+      )}
+
+      {!supportsHover && infoOpen && awaitingSelection && isMobileViewport && (
+        <p className="mt-2 w-28 text-center text-[10px] font-semibold leading-tight text-komma-black/55">
           Tik weer om te kies
         </p>
       )}
