@@ -1,41 +1,38 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { BubblesBibNav } from "@/components/BubblesBibNav";
-import { BubblesWhatSection } from "@/components/BubblesWhatSection";
+import { DieBubblesPageContent } from "@/components/DieBubblesPageContent";
 import { Header } from "@/components/Header";
 import { PageContainer } from "@/components/PageContainer";
-import { WaardesLegacyRedirect } from "@/components/WaardesLegacyRedirect";
 
 export const metadata: Metadata = {
-  title: "Bubbles Bib — Komma",
+  title: "Die Bubbles — Bubbles Bib — Komma",
   description:
-    "Wat is 'n Bubble? Verstaan hoe KommaPunt waardes ons prioriteite, besluite en standpunte vorm.",
+    "Verken die KommaPunt waardekaart — waar waardes lê tussen Ek en Ons, Stabiliteit en Verandering.",
 };
 
-export default function WaardesPage() {
+export default function DieBubblesPage() {
   return (
     <>
       <Header />
 
       <main className="overflow-x-clip">
         <PageContainer outerClassName="overflow-visible py-8 sm:py-12">
-          <Suspense>
-            <WaardesLegacyRedirect />
-          </Suspense>
-
           <div className="mb-4 sm:mb-6">
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-              Bubbles Bib
+              Die Bubbles
             </h1>
             <p className="mt-4 max-w-2xl text-base text-komma-black/75 sm:text-lg">
-              Wat is &rsquo;n Bubble? Waarom maak waardes saak, en hoe vorm
-              hulle ons prioriteite en standpunte?
+              Kies &rsquo;n waardegroep en sien waar sy waardes op die waardekaart
+              lê &mdash; tussen Ek en Ons, Stabiliteit en Verandering.
             </p>
           </div>
 
           <BubblesBibNav />
 
-          <BubblesWhatSection />
+          <Suspense>
+            <DieBubblesPageContent />
+          </Suspense>
         </PageContainer>
       </main>
     </>

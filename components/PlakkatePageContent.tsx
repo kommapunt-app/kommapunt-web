@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PosterViewerModal } from "@/components/PosterViewerModal";
@@ -67,36 +66,16 @@ export function PlakkatePageContent() {
 
   return (
     <>
-      <header className="mb-8 sm:mb-10">
-        <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-          Bubbleblaaie
-        </h1>
-        <p className="mt-3 max-w-2xl text-base text-komma-black/80 sm:text-lg">
-          KommaPunt Bubbleblaaie &mdash; eenblad-opsommings van individuele
-          waardes.
-        </p>
-
-        <div className="mt-5">
-          <Link
-            href="/waardes"
-            onClick={() => trackEvent({ name: "cta_plakkate_to_waardes" })}
-            className="inline-flex items-center justify-center rounded-full border-4 border-komma-black bg-white px-6 py-3 text-base font-extrabold shadow-[4px_4px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:bg-komma-yellow hover:shadow-[5px_5px_0_0_#FF1493] sm:px-8 sm:py-3.5 sm:text-lg"
-          >
-            Terug na Bubbles Bib
-          </Link>
-        </div>
-
-        <label className="mt-6 block">
-          <span className="sr-only">Soek vir &apos;n waarde</span>
-          <input
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Soek vir 'n waarde..."
-            className="w-full rounded-2xl border-4 border-komma-black bg-white px-5 py-4 text-base font-semibold shadow-[4px_4px_0_0_#000] outline-none transition-shadow placeholder:text-komma-black/40 focus:shadow-[5px_5px_0_0_#FF1493] sm:text-lg"
-          />
-        </label>
-      </header>
+      <label className="mb-8 block sm:mb-10">
+        <span className="sr-only">Soek vir &apos;n waarde</span>
+        <input
+          type="search"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="Soek vir 'n waarde..."
+          className="w-full rounded-2xl border-4 border-komma-black bg-white px-5 py-4 text-base font-semibold shadow-[4px_4px_0_0_#000] outline-none transition-shadow placeholder:text-komma-black/40 focus:shadow-[5px_5px_0_0_#FF1493] sm:text-lg"
+        />
+      </label>
 
       {filteredPosters.length === 0 ? (
         <div className="rounded-[2rem] border-4 border-komma-black bg-[#F5F5F0] px-6 py-10 text-center shadow-[6px_6px_0_0_#000] sm:px-8">

@@ -1,16 +1,10 @@
 export const BUBBLES_BIB_SECTIONS = [
-  { id: "wat-is-bubbles", label: "Wat is Bubbles" },
-  { id: "die-bubbles", label: "Die Bubbles" },
+  { id: "wat-is-bubbles", label: "Wat is Bubbles", href: "/waardes" },
+  { id: "die-bubbles", label: "Die Bubbles", href: "/waardes/die-bubbles" },
   { id: "bubbleblaaie", label: "Bubbleblaaie", href: "/plakkate" },
 ] as const;
 
-export type BubblesBibScrollSectionId = "wat-is-bubbles" | "die-bubbles";
-
-export const BUBBLES_BIB_SCROLL_SECTIONS = BUBBLES_BIB_SECTIONS.filter(
-  (section): section is (typeof BUBBLES_BIB_SECTIONS)[number] & {
-    id: BubblesBibScrollSectionId;
-  } => !("href" in section),
-);
+export type BubblesBibSectionId = (typeof BUBBLES_BIB_SECTIONS)[number]["id"];
 
 export const BUBBLES_BIB_IMAGES = {
   watIsBubbles: {
@@ -60,5 +54,16 @@ export const BUBBLES_AXIS_QUADRANTS = [
   },
 ] as const;
 
-/** Offset for sticky header + section nav when scrolling to anchors. */
-export const BUBBLES_BIB_SCROLL_MARGIN_CLASS = "scroll-mt-[9.5rem]";
+export function getActiveBubblesBibSectionId(
+  pathname: string,
+): BubblesBibSectionId {
+  if (pathname === "/plakkate") {
+    return "bubbleblaaie";
+  }
+
+  if (pathname === "/waardes/die-bubbles") {
+    return "die-bubbles";
+  }
+
+  return "wat-is-bubbles";
+}

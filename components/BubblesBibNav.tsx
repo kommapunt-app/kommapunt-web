@@ -1,11 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import {
-  BUBBLES_BIB_SCROLL_SECTIONS,
   BUBBLES_BIB_SECTIONS,
-  type BubblesBibScrollSectionId,
+  getActiveBubblesBibSectionId,
 } from "@/lib/bubbles-bib";
 
 const PILL_BASE_CLASS =
@@ -17,58 +16,9 @@ const PILL_ACTIVE_CLASS =
 const PILL_INACTIVE_CLASS =
   "bg-white hover:-translate-y-0.5 hover:bg-komma-yellow hover:shadow-[4px_4px_0_0_#FF1493]";
 
-function scrollToSection(id: BubblesBibScrollSectionId) {
-  const element = document.getElementById(id);
-
-  if (!element) {
-    return;
-  }
-
-  element.scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
 export function BubblesBibNav() {
-  const [activeSection, setActiveSection] =
-    useState<BubblesBibScrollSectionId>("wat-is-bubbles");
-
-  const observeSections = useCallback(() => {
-    const sectionElements = BUBBLES_BIB_SCROLL_SECTIONS.map((section) =>
-      document.getElementById(section.id),
-    ).filter((element): element is HTMLElement => element !== null);
-
-    if (sectionElements.length === 0) {
-      return undefined;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-
-        const topEntry = visible[0];
-
-        if (topEntry?.target.id) {
-          setActiveSection(topEntry.target.id as BubblesBibScrollSectionId);
-        }
-      },
-      {
-        rootMargin: "-28% 0px -58% 0px",
-        threshold: [0.08, 0.2, 0.4],
-      },
-    );
-
-    for (const element of sectionElements) {
-      observer.observe(element);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    const cleanup = observeSections();
-    return cleanup;
-  }, [observeSections]);
+  const pathname = usePathname();
+  const activeSectionId = getActiveBubblesBibSectionId(pathname);
 
   return (
     <div className="relative z-40 mb-8 sm:mb-10">
@@ -78,32 +28,19 @@ export function BubblesBibNav() {
       >
         <div className="flex gap-2 overflow-x-auto overscroll-x-contain py-1 pr-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {BUBBLES_BIB_SECTIONS.map((section) => {
-            if ("href" in section) {
-              return (
-                <Link
-                  key={section.id}
-                  href={section.href}
-                  className={`${PILL_BASE_CLASS} ${PILL_INACTIVE_CLASS}`}
-                >
-                  {section.label}
-                </Link>
-              );
-            }
-
-            const isActive = activeSection === section.id;
+            const isActive = activeSectionId === section.id;
 
             return (
-              <button
+              <Link
                 key={section.id}
-                type="button"
-                onClick={() => scrollToSection(section.id)}
-                aria-current={isActive ? "true" : undefined}
+                href={section.href}
+                aria-current={isActive ? "page" : undefined}
                 className={`${PILL_BASE_CLASS} ${
                   isActive ? PILL_ACTIVE_CLASS : PILL_INACTIVE_CLASS
                 }`}
               >
                 {section.label}
-              </button>
+              </Link>
             );
           })}
         </div>
