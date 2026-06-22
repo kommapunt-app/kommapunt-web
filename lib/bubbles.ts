@@ -117,9 +117,10 @@ export const BUBBLE_LIBRARY: BubbleValue[] = [
   },
   {
     id: "behoortheid",
-    nameAf: "Behoortheid",
+    nameAf: "Om te behoort",
     nameEn: "Belonging",
-    descriptionAf: "Die gevoel dat jy verwelkom word en 'n plek het.",
+    descriptionAf:
+      "Die behoefte om deel van 'n groep, familie, gemeenskap of verhouding te voel waar jy aanvaar en gewaardeer word.",
     category: "mense-verhoudings",
   },
   {
@@ -280,7 +281,7 @@ export const BUBBLE_LIBRARY: BubbleValue[] = [
     nameAf: "Moed",
     nameEn: "Courage",
     descriptionAf:
-      "Om op te staan vir wat reg is, selfs wanneer dit moeilik is.",
+      "Die bereidheid om op te tree ten spyte van vrees, onsekerheid of risiko.",
     category: "bydrae-verandering",
   },
   {

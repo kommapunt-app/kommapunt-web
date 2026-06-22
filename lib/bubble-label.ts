@@ -7,7 +7,6 @@ const PREDEFINED_BREAKS: Record<string, readonly [string, string]> = {
   volhoubaarheid: ["Volhoubaar-", "heid"],
   geregtigheid: ["Geregtig-", "heid"],
   vriendelikheid: ["Vriendelik-", "heid"],
-  behoortheid: ["Behoort-", "heid"],
   billikheid: ["Billik-", "heid"],
   inklusiwiteit: ["Inklusiw-", "iteit"],
   integriteit: ["Integrit-", "eit"],

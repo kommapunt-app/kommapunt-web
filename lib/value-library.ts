@@ -249,12 +249,13 @@ export const VALUE_LIBRARY: ValueLibraryEntry[] = [
   },
   {
     id: "behoortheid",
-    nameAf: "Behoortheid",
+    nameAf: "Om te behoort",
     nameEn: "Belonging",
     category: "mense-verhoudings",
-    shortMeaningAf: "Die ervaring dat jy welkom is soos jy is.",
+    shortMeaningAf:
+      "Die behoefte om deel te voel van 'n groep of verhouding waar jy aanvaar word.",
     definitionAf:
-      "Jy verlang na ruimtes waar mense mekaar sien, insluit en veilig laat voel.",
+      "Die behoefte om deel van 'n groep, familie, gemeenskap of verhouding te voel waar jy aanvaar en gewaardeer word.",
     whenBigAf:
       "Jy let op wie uitgesluit voel en bou doelbewus plek vir meer stemme en stories.",
     strengthAf: "Jy help mense ontspan en voluit deelneem.",
@@ -670,9 +671,10 @@ export const VALUE_LIBRARY: ValueLibraryEntry[] = [
     nameAf: "Moed",
     nameEn: "Courage",
     category: "bydrae-verandering",
-    shortMeaningAf: "Om te doen wat reg is ondanks vrees.",
+    shortMeaningAf:
+      "Die bereidheid om op te tree ten spyte van vrees, onsekerheid of risiko.",
     definitionAf:
-      "Jy kies aksie in lyn met jou gewete, selfs wanneer dit risiko, spanning of verlies kan bring.",
+      "Die bereidheid om op te tree ten spyte van vrees, onsekerheid of risiko.",
     whenBigAf:
       "Jy spreek op, stel grense en vat moeilike stappe wat jy lank uitgestel het.",
     strengthAf: "Jy breek stiltes en maak verandering moontlik.",

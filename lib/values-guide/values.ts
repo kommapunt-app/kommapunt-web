@@ -275,7 +275,8 @@ const VALUE_GUIDE_ENTRIES: ValueGuideEntryInput[] = [
     nameAf: "Moed",
     nameEn: "Courage",
     category: "esteem",
-    definitionAf: "Moed is om te doen wat reg is al voel jy bang. Dit is nie die afwesigheid van vrees nie, maar beweging deur dit.",
+    definitionAf:
+      "Die bereidheid om op te tree ten spyte van vrees, onsekerheid of risiko.",
     significanceAf: "Moed maak verandering en waarheid moontlik. Dit help jou trou bly aan jou waardes onder druk.",
     healthyExpressionAf: "Jy neem berekende risiko's en praat op die regte tyd. Jy tree ferm op met respek vir mense.",
     overdoneRiskAf: "As moed roekeloos word, ignoreer jy wysheid en gevolge. Dan noem jy impulsiwiteit sommer dapperheid.",
