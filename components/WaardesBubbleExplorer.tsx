@@ -1,48 +1,44 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { BubbleCategoryIcon } from "@/components/BubbleCategoryIcon";
+import { CircularBubbleRing } from "@/components/CircularBubbleRing";
 import { ExplorerBubble } from "@/components/ExplorerBubble";
+import { BUBBLE_CATEGORIES } from "@/lib/bubbles";
 import {
   VALUE_GUIDE,
-  VALUE_GUIDE_CATEGORIES,
-  groupValuesGuideByCategory,
+  groupValuesGuideByBubbleCategory,
   searchValueGuide,
-  type ValueGuideCategory,
-  type ValueGuideCategoryId,
   type ValueGuideEntry,
 } from "@/lib/values-guide";
-import {
-  formatValueCount,
-  getCategoryOrbitRadius,
-  getExplorerMinHeight,
-  getOrbitOffset,
-  getValueOrbitPosition,
-} from "@/lib/waardes-explorer-layout";
-
-type ExplorerPhase = "hub" | "groups" | "values";
+import type { BubbleCategory, BubbleCategoryId } from "@/lib/bubbles";
+import { formatValueCount } from "@/lib/waardes-explorer-layout";
 
 interface WaardesBubbleExplorerProps {
   searchQuery: string;
   onValueSelect: (valueId: string) => void;
 }
 
-const GROUPED_VALUES = groupValuesGuideByCategory(VALUE_GUIDE);
+const GROUPED_VALUES = groupValuesGuideByBubbleCategory(VALUE_GUIDE);
 
-function CentreCategory({
+function GroupCentreBubble({
   category,
   valueCount,
+  interactive = false,
 }: {
-  category: ValueGuideCategory;
+  category: BubbleCategory;
   valueCount: number;
+  interactive?: boolean;
 }) {
   return (
     <div className="flex flex-col items-center gap-2">
       <ExplorerBubble
-        label={category.labelAf}
+        label={category.label}
         size="group"
         active
-        interactive={false}
-        ariaLabel={category.labelAf}
+        interactive={interactive}
+        icon={<BubbleCategoryIcon categoryId={category.id} />}
+        ariaLabel={category.label}
       />
       <p className="text-sm font-bold text-komma-black/70 sm:text-base">
         {formatValueCount(valueCount)}
@@ -51,13 +47,95 @@ function CentreCategory({
   );
 }
 
+function ExplorerPanel({
+  title,
+  children,
+  className = "",
+}: {
+  title: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <section
+      className={`rounded-[2rem] border-4 border-komma-black bg-white p-4 shadow-[6px_6px_0_0_#000] sm:p-6 ${className}`.trim()}
+    >
+      <h2 className="mb-4 text-center text-sm font-extrabold uppercase tracking-wide text-komma-black/55 sm:mb-6 sm:text-base">
+        {title}
+      </h2>
+      {children}
+    </section>
+  );
+}
+
+function EmptyRightPanel() {
+  return (
+    <div className="flex min-h-[20rem] flex-col items-center justify-center px-4 text-center sm:min-h-[26rem]">
+      <p className="max-w-sm text-base font-bold leading-relaxed text-komma-black/65 sm:text-lg">
+        <span className="hidden lg:inline">
+          Kies &rsquo;n groep aan die linkerkant om sy waardes te sien.
+        </span>
+        <span className="lg:hidden">
+          Kies &rsquo;n groep hier bo om sy waardes te sien.
+        </span>
+      </p>
+    </div>
+  );
+}
+
+function SearchResultsRing({
+  values,
+  onValueClick,
+  compact = false,
+}: {
+  values: ValueGuideEntry[];
+  onValueClick: (value: ValueGuideEntry) => void;
+  compact?: boolean;
+}) {
+  return (
+    <CircularBubbleRing
+      compact={compact}
+      itemCount={values.length}
+      ringKind="value"
+      getItemKey={(index) => values[index]?.id ?? `search-${index}`}
+      center={
+        <div className="flex h-28 w-28 flex-col items-center justify-center rounded-full border-4 border-komma-black bg-komma-yellow px-3 text-center shadow-[4px_4px_0_0_#000] sm:h-32 sm:w-32">
+          <span className="text-2xl font-extrabold text-komma-black sm:text-3xl">
+            {values.length}
+          </span>
+          <span className="text-[10px] font-bold uppercase tracking-wide text-komma-black/60 sm:text-xs">
+            gevind
+          </span>
+        </div>
+      }
+      renderItem={(index) => {
+        const value = values[index];
+
+        if (!value) {
+          return null;
+        }
+
+        return (
+          <ExplorerBubble
+            label={value.nameAf}
+            sublabel={value.nameEn}
+            size="value"
+            highlighted
+            onClick={() => onValueClick(value)}
+            animationDelayMs={index * 20}
+          />
+        );
+      }}
+    />
+  );
+}
+
 export function WaardesBubbleExplorer({
   searchQuery,
   onValueSelect,
 }: WaardesBubbleExplorerProps) {
-  const [phase, setPhase] = useState<ExplorerPhase>("hub");
   const [selectedCategoryId, setSelectedCategoryId] =
-    useState<ValueGuideCategoryId | null>(null);
+    useState<BubbleCategoryId | null>(null);
 
   const normalizedQuery = searchQuery.trim();
   const isSearchActive = normalizedQuery.length > 0;
@@ -68,247 +146,216 @@ export function WaardesBubbleExplorer({
   );
 
   const selectedGroup = useMemo(
-    () => GROUPED_VALUES.find((group) => group.category.id === selectedCategoryId),
+    () =>
+      GROUPED_VALUES.find((group) => group.category.id === selectedCategoryId) ??
+      null,
     [selectedCategoryId],
   );
 
-  const activeCategory = selectedGroup?.category ?? null;
   const categoryValues = selectedGroup?.values ?? [];
-  const visibleValues = isSearchActive ? searchResults : categoryValues;
 
-  function handleHubClick() {
-    if (isSearchActive) {
-      return;
-    }
+  const rightPanelKey = isSearchActive
+    ? `search-${normalizedQuery}`
+    : `group-${selectedCategoryId ?? "none"}`;
 
-    if (phase === "hub") {
-      setPhase("groups");
-      return;
-    }
+  const hintText = isSearchActive
+    ? searchResults.length > 0
+      ? `${searchResults.length} Bubble${searchResults.length === 1 ? "" : "s"} gevind`
+      : "Geen Bubbles gevind nie. Probeer 'n ander soekterm."
+    : selectedGroup
+      ? `Waardes in ${selectedGroup.category.label}`
+      : "Kies 'n groep om die waardes daarin te sien";
 
-    setPhase("hub");
-    setSelectedCategoryId(null);
-  }
-
-  function handleGroupClick(categoryId: ValueGuideCategoryId) {
-    if (isSearchActive) {
-      return;
-    }
-
+  function handleGroupClick(categoryId: BubbleCategoryId) {
     setSelectedCategoryId(categoryId);
-    setPhase("values");
-  }
-
-  function handleBackToGroups() {
-    setPhase("groups");
-    setSelectedCategoryId(null);
   }
 
   function handleValueClick(value: ValueGuideEntry) {
     onValueSelect(value.id);
   }
 
-  const showHubCentre =
-    phase === "hub" ||
-    phase === "groups" ||
-    isSearchActive;
-  const showCategoryOrbit = phase === "groups" && !isSearchActive;
-  const showValueOrbit =
-    (phase === "values" && !isSearchActive) ||
-    (isSearchActive && searchResults.length > 0);
-
-  const levelKey = isSearchActive
-    ? `search-${normalizedQuery}`
-    : `${phase}-${selectedCategoryId ?? "none"}`;
-
-  const hintText = isSearchActive
-    ? searchResults.length > 0
-      ? `${searchResults.length} Bubble${searchResults.length === 1 ? "" : "s"} gevind`
-      : "Geen Bubbles gevind nie. Probeer 'n ander soekterm."
-    : phase === "hub"
-      ? "Klik om die waardegroepe oop te maak"
-      : phase === "groups"
-        ? "Kies 'n groep om die waardes daarin te sien"
-        : activeCategory
-          ? `Waardes in ${activeCategory.labelAf}`
-          : "";
-
-  const desktopMinHeight = getExplorerMinHeight(visibleValues.length);
-
   return (
-    <section aria-label="Bubble verkenner" className="pb-8 sm:pb-12">
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm font-semibold text-komma-black/70 sm:text-base">
-          {hintText}
-        </p>
+    <section aria-label="Bubble verkenner" className="pb-10 sm:pb-14">
+      <p className="mb-6 text-sm font-semibold text-komma-black/70 sm:text-base">
+        {hintText}
+      </p>
 
-        {phase === "values" && !isSearchActive ? (
-          <button
-            type="button"
-            onClick={handleBackToGroups}
-            className="rounded-full border-4 border-komma-black bg-white px-4 py-1.5 text-sm font-extrabold shadow-[3px_3px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_#FF1493]"
-          >
-            ← Terug na Groepe
-          </button>
-        ) : null}
-      </div>
-
-      <div
-        key={levelKey}
-        className="explorer-level-transition mx-auto w-full max-w-5xl"
-      >
-        {/* Mobile */}
-        <div className="flex flex-col items-center gap-8 sm:hidden">
-          {phase === "values" && activeCategory && !isSearchActive ? (
-            <CentreCategory
-              category={activeCategory}
-              valueCount={categoryValues.length}
-            />
-          ) : showHubCentre ? (
-            <ExplorerBubble
-              label="Die Bubbles"
-              size="hub"
-              active={phase !== "hub" || isSearchActive}
-              onClick={isSearchActive ? undefined : handleHubClick}
-              ariaLabel="Die Bubbles — sentrum"
-            />
-          ) : null}
-
-          {showCategoryOrbit ? (
-            <div className="grid w-full max-w-md grid-cols-2 gap-4 px-2">
-              {VALUE_GUIDE_CATEGORIES.map((category, index) => (
-                <ExplorerBubble
-                  key={category.id}
-                  label={category.labelAf}
-                  size="group"
-                  onClick={() => handleGroupClick(category.id)}
-                  animationDelayMs={index * 45}
-                />
-              ))}
-            </div>
-          ) : null}
-
-          {showValueOrbit ? (
-            <div className="flex w-full flex-wrap justify-center gap-3 px-2 pb-4">
-              {visibleValues.map((value, index) => (
-                <ExplorerBubble
-                  key={value.id}
-                  label={value.nameAf}
-                  sublabel={value.nameEn}
-                  size="value"
-                  highlighted={isSearchActive}
-                  onClick={() => handleValueClick(value)}
-                  animationDelayMs={index * 30}
-                />
-              ))}
-            </div>
-          ) : null}
-
-          {isSearchActive && searchResults.length === 0 ? (
-            <p className="rounded-2xl border-4 border-komma-black bg-white px-5 py-4 text-center text-sm font-semibold shadow-[4px_4px_0_0_#000]">
-              Geen Bubbles gevind vir &ldquo;{normalizedQuery}&rdquo;
-            </p>
-          ) : null}
-        </div>
-
-        {/* Desktop */}
-        <div
-          className={`relative mx-auto hidden w-full sm:block ${desktopMinHeight}`}
-        >
-          <div className="absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
-            {phase === "values" && activeCategory && !isSearchActive ? (
-              <CentreCategory
-                category={activeCategory}
-                valueCount={categoryValues.length}
-              />
-            ) : showHubCentre ? (
+      {/* Desktop: two-panel layout */}
+      <div className="hidden gap-6 lg:grid lg:grid-cols-2">
+        <ExplorerPanel title="Die Bubbles">
+          <CircularBubbleRing
+            itemCount={BUBBLE_CATEGORIES.length}
+            ringKind="category"
+            getItemKey={(index) => BUBBLE_CATEGORIES[index]?.id ?? `cat-${index}`}
+            center={
               <ExplorerBubble
                 label="Die Bubbles"
                 size="hub"
-                active={phase !== "hub" || isSearchActive}
-                onClick={isSearchActive ? undefined : handleHubClick}
+                active={selectedCategoryId !== null}
+                interactive={false}
                 ariaLabel="Die Bubbles — sentrum"
               />
-            ) : null}
-          </div>
+            }
+            renderItem={(index) => {
+              const category = BUBBLE_CATEGORIES[index];
 
-          {showCategoryOrbit ? (
-            <div className="pointer-events-none absolute inset-0">
-              {VALUE_GUIDE_CATEGORIES.map((category, index) => {
-                const radius = getCategoryOrbitRadius(
-                  VALUE_GUIDE_CATEGORIES.length,
-                );
-                const { x, y } = getOrbitOffset(
-                  index,
-                  VALUE_GUIDE_CATEGORIES.length,
-                  radius,
-                );
+              if (!category) {
+                return null;
+              }
 
-                return (
-                  <div
-                    key={category.id}
-                    className="pointer-events-auto absolute left-1/2 top-1/2"
-                    style={{
-                      transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
-                    }}
-                  >
-                    <ExplorerBubble
-                      label={category.labelAf}
-                      size="group"
-                      onClick={() => handleGroupClick(category.id)}
-                      animationDelayMs={index * 50}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          ) : null}
+              return (
+                <ExplorerBubble
+                  label={category.label}
+                  size="group"
+                  icon={<BubbleCategoryIcon categoryId={category.id} />}
+                  active={selectedCategoryId === category.id}
+                  onClick={() => handleGroupClick(category.id)}
+                  animationDelayMs={index * 45}
+                />
+              );
+            }}
+          />
+        </ExplorerPanel>
 
-          {showValueOrbit ? (
-            <div className="pointer-events-none absolute inset-0">
-              {visibleValues.map((value, index) => {
-                const { x, y } = getValueOrbitPosition(
-                  index,
-                  visibleValues.length,
-                );
+        <ExplorerPanel title={isSearchActive ? "Soekresultate" : "Waardes"}>
+          <div key={rightPanelKey} className="explorer-level-transition">
+            {isSearchActive ? (
+              searchResults.length > 0 ? (
+                <SearchResultsRing
+                  values={searchResults}
+                  onValueClick={handleValueClick}
+                />
+              ) : (
+                <div className="flex min-h-[26rem] items-center justify-center px-4">
+                  <p className="rounded-2xl border-4 border-komma-black bg-[#F5F5F0] px-5 py-4 text-center text-sm font-semibold shadow-[4px_4px_0_0_#000] sm:text-base">
+                    Geen Bubbles gevind vir &ldquo;{normalizedQuery}&rdquo;
+                  </p>
+                </div>
+              )
+            ) : selectedGroup ? (
+              <CircularBubbleRing
+                itemCount={categoryValues.length}
+                ringKind="value"
+                getItemKey={(index) => categoryValues[index]?.id ?? `val-${index}`}
+                center={
+                  <GroupCentreBubble
+                    category={selectedGroup.category}
+                    valueCount={categoryValues.length}
+                  />
+                }
+                renderItem={(index) => {
+                  const value = categoryValues[index];
 
-                return (
-                  <div
-                    key={value.id}
-                    className="pointer-events-auto absolute left-1/2 top-1/2"
-                    style={{
-                      transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
-                    }}
-                  >
+                  if (!value) {
+                    return null;
+                  }
+
+                  return (
                     <ExplorerBubble
                       label={value.nameAf}
                       sublabel={value.nameEn}
                       size="value"
-                      highlighted={isSearchActive}
                       onClick={() => handleValueClick(value)}
                       animationDelayMs={index * 25}
                     />
-                  </div>
-                );
-              })}
-            </div>
-          ) : null}
-
-          {isSearchActive && searchResults.length === 0 ? (
-            <div className="absolute bottom-0 left-1/2 w-full max-w-md -translate-x-1/2">
-              <p className="rounded-2xl border-4 border-komma-black bg-white px-5 py-4 text-center text-sm font-semibold shadow-[4px_4px_0_0_#000]">
-                Geen Bubbles gevind vir &ldquo;{normalizedQuery}&rdquo;
-              </p>
-            </div>
-          ) : null}
-        </div>
+                  );
+                }}
+              />
+            ) : (
+              <EmptyRightPanel />
+            )}
+          </div>
+        </ExplorerPanel>
       </div>
 
-      {phase === "hub" && !isSearchActive ? (
-        <p className="mt-8 text-center text-sm font-semibold text-komma-black/55 sm:hidden">
-          Klik om die waardegroepe oop te maak
-        </p>
-      ) : null}
+      {/* Mobile + tablet: stacked panels */}
+      <div className="flex flex-col gap-8 lg:hidden">
+        <ExplorerPanel title="Die Bubbles">
+          <CircularBubbleRing
+            compact
+            itemCount={BUBBLE_CATEGORIES.length}
+            ringKind="category"
+            getItemKey={(index) => BUBBLE_CATEGORIES[index]?.id ?? `cat-${index}`}
+            center={
+              <ExplorerBubble
+                label="Die Bubbles"
+                size="hub"
+                active={selectedCategoryId !== null}
+                interactive={false}
+                ariaLabel="Die Bubbles — sentrum"
+              />
+            }
+            renderItem={(index) => {
+              const category = BUBBLE_CATEGORIES[index];
+
+              if (!category) {
+                return null;
+              }
+
+              return (
+                <ExplorerBubble
+                  label={category.label}
+                  size="group"
+                  icon={<BubbleCategoryIcon categoryId={category.id} />}
+                  active={selectedCategoryId === category.id}
+                  onClick={() => handleGroupClick(category.id)}
+                  animationDelayMs={index * 40}
+                />
+              );
+            }}
+          />
+        </ExplorerPanel>
+
+        <ExplorerPanel title={isSearchActive ? "Soekresultate" : "Waardes"}>
+          <div key={rightPanelKey} className="explorer-level-transition">
+            {isSearchActive ? (
+              searchResults.length > 0 ? (
+                <SearchResultsRing
+                  compact
+                  values={searchResults}
+                  onValueClick={handleValueClick}
+                />
+              ) : (
+                <p className="rounded-2xl border-4 border-komma-black bg-[#F5F5F0] px-5 py-4 text-center text-sm font-semibold shadow-[4px_4px_0_0_#000]">
+                  Geen Bubbles gevind vir &ldquo;{normalizedQuery}&rdquo;
+                </p>
+              )
+            ) : selectedGroup ? (
+              <CircularBubbleRing
+                compact
+                itemCount={categoryValues.length}
+                ringKind="value"
+                getItemKey={(index) => categoryValues[index]?.id ?? `val-${index}`}
+                center={
+                  <GroupCentreBubble
+                    category={selectedGroup.category}
+                    valueCount={categoryValues.length}
+                  />
+                }
+                renderItem={(index) => {
+                  const value = categoryValues[index];
+
+                  if (!value) {
+                    return null;
+                  }
+
+                  return (
+                    <ExplorerBubble
+                      label={value.nameAf}
+                      sublabel={value.nameEn}
+                      size="value"
+                      onClick={() => handleValueClick(value)}
+                      animationDelayMs={index * 20}
+                    />
+                  );
+                }}
+              />
+            ) : (
+              <EmptyRightPanel />
+            )}
+          </div>
+        </ExplorerPanel>
+      </div>
     </section>
   );
 }

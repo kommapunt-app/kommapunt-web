@@ -3,6 +3,7 @@ export * from "./intro";
 export * from "./categories";
 export * from "./labels";
 export * from "./values";
+export * from "./bubble-category";
 
 import { VALUE_GUIDE_CATEGORIES } from "./categories";
 import type { ValueGuideCategoryId, ValueGuideEntry } from "./types";

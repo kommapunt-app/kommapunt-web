@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BubblesBibNav } from "@/components/BubblesBibNav";
 import { Header } from "@/components/Header";
 import { PageContainer } from "@/components/PageContainer";
 import { WaardesPageContent } from "@/components/WaardesPageContent";
@@ -14,16 +15,15 @@ export default function WaardesPage() {
     <>
       <Header />
 
-      <main>
-        <PageContainer outerClassName="py-8 sm:py-12">
-          <div className="mb-10 sm:mb-12">
+      <main className="overflow-x-clip">
+        <PageContainer outerClassName="overflow-visible py-8 sm:py-12">
+          <div className="mb-4 sm:mb-6">
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
               Bubbles Bib
             </h1>
-            <p className="mt-3 text-2xl font-extrabold tracking-tight text-komma-black/85 sm:text-3xl">
-              Wat is vir jou belangrik?
-            </p>
           </div>
+
+          <BubblesBibNav />
 
           <WaardesPageContent />
         </PageContainer>

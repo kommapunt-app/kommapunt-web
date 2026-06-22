@@ -1,10 +1,11 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { BubblesAxisExplorer } from "@/components/BubblesAxisExplorer";
+import { BubblesWhatSection } from "@/components/BubblesWhatSection";
 import { ValueGuideDetailModal } from "@/components/ValueGuideDetailModal";
 import { ValuePosterModal } from "@/components/ValuePosterModal";
-import { ValuesGuideIntro } from "@/components/ValuesGuideIntro";
-import { WaardesBubbleExplorer } from "@/components/WaardesBubbleExplorer";
+import { BUBBLES_BIB_SCROLL_MARGIN_CLASS } from "@/lib/bubbles-bib";
 import { getValueGuideById } from "@/lib/values-guide";
 import {
   checkValuePosterExists,
@@ -44,24 +45,35 @@ export function WaardesPageContent() {
   const posterSrc = posterValueId ? getValuePosterSrc(posterValueId) : "";
 
   return (
-    <>
-      <label className="mb-8 block sm:mb-10">
-        <span className="sr-only">Soek vir &apos;n Bubble</span>
-        <input
-          type="search"
-          value={searchQuery}
-          onChange={(event) => setSearchQuery(event.target.value)}
-          placeholder="Soek vir 'n Bubble..."
-          className="w-full rounded-2xl border-4 border-komma-black bg-white px-5 py-4 text-base font-semibold shadow-[4px_4px_0_0_#000] outline-none transition-shadow placeholder:text-komma-black/40 focus:shadow-[5px_5px_0_0_#FF1493] sm:text-lg"
-        />
-      </label>
+    <div className="overflow-visible">
+      <div className="space-y-12 sm:space-y-16 lg:space-y-20">
+        <div
+          id="wat-is-bubbles"
+          className={BUBBLES_BIB_SCROLL_MARGIN_CLASS}
+        >
+          <BubblesWhatSection />
+        </div>
 
-      <ValuesGuideIntro />
+        <section
+          id="die-bubbles"
+          className={`${BUBBLES_BIB_SCROLL_MARGIN_CLASS} rounded-[2rem] border-4 border-komma-black bg-white p-5 shadow-[6px_6px_0_0_#000] sm:p-8 lg:p-10`}
+        >
+          <h2 className="mb-3 text-3xl font-extrabold tracking-tight sm:text-4xl">
+            Die Bubbles
+          </h2>
+          <p className="mb-6 max-w-none text-base leading-relaxed text-komma-black/80 sm:mb-8 sm:text-lg lg:max-w-6xl">
+            Kies &rsquo;n waardegroep en sien waar sy waardes op die waardekaart lê
+            &mdash; tussen Ek en Ons, Stabiliteit en Verandering. Klik op &rsquo;n
+            waarde om meer inligting oor daardie waarde te sien.
+          </p>
 
-      <WaardesBubbleExplorer
-        searchQuery={searchQuery}
-        onValueSelect={handleValueSelect}
-      />
+          <BubblesAxisExplorer
+            searchQuery={searchQuery}
+            onSearchQueryChange={setSearchQuery}
+            onValueSelect={handleValueSelect}
+          />
+        </section>
+      </div>
 
       <ValuePosterModal
         open={posterValueId !== null}
@@ -70,10 +82,7 @@ export function WaardesPageContent() {
         onClose={handleClosePoster}
       />
 
-      <ValueGuideDetailModal
-        value={detailValue}
-        onClose={handleCloseDetail}
-      />
-    </>
+      <ValueGuideDetailModal value={detailValue} onClose={handleCloseDetail} />
+    </div>
   );
 }

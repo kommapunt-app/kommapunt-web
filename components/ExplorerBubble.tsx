@@ -1,13 +1,15 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { formatBubbleLabel } from "@/lib/bubble-label";
 import { getBubbleFontSize } from "@/lib/bubbles";
 
-export type ExplorerBubbleSize = "hub" | "group" | "value";
+export type ExplorerBubbleSize = "hub" | "group" | "value" | "map-value";
 
 interface ExplorerBubbleProps {
   label: string;
   sublabel?: string;
+  icon?: ReactNode;
   size: ExplorerBubbleSize;
   active?: boolean;
   dimmed?: boolean;
@@ -25,11 +27,14 @@ const sizeClasses: Record<ExplorerBubbleSize, string> = {
   group: "h-[7.5rem] w-[7.5rem] text-[10px] leading-tight sm:h-32 sm:w-32 sm:text-[11px]",
   value:
     "h-[5.75rem] w-[5.75rem] text-[10px] leading-tight sm:h-24 sm:w-24 sm:text-[11px]",
+  "map-value":
+    "h-[4.5rem] w-[4.5rem] text-[8px] leading-[1.15] sm:h-[5rem] sm:w-[5rem] sm:text-[9px] md:h-[5.5rem] md:w-[5.5rem] md:text-[10px] lg:h-[5.75rem] lg:w-[5.75rem]",
 };
 
 export function ExplorerBubble({
   label,
   sublabel,
+  icon,
   size,
   active = false,
   dimmed = false,
@@ -41,7 +46,7 @@ export function ExplorerBubble({
   ariaLabel,
   interactive = true,
 }: ExplorerBubbleProps) {
-  const lines = formatBubbleLabel(label);
+  const lines = formatBubbleLabel(label).slice(0, 2);
   const fontSizeClass = size === "value" ? getBubbleFontSize(label) : "";
 
   const bubbleClassName = [
@@ -67,6 +72,29 @@ export function ExplorerBubble({
     animationDelay: `${animationDelayMs}ms`,
   };
 
+  const bubbleContent = (
+    <>
+      {icon ? (
+        <span className="mb-1 flex shrink-0 items-center justify-center [&_svg]:h-6 [&_svg]:w-6 sm:[&_svg]:h-7 sm:[&_svg]:w-7">
+          {icon}
+        </span>
+      ) : null}
+      {lines.map((line) => (
+        <span
+          key={line}
+          className={`block max-w-full text-komma-black ${fontSizeClass}`}
+        >
+          {line}
+        </span>
+      ))}
+      {sublabel ? (
+        <span className="mt-1 block text-[9px] font-semibold uppercase tracking-wide text-komma-black/45 sm:text-[10px]">
+          {sublabel}
+        </span>
+      ) : null}
+    </>
+  );
+
   if (!interactive) {
     return (
       <div
@@ -74,19 +102,7 @@ export function ExplorerBubble({
         style={bubbleStyle}
         className={bubbleClassName.replace(/hover:[^\s]+/g, "")}
       >
-        {lines.map((line) => (
-          <span
-            key={line}
-            className={`block text-komma-black ${fontSizeClass}`}
-          >
-            {line}
-          </span>
-        ))}
-        {sublabel ? (
-          <span className="mt-1 block text-[9px] font-semibold uppercase tracking-wide text-komma-black/45 sm:text-[10px]">
-            {sublabel}
-          </span>
-        ) : null}
+        {bubbleContent}
       </div>
     );
   }
@@ -99,19 +115,7 @@ export function ExplorerBubble({
       style={bubbleStyle}
       className={bubbleClassName}
     >
-      {lines.map((line) => (
-        <span
-          key={line}
-          className={`block text-komma-black ${fontSizeClass}`}
-        >
-          {line}
-        </span>
-      ))}
-      {sublabel ? (
-        <span className="mt-1 block text-[9px] font-semibold uppercase tracking-wide text-komma-black/45 sm:text-[10px]">
-          {sublabel}
-        </span>
-      ) : null}
+      {bubbleContent}
     </button>
   );
 }
