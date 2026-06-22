@@ -143,7 +143,7 @@ export function ValueGuideDetailModal({
                 href={`/plakkate?poster=${value.id}`}
                 className="inline-flex w-full items-center justify-center rounded-full border-4 border-komma-black bg-komma-yellow px-6 py-3.5 text-base font-extrabold shadow-[4px_4px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:bg-komma-pink hover:text-white hover:shadow-[5px_5px_0_0_#000] sm:w-auto sm:px-8"
               >
-                🖼️ Bekyk Waardeplakkaat
+                🖼️ Bekyk Bubbleblad
               </Link>
             ) : null}
             <Link

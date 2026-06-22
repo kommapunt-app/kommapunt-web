@@ -27,8 +27,8 @@ export default function WaardesPage() {
               <WaardesPlakkateCta />
             </div>
             <p className="mt-4 max-w-2xl text-base text-komma-black/75 sm:text-lg">
-              Verstaan waardes op die kaart. Vir die volledige visuele
-              plakkate, gaan na Waardeplakkate.
+              Verstaan waardes op die kaart. Sien ook al die Bubbleblaaie
+              &mdash; eenblad-opsommings van elke waarde.
             </p>
           </div>
 

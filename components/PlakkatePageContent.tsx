@@ -69,10 +69,11 @@ export function PlakkatePageContent() {
     <>
       <header className="mb-8 sm:mb-10">
         <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-          Waardeplakkate
+          Bubbleblaaie
         </h1>
         <p className="mt-3 max-w-2xl text-base text-komma-black/80 sm:text-lg">
-          &rsquo;n Visuele biblioteek van KommaPunt waardeplakkate.
+          KommaPunt Bubbleblaaie &mdash; eenblad-opsommings van individuele
+          waardes.
         </p>
 
         <div className="mt-5">
@@ -100,7 +101,7 @@ export function PlakkatePageContent() {
       {filteredPosters.length === 0 ? (
         <div className="rounded-[2rem] border-4 border-komma-black bg-[#F5F5F0] px-6 py-10 text-center shadow-[6px_6px_0_0_#000] sm:px-8">
           <p className="text-lg font-extrabold sm:text-xl">
-            🧐 Geen waardeplakkate gevind nie.
+            🧐 Geen Bubbleblaaie gevind nie.
           </p>
           <button
             type="button"
@@ -148,7 +149,7 @@ function PosterCard({
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={poster.image_url}
-          alt={`${poster.name_af} waardeplakkaat`}
+          alt={`${poster.name_af} Bubbleblad`}
           className="aspect-[3/4] w-full max-w-[280px] object-contain transition-transform duration-300 group-hover:scale-[1.02]"
           loading="lazy"
           draggable={false}

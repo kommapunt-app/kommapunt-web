@@ -5,9 +5,9 @@ import { PageContainer } from "@/components/PageContainer";
 import { PlakkatePageContent } from "@/components/PlakkatePageContent";
 
 export const metadata: Metadata = {
-  title: "KommaPunt Waardeplakkate",
+  title: "Bubbleblaaie | KommaPunt",
   description:
-    "Verken die volledige KommaPunt versameling van waardeplakkate en ontdek hoe waardes ons prioriteite, besluite en standpunte vorm.",
+    "Verken KommaPunt se versameling Bubbleblaaie — eenblad-opsommings van waardes wat wys waarom hulle belangrik is, hoe hulle met ander waardes bots, en hoe hulle ons besluite beïnvloed.",
 };
 
 export default function PlakkatePage() {

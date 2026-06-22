@@ -43,21 +43,21 @@ export function PosterViewerModal({
     return null;
   }
 
-  const downloadName = `${poster.id}-waardeplakkaat.png`;
+  const downloadName = `${poster.id}-bubbleblad.png`;
 
   return (
     <div className="fixed inset-0 z-[100] flex flex-col sm:items-center sm:justify-center sm:p-6">
       <button
         type="button"
         className="absolute inset-0 bg-komma-black/75"
-        aria-label="Sluit plakkaat"
+        aria-label="Sluit Bubbleblad"
         onClick={onClose}
       />
 
       <div
         role="dialog"
         aria-modal="true"
-        aria-label={`${poster.name_af} waardeplakkaat`}
+        aria-label={`${poster.name_af} Bubbleblad`}
         className="relative flex h-full w-full flex-col overflow-hidden bg-[#F5F5F0] sm:h-auto sm:max-h-[94vh] sm:max-w-[1040px] sm:rounded-[2rem] sm:border-4 sm:border-komma-black sm:shadow-[8px_8px_0_0_#FF1493]"
       >
         <div className="sticky top-0 z-10 flex shrink-0 items-center justify-between gap-3 border-b-4 border-komma-black bg-komma-yellow px-3 py-3 sm:rounded-t-[1.75rem] sm:px-4">
@@ -84,7 +84,7 @@ export function PosterViewerModal({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={poster.image_url}
-            alt={`${poster.name_af} waardeplakkaat`}
+            alt={`${poster.name_af} Bubbleblad`}
             className="mx-auto block h-auto w-full max-w-full shadow-[6px_6px_0_0_#000] sm:shadow-[8px_8px_0_0_#000]"
             draggable={false}
           />
