@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Header } from "@/components/Header";
 import { PageContainer } from "@/components/PageContainer";
 import { WaardesPageContent } from "@/components/WaardesPageContent";
-import { ValuesGuideIntro } from "@/components/ValuesGuideIntro";
 
 export const metadata: Metadata = {
   title: "Bubbles Bib — Komma",
@@ -25,8 +24,6 @@ export default function WaardesPage() {
               Wat is vir jou belangrik?
             </p>
           </div>
-
-          <ValuesGuideIntro />
 
           <WaardesPageContent />
         </PageContainer>

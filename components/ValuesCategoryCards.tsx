@@ -5,7 +5,6 @@ import {
   VALUE_GUIDE_CATEGORIES,
   getValueGuideById,
 } from "@/lib/values-guide";
-import { hasValuePoster } from "@/lib/value-poster-map";
 
 interface ValuesCategoryCardsProps {
   onOpenPoster?: (valueId: string) => void;
@@ -41,7 +40,7 @@ export function ValuesCategoryCards({ onOpenPoster }: ValuesCategoryCardsProps) 
                 return null;
               }
 
-              if (hasValuePoster(value.id) && onOpenPoster) {
+              if (onOpenPoster) {
                 return (
                   <button
                     key={value.id}

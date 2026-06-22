@@ -3,7 +3,6 @@
 import Link from "next/link";
 import type { ValueGuideEntry } from "@/lib/values-guide";
 import { getBubbleFontSize } from "@/lib/bubbles";
-import { hasValuePoster } from "@/lib/value-poster-map";
 
 interface ValueGuideBubbleCardProps {
   value: ValueGuideEntry;
@@ -33,7 +32,7 @@ export function ValueGuideBubbleCard({
     </>
   );
 
-  if (hasValuePoster(value.id) && onOpenPoster) {
+  if (onOpenPoster) {
     return (
       <button
         type="button"
