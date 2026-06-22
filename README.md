@@ -1,5 +1,20 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Production deployment
+
+**This repo is the production source of truth.**
+
+| Item | Value |
+|------|-------|
+| GitHub | [kommapunt-app/kommapunt-web](https://github.com/kommapunt-app/kommapunt-web) |
+| Branch | `main` |
+| Hosting | [Vercel](https://vercel.com/kommapunt/kommapunt-web) |
+| Live site | [kommapunt.co.za](https://www.kommapunt.co.za) |
+
+Vercel auto-deploys on every push to `main`. After pushing, confirm the new commit appears under **Deployments** in the Vercel dashboard and that the deployment status on GitHub shows **Vercel — success**.
+
+If a push does not trigger a deployment (GitHub commit status stays `pending` with no Vercel check), push a small follow-up commit to `main` or redeploy manually from the Vercel dashboard.
+
 ## Getting Started
 
 First, run the development server:
