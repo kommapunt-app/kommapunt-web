@@ -8,6 +8,11 @@ export async function POST(request: Request) {
     const payload = validateBubbleProfileRequest(body);
 
     if (!payload) {
+      console.error("[bubble-profile] failed", {
+        reason: "validation",
+        body,
+      });
+
       return Response.json(
         {
           ok: false,
@@ -18,7 +23,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const profileId = await insertBubbleProfile({
+    const insertRecord = {
       name: payload.name,
       email: payload.email,
       age_group: payload.ageGroup,
@@ -28,7 +33,13 @@ export async function POST(request: Request) {
       top_5_values: payload.top5Values,
       top_10_values: payload.top10Values,
       scores: payload.scores,
-    });
+    };
+
+    console.log("[bubble-profile] inserting", insertRecord);
+
+    const profileId = await insertBubbleProfile(insertRecord);
+
+    console.log("[bubble-profile] inserted", profileId);
 
     return Response.json({
       ok: true,
@@ -36,7 +47,7 @@ export async function POST(request: Request) {
       profileId,
     } satisfies BubbleProfileResponse);
   } catch (error) {
-    console.error("[POST /api/bubble-profile] insert failed", error);
+    console.error("[bubble-profile] failed", error);
 
     const supabaseCode =
       error &&
@@ -48,7 +59,7 @@ export async function POST(request: Request) {
 
     let message = "Kon nie jou profiel stoor nie. Probeer weer.";
 
-    if (error instanceof Error && error.message === "Database is not configured.") {
+    if (error instanceof Error && error.message === "Database is not configured") {
       message = "Kon nie jou profiel stoor nie. Probeer later weer.";
     } else if (supabaseCode === "42501") {
       message =
@@ -56,6 +67,8 @@ export async function POST(request: Request) {
     } else if (supabaseCode === "23502") {
       message =
         "Kon nie jou profiel stoor nie. Databasis-skema moet opgedateer word (race kolom).";
+    } else if (supabaseCode === "23505") {
+      message = "Kon nie jou profiel stoor nie. Hierdie profiel bestaan reeds.";
     }
 
     return Response.json(

@@ -39,6 +39,12 @@ export function ResultsPageContent() {
 
   useEffect(() => {
     const savedProfile = loadBubbleProfileFromSession();
+    if (savedProfile) {
+      console.log(
+        "[bubble-profile] skipped gate — local profile already exists",
+        savedProfile,
+      );
+    }
     setResults(loadResultsFromStorage());
     setProfileContact(savedProfile);
     setProfileModalOpen(savedProfile === null);

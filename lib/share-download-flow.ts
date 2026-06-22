@@ -29,6 +29,11 @@ export async function saveProfileAndDownloadBubbles({
     const payload = buildBubbleProfileRequest(rankedBubbles, contact);
     await saveBubbleProfile(payload);
     saveBubbleProfileToSession(contact);
+  } else {
+    console.log(
+      "[bubble-profile] skipped save — local profile already exists",
+      contact,
+    );
   }
 
   const element = exportRef.current;

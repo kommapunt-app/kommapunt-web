@@ -9,18 +9,37 @@ export type ShareLeadRecord = {
   created_at?: string;
 };
 
+const DATABASE_NOT_CONFIGURED = "Database is not configured";
+
 let adminClient: SupabaseClient | null = null;
 
-export function getSupabaseAdmin(): SupabaseClient | null {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+function getSupabaseEnv() {
+  const supabaseUrl =
+    process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  if (!url || !serviceRoleKey) {
-    return null;
+  return {
+    supabaseUrl,
+    serviceRoleKey,
+    hasSupabaseUrl: Boolean(supabaseUrl),
+    hasServiceRoleKey: Boolean(serviceRoleKey),
+  };
+}
+
+export function getSupabaseAdmin(): SupabaseClient {
+  const { supabaseUrl, serviceRoleKey } = getSupabaseEnv();
+
+  if (!supabaseUrl || !serviceRoleKey) {
+    console.error("[bubble-profile] env check", {
+      hasSupabaseUrl: !!process.env.SUPABASE_URL,
+      hasNextPublicSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+      hasServiceRoleKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+    });
+    throw new Error(DATABASE_NOT_CONFIGURED);
   }
 
   if (!adminClient) {
-    adminClient = createClient(url, serviceRoleKey, {
+    adminClient = createClient(supabaseUrl, serviceRoleKey, {
       auth: {
         autoRefreshToken: false,
         persistSession: false,
@@ -33,10 +52,6 @@ export function getSupabaseAdmin(): SupabaseClient | null {
 
 export async function insertShareLead(record: ShareLeadRecord) {
   const supabase = getSupabaseAdmin();
-
-  if (!supabase) {
-    throw new Error("Database is not configured.");
-  }
 
   const { error } = await supabase.from("share_leads").insert({
     name: record.name,
@@ -65,10 +80,6 @@ export async function insertBubbleProfile(
   record: BubbleProfileInsertRecord,
 ): Promise<string> {
   const supabase = getSupabaseAdmin();
-
-  if (!supabase) {
-    throw new Error("Database is not configured.");
-  }
 
   const { data, error } = await supabase
     .from("bubble_profiles")
