@@ -1,5 +1,7 @@
 export const VALUE_POSTERS = {
   curiosity: "/value-posters/nuuskierigheid.png",
+  religion: "/value-posters/geloof.png",
+  freedom: "/value-posters/vryheid.png",
 } as const;
 
 export type ValuePosterId = keyof typeof VALUE_POSTERS;
