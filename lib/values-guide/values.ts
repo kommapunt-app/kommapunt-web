@@ -584,6 +584,22 @@ const VALUE_GUIDE_ENTRIES: ValueGuideEntryInput[] = [
     reflectionQuestionAf: "Waar kan ek nou bydra op 'n manier wat ook volhoubaar vir my is?",
   },
   {
+    id: "vernuwing",
+    nameAf: "Vernuwing",
+    nameEn: "Innovation",
+    category: "self-actualisation",
+    definitionAf:
+      "Vernuwing is die moed om nuwe idees in die werklikheid te bring. Dit beteken ons verbeter, verander en vind slim maniere om dinge beter te doen.",
+    significanceAf:
+      "Vernuwing help om vasgevatte patrone te breek, probleme op te los en geleenthede te skep. Dit dryf vooruitgang en 'n beter toekoms.",
+    healthyExpressionAf:
+      "Jy sien moontlikhede waar ander probleme sien, toets idees en neem berekende risiko's wat waarde skep.",
+    overdoneRiskAf:
+      "As jy te veel idees jaag, verloor jy fokus en laat mense agter. Dan word verandering roekeloos eerder as doelgerig.",
+    reflectionQuestionAf:
+      "Watter idee of verandering kan ek vandag begin wat môre 'n positiewe verskil kan maak?",
+  },
+  {
     id: "creativity",
     nameAf: "Kreatiwiteit",
     nameEn: "Creativity",

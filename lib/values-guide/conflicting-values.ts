@@ -261,6 +261,11 @@ export const CONFLICTING_VALUES: Record<string, ValueConflict[]> = {
     { name: "Dissipline", reason: "Kreatiwiteit speel; dissipline volg plan." },
     { name: "Sekerheid", reason: "Kreatiwiteit is onvoorspelbaar; sekerheid wil weet." },
   ],
+  "vernuwing": [
+    { name: "Stabiliteit", reason: "Vernuwing verander; stabiliteit hou vas." },
+    { name: "Orde", reason: "Vernuwing breek patrone; orde hou struktuur." },
+    { name: "Lojaliteit", reason: "Vernuwing jaag vorentoe; lojaliteit bly by mense." },
+  ],
   "equality": [
     { name: "Outoriteit", reason: "Gelykheid deel mag; outoriteit konsentreer mag." },
     { name: "Tradisie", reason: "Gelykheid vra nuwe reëls; tradisie hou aan ou orde." },
