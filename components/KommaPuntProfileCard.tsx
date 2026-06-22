@@ -15,6 +15,8 @@ interface KommaPuntProfileCardProps {
   personName: string;
   rankedBubbles: RankedBubbleResult[];
   photoUrl?: string | null;
+  onPhotoChange?: (url: string | null) => void;
+  photoUploadEnabled?: boolean;
   className?: string;
 }
 
@@ -22,7 +24,14 @@ export const KommaPuntProfileCard = forwardRef<
   HTMLDivElement,
   KommaPuntProfileCardProps
 >(function KommaPuntProfileCard(
-  { personName, rankedBubbles, photoUrl = null, className = "" },
+  {
+    personName,
+    rankedBubbles,
+    photoUrl = null,
+    onPhotoChange,
+    photoUploadEnabled = false,
+    className = "",
+  },
   ref,
 ) {
   return (
@@ -43,6 +52,9 @@ export const KommaPuntProfileCard = forwardRef<
         <TopFiveBubbleVisual
           rankedBubbles={rankedBubbles}
           photoUrl={photoUrl}
+          onPhotoChange={onPhotoChange}
+          photoUploadEnabled={photoUploadEnabled}
+          centerCircleFill="#D4D4D4"
           colorScheme="demo"
           frameless
           className="max-w-none"

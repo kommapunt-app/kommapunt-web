@@ -12,7 +12,7 @@ export async function POST(request: Request) {
         {
           ok: false,
           message:
-            "Naam, e-pos, demografie en Bubble-resultate is verplig.",
+            "Naam, e-pos, ouderdom, provinsie en Bubble-resultate is verplig.",
         } satisfies BubbleProfileResponse,
         { status: 400 },
       );
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
       name: payload.name,
       email: payload.email,
       age_group: payload.ageGroup,
-      race: payload.race,
+      race: null,
       province: payload.province,
       ranked_values: payload.rankedValues,
       top_5_values: payload.top5Values,

@@ -9,7 +9,6 @@ import { FullFeedbackModal } from "@/components/FullFeedbackModal";
 import { KommaPuntProfileCard } from "@/components/KommaPuntProfileCard";
 import { LockedProfilePlaceholder } from "@/components/LockedProfilePlaceholder";
 import { PageContainer } from "@/components/PageContainer";
-import { PhotoUploadSection } from "@/components/PhotoUploadSection";
 import { ProfileActionButtons } from "@/components/ProfileActionButtons";
 import { RankedBubbleListItem } from "@/components/RankedBubbleListItem";
 import { ReflectionSection } from "@/components/ReflectionSection";
@@ -177,20 +176,14 @@ export function ResultsPageContent() {
           <div className="relative z-0 mb-8 flex flex-col items-center gap-6 overflow-visible sm:mb-10">
             <div className="inline-block w-full max-w-3xl overflow-visible p-2 sm:p-3">
               {profileSaved ? (
-                <>
-                  <PhotoUploadSection
-                    photoUrl={photoUrl}
-                    onPhotoChange={handlePhotoChange}
-                  />
-                  <div className="mt-6">
-                    <KommaPuntProfileCard
-                      ref={exportRef}
-                      personName={profileContact.name}
-                      rankedBubbles={results}
-                      photoUrl={photoUrl}
-                    />
-                  </div>
-                </>
+                <KommaPuntProfileCard
+                  ref={exportRef}
+                  personName={profileContact.name}
+                  rankedBubbles={results}
+                  photoUrl={photoUrl}
+                  onPhotoChange={handlePhotoChange}
+                  photoUploadEnabled
+                />
               ) : (
                 <LockedProfilePlaceholder
                   onUnlock={() => setProfileModalOpen(true)}

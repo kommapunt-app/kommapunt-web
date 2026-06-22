@@ -138,6 +138,13 @@ export async function exportBubbleVisualAsPng(
       cacheBust: true,
       skipFonts: false,
       backgroundColor: "#F5DD00",
+      filter: (node) => {
+        if (node instanceof Element && node.classList.contains("export-exclude")) {
+          return false;
+        }
+
+        return true;
+      },
     });
 
     return dataUrlToBlob(dataUrl);

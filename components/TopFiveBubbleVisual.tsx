@@ -1,6 +1,6 @@
 "use client";
 
-import { useId } from "react";
+import { useId, useRef } from "react";
 import { formatBubbleLabel } from "@/lib/bubble-label";
 import type { RankedBubbleResult } from "@/lib/results";
 
@@ -14,6 +14,9 @@ const FRAME_BORDER = {
 } as const;
 
 const CENTER = { cx: 500, cy: 360, r: 135 };
+const CENTER_LEFT_PCT = (CENTER.cx / VIEWBOX_WIDTH) * 100;
+const CENTER_TOP_PCT = (CENTER.cy / VIEWBOX_HEIGHT) * 100;
+const CENTER_WIDTH_PCT = ((CENTER.r * 2) / VIEWBOX_WIDTH) * 100;
 
 const VALUE_BUBBLES = [
   {
@@ -167,6 +170,8 @@ interface TopFiveBubbleVisualProps {
   animationPreset?: "default" | "heroFloat";
   /** Landing hero only — grey centre circle instead of yellow */
   centerCircleFill?: string;
+  photoUploadEnabled?: boolean;
+  onPhotoChange?: (url: string | null) => void;
 }
 
 type BubbleMotion = {
@@ -397,8 +402,11 @@ export function TopFiveBubbleVisual({
   clusterOffsetY = 0,
   animationPreset = "default",
   centerCircleFill,
+  photoUploadEnabled = false,
+  onPhotoChange,
 }: TopFiveBubbleVisualProps) {
   const clipId = useId().replace(/:/g, "");
+  const photoInputRef = useRef<HTMLInputElement>(null);
   const topFive = rankedBubbles.slice(0, 5);
   const strokeWidth = compact ? 5 : 8;
   const photoRadius = CENTER.r - strokeWidth / 2;
@@ -429,9 +437,23 @@ export function TopFiveBubbleVisual({
   const clusterTransform =
     clusterOffsetY !== 0 ? `translate(0 ${clusterOffsetY})` : undefined;
 
+  function openPhotoPicker() {
+    photoInputRef.current?.click();
+  }
+
+  function handlePhotoFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+
+    if (!file?.type.startsWith("image/") || !onPhotoChange) {
+      return;
+    }
+
+    onPhotoChange(URL.createObjectURL(file));
+  }
+
   return (
     <div
-      className={`mx-auto w-full max-w-[900px] overflow-visible ${frameless ? "" : "p-2 sm:p-3"} ${frameRadiusClass} ${frameShadowClass} ${className}`.trim()}
+      className={`relative mx-auto w-full max-w-[900px] overflow-visible ${frameless ? "" : "p-2 sm:p-3"} ${frameRadiusClass} ${frameShadowClass} ${className}`.trim()}
     >
       <svg
         viewBox={viewBox}
@@ -535,6 +557,50 @@ export function TopFiveBubbleVisual({
           />
         </g>
       </svg>
+
+      {photoUploadEnabled && onPhotoChange ? (
+        <>
+          <input
+            ref={photoInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handlePhotoFileChange}
+            className="sr-only"
+            aria-hidden
+            tabIndex={-1}
+          />
+          <div
+            className="export-exclude pointer-events-none absolute inset-0"
+            aria-hidden={false}
+          >
+            <div
+              className="pointer-events-auto absolute -translate-x-1/2 -translate-y-1/2"
+              style={{
+                left: `${CENTER_LEFT_PCT}%`,
+                top: `${CENTER_TOP_PCT}%`,
+                width: `${CENTER_WIDTH_PCT}%`,
+              }}
+            >
+              {photoUrl ? (
+                <button
+                  type="button"
+                  onClick={openPhotoPicker}
+                  className="absolute inset-0 rounded-full opacity-0 focus-visible:opacity-100 focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-komma-pink"
+                  aria-label="Verander foto"
+                />
+              ) : (
+                <button
+                  type="button"
+                  onClick={openPhotoPicker}
+                  className="absolute left-1/2 top-[calc(50%-60px)] w-[72%] max-w-[8.5rem] -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-komma-black bg-white px-2 py-2 text-center text-[0.6rem] font-extrabold leading-tight shadow-[3px_3px_0_0_#000] transition-all hover:-translate-y-[calc(50%+2px)] hover:bg-komma-yellow hover:shadow-[4px_4px_0_0_#FF1493] active:translate-y-0 sm:max-w-[9rem] sm:px-3 sm:py-2.5 sm:text-xs"
+                >
+                  Laai jou foto op
+                </button>
+              )}
+            </div>
+          </div>
+        </>
+      ) : null}
     </div>
   );
 }

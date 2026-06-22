@@ -36,7 +36,7 @@ export function buildBubbleProfileRequest(
   results: RankedBubbleResult[],
   contact: Pick<
     BubbleProfileRequest,
-    "name" | "email" | "ageGroup" | "race" | "province"
+    "name" | "email" | "ageGroup" | "province"
   >,
 ): BubbleProfileRequest {
   const rankedValues = toRankedValueRecords(results);
@@ -45,7 +45,6 @@ export function buildBubbleProfileRequest(
     name: contact.name.trim(),
     email: contact.email.trim(),
     ageGroup: contact.ageGroup,
-    race: contact.race,
     province: contact.province,
     rankedValues,
     top5Values: rankedValues.slice(0, 5).map((item) => item.nameAf),
@@ -61,7 +60,6 @@ export function toBubbleProfileApiPayload(
     name: request.name,
     email: request.email,
     age_group: request.ageGroup,
-    race: request.race,
     province: request.province,
     ranked_values: request.rankedValues,
     top_5_values: request.top5Values,

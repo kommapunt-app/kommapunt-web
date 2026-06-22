@@ -7,7 +7,6 @@ import { saveBubbleProfile } from "@/lib/bubble-profile/api";
 import {
   AGE_GROUP_OPTIONS,
   PROVINCE_OPTIONS,
-  RACE_OPTIONS,
 } from "@/lib/bubble-profile/demographics";
 import {
   saveBubbleProfileToSession,
@@ -42,7 +41,6 @@ export function ShareBubblesModal({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [ageGroup, setAgeGroup] = useState("");
-  const [race, setRace] = useState("");
   const [province, setProvince] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -73,7 +71,6 @@ export function ShareBubblesModal({
       setName("");
       setEmail("");
       setAgeGroup("");
-      setRace("");
       setProvince("");
       setErrorMessage(null);
       setIsSubmitting(false);
@@ -88,7 +85,6 @@ export function ShareBubblesModal({
       name,
       email,
       ageGroup: ageGroup as BubbleProfileContact["ageGroup"],
-      race: race as BubbleProfileContact["race"],
       province: province as BubbleProfileContact["province"],
     };
 
@@ -109,7 +105,6 @@ export function ShareBubblesModal({
         name: contact.name.trim(),
         email: contact.email.trim(),
         ageGroup: contact.ageGroup,
-        race: contact.race,
         province: contact.province,
       };
 
@@ -240,29 +235,7 @@ export function ShareBubblesModal({
                 </select>
               </div>
 
-              <div>
-                <label htmlFor="share-race" className="mb-1.5 block text-sm font-extrabold">
-                  Bevolkingsgroep
-                </label>
-                <select
-                  id="share-race"
-                  required
-                  value={race}
-                  onChange={(event) => setRace(event.target.value)}
-                  className={selectClassName}
-                >
-                  <option value="" disabled>
-                    Kies
-                  </option>
-                  {RACE_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
+              <div className="sm:col-span-2">
                 <label htmlFor="share-province" className="mb-1.5 block text-sm font-extrabold">
                   Provinsie
                 </label>

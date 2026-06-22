@@ -7,7 +7,6 @@ import { saveBubbleProfile } from "@/lib/bubble-profile/api";
 import {
   AGE_GROUP_OPTIONS,
   PROVINCE_OPTIONS,
-  RACE_OPTIONS,
 } from "@/lib/bubble-profile/demographics";
 import {
   inputClassName,
@@ -38,7 +37,6 @@ export function BubbleProfileGateModal({
   const [name, setName] = useState(initialContact?.name ?? "");
   const [email, setEmail] = useState(initialContact?.email ?? "");
   const [ageGroup, setAgeGroup] = useState(initialContact?.ageGroup ?? "");
-  const [race, setRace] = useState(initialContact?.race ?? "");
   const [province, setProvince] = useState(initialContact?.province ?? "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -79,7 +77,6 @@ export function BubbleProfileGateModal({
       name,
       email,
       ageGroup: ageGroup as BubbleProfileContact["ageGroup"],
-      race: race as BubbleProfileContact["race"],
       province: province as BubbleProfileContact["province"],
     };
 
@@ -100,7 +97,6 @@ export function BubbleProfileGateModal({
         name: contact.name.trim(),
         email: contact.email.trim(),
         ageGroup: contact.ageGroup,
-        race: contact.race,
         province: contact.province,
       };
 
@@ -224,28 +220,6 @@ export function BubbleProfileGateModal({
                     Kies
                   </option>
                   {AGE_GROUP_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label htmlFor="gate-race" className="mb-1.5 block text-sm font-extrabold">
-                  Bevolkingsgroep
-                </label>
-                <select
-                  id="gate-race"
-                  required
-                  value={race}
-                  onChange={(event) => setRace(event.target.value)}
-                  className={selectClassName}
-                >
-                  <option value="" disabled>
-                    Kies
-                  </option>
-                  {RACE_OPTIONS.map((option) => (
                     <option key={option.value} value={option.value}>
                       {option.label}
                     </option>

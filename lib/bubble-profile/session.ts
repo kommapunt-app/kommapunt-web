@@ -3,7 +3,6 @@ import { STORAGE_KEY_BUBBLE_PROFILE } from "@/lib/bubble-profile/types";
 import {
   isValidAgeGroup,
   isValidProvince,
-  isValidRace,
 } from "@/lib/bubble-profile/demographics";
 import { isValidEmail } from "@/lib/share-leads";
 
@@ -25,11 +24,9 @@ export function loadBubbleProfileFromSession(): BubbleProfileContact | null {
       !parsed.name?.trim() ||
       !parsed.email?.trim() ||
       !parsed.ageGroup ||
-      !parsed.race ||
       !parsed.province ||
       !isValidEmail(parsed.email) ||
       !isValidAgeGroup(parsed.ageGroup) ||
-      !isValidRace(parsed.race) ||
       !isValidProvince(parsed.province)
     ) {
       return null;
@@ -39,7 +36,6 @@ export function loadBubbleProfileFromSession(): BubbleProfileContact | null {
       name: parsed.name.trim(),
       email: parsed.email.trim(),
       ageGroup: parsed.ageGroup,
-      race: parsed.race,
       province: parsed.province,
     };
   } catch {
@@ -72,10 +68,6 @@ export function validateBubbleProfileContact(
 
   if (!contact.ageGroup || !isValidAgeGroup(contact.ageGroup)) {
     return "Kies jou ouderdomsgroep.";
-  }
-
-  if (!contact.race || !isValidRace(contact.race)) {
-    return "Kies jou bevolkingsgroep.";
   }
 
   if (!contact.province || !isValidProvince(contact.province)) {

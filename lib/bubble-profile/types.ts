@@ -1,4 +1,4 @@
-import type { AgeGroup, ProvinceOption, RaceOption } from "@/lib/bubble-profile/demographics";
+import type { AgeGroup, ProvinceOption } from "@/lib/bubble-profile/demographics";
 
 export type RankedValueRecord = {
   id: string;
@@ -13,7 +13,6 @@ export type BubbleProfileContact = {
   name: string;
   email: string;
   ageGroup: AgeGroup;
-  race: RaceOption;
   province: ProvinceOption;
 };
 
@@ -28,7 +27,6 @@ export type BubbleProfileRequest = {
   name: string;
   email: string;
   ageGroup: AgeGroup;
-  race: RaceOption;
   province: ProvinceOption;
   rankedValues: RankedValueRecord[];
   top5Values: string[];
@@ -41,7 +39,6 @@ export type BubbleProfileApiPayload = {
   name: string;
   email: string;
   age_group: AgeGroup;
-  race: RaceOption;
   province: ProvinceOption;
   ranked_values: RankedValueRecord[];
   top_5_values: string[];

@@ -1,7 +1,6 @@
 import {
   isValidAgeGroup,
   isValidProvince,
-  isValidRace,
 } from "@/lib/bubble-profile/demographics";
 import type {
   BubbleProfileRequest,
@@ -60,7 +59,6 @@ export function validateBubbleProfileRequest(
   const name = typeof payload.name === "string" ? payload.name.trim() : "";
   const email = typeof payload.email === "string" ? payload.email.trim() : "";
   const ageGroupRaw = payload.age_group ?? payload.ageGroup;
-  const race = payload.race;
   const province = payload.province;
   const rankedValues = payload.ranked_values ?? payload.rankedValues;
   const top5Values = payload.top_5_values ?? payload.top5Values;
@@ -73,8 +71,6 @@ export function validateBubbleProfileRequest(
     !isValidEmail(email) ||
     typeof ageGroupRaw !== "string" ||
     !isValidAgeGroup(ageGroupRaw) ||
-    typeof race !== "string" ||
-    !isValidRace(race) ||
     typeof province !== "string" ||
     !isValidProvince(province) ||
     !isValidRankedValues(rankedValues) ||
@@ -89,7 +85,6 @@ export function validateBubbleProfileRequest(
     name,
     email,
     ageGroup: ageGroupRaw,
-    race,
     province,
     rankedValues,
     top5Values,
