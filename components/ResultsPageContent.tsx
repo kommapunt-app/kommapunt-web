@@ -14,6 +14,7 @@ import { RankedBubbleListItem } from "@/components/RankedBubbleListItem";
 import { ReflectionSection } from "@/components/ReflectionSection";
 import {
   downloadBubbleVisual,
+  saveBubbleVisualToPhotos,
   shareBubbleVisualFromRef,
 } from "@/lib/bubble-profile/export-actions";
 import { loadBubbleProfileFromSession } from "@/lib/bubble-profile/session";
@@ -21,6 +22,7 @@ import { STORAGE_KEY_BUBBLE_PROFILE } from "@/lib/bubble-profile/types";
 import type { BubbleProfileContact } from "@/lib/bubble-profile/types";
 import { clearKommaSession, loadResultsFromStorage, type RankedBubbleResult } from "@/lib/results";
 import { TOTAL_FLOW_STEPS } from "@/lib/constants";
+import { useMobileViewport } from "@/lib/use-mobile-viewport";
 
 export function ResultsPageContent() {
   const router = useRouter();
@@ -34,8 +36,10 @@ export function ResultsPageContent() {
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [isActionBusy, setIsActionBusy] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [saveHelperMessage, setSaveHelperMessage] = useState<string | null>(null);
   const [syncWarning, setSyncWarning] = useState<string | null>(null);
   const exportRef = useRef<HTMLDivElement>(null);
+  const isMobile = useMobileViewport();
 
   useEffect(() => {
     const savedProfile = loadBubbleProfileFromSession();
@@ -99,15 +103,21 @@ export function ResultsPageContent() {
     }
 
     setActionError(null);
+    setSaveHelperMessage(null);
     setIsActionBusy(true);
 
     try {
-      await downloadBubbleVisual(exportRef, photoUrl);
+      if (isMobile) {
+        const result = await saveBubbleVisualToPhotos(exportRef, photoUrl);
+        setSaveHelperMessage(result.helperMessage ?? null);
+      } else {
+        await downloadBubbleVisual(exportRef, photoUrl);
+      }
     } catch (error) {
       setActionError(
         error instanceof Error
           ? error.message
-          : "Kon nie jou profiel af laai nie. Probeer weer.",
+          : "Kon nie jou profiel stoor nie. Probeer weer.",
       );
     } finally {
       setIsActionBusy(false);
@@ -120,6 +130,7 @@ export function ResultsPageContent() {
     }
 
     setActionError(null);
+    setSaveHelperMessage(null);
     setIsActionBusy(true);
 
     try {
@@ -211,9 +222,11 @@ export function ResultsPageContent() {
             <ProfileActionButtons
               profileSaved={profileSaved}
               isBusy={isActionBusy}
+              isMobile={isMobile}
               onDownload={handleDownload}
               onShare={handleShare}
               actionError={actionError}
+              saveHelperMessage={saveHelperMessage}
             />
           </div>
 

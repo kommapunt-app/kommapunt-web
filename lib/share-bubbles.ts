@@ -9,6 +9,50 @@ export const SHARE_UNSUPPORTED_MESSAGE =
 
 export const BUBBLE_EXPORT_FILENAME = "komma-my-bubbles.png";
 
+export const KOMMAPUNT_PROFILE_FILENAME = "kommapunt-profiel.png";
+
+export const IPHONE_PHOTOS_FALLBACK_HELPER =
+  "Op iPhone: Maak Downloads oop, kies die beeld en tik Save Image om dit na Fotos te stoor.";
+
+export function createProfileImageFile(blob: Blob): File {
+  return new File([blob], KOMMAPUNT_PROFILE_FILENAME, { type: "image/png" });
+}
+
+export function canShareProfileImageFile(blob: Blob): boolean {
+  if (!canUseNativeShare()) {
+    return false;
+  }
+
+  const file = createProfileImageFile(blob);
+
+  return navigator.canShare?.({ files: [file] }) ?? false;
+}
+
+export async function saveProfileImageToPhotos(
+  blob: Blob,
+): Promise<"shared" | "downloaded"> {
+  const file = createProfileImageFile(blob);
+
+  if (canShareProfileImageFile(blob)) {
+    try {
+      await navigator.share({
+        files: [file],
+        title: "KommaPunt Profiel",
+      });
+      return "shared";
+    } catch (error) {
+      if (error instanceof Error && error.name === "AbortError") {
+        return "shared";
+      }
+
+      throw error;
+    }
+  }
+
+  downloadBlob(blob, KOMMAPUNT_PROFILE_FILENAME);
+  return "downloaded";
+}
+
 async function blobUrlToDataUrl(blobUrl: string): Promise<string> {
   const response = await fetch(blobUrl);
   const blob = await response.blob();
@@ -175,17 +219,25 @@ export async function shareBubbleVisual(
     return "unsupported";
   }
 
-  const file = new File([blob], BUBBLE_EXPORT_FILENAME, { type: "image/png" });
+  const file = createProfileImageFile(blob);
   const shareData: ShareData = {
-    title: "My Komma. Bubbles",
+    title: "KommaPunt Profiel",
     text: KOMMA_SHARE_CAPTION,
   };
 
-  if (navigator.canShare?.({ files: [file] })) {
-    await navigator.share({ ...shareData, files: [file] });
-    return "shared";
-  }
+  try {
+    if (navigator.canShare?.({ files: [file] })) {
+      await navigator.share({ ...shareData, files: [file] });
+      return "shared";
+    }
 
-  await navigator.share(shareData);
-  return "shared";
+    await navigator.share(shareData);
+    return "shared";
+  } catch (error) {
+    if (error instanceof Error && error.name === "AbortError") {
+      return "shared";
+    }
+
+    throw error;
+  }
 }
