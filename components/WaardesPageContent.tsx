@@ -1,48 +1,48 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 import { BubblesAxisExplorer } from "@/components/BubblesAxisExplorer";
 import { BubblesWhatSection } from "@/components/BubblesWhatSection";
 import { ValueGuideDetailModal } from "@/components/ValueGuideDetailModal";
-import { ValuePosterModal } from "@/components/ValuePosterModal";
 import { BUBBLES_BIB_SCROLL_MARGIN_CLASS } from "@/lib/bubbles-bib";
 import { getValueGuideById } from "@/lib/values-guide";
-import {
-  checkValuePosterExists,
-  getValuePosterSrc,
-} from "@/lib/value-posters";
 
 export function WaardesPageContent() {
+  const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
-  const [posterValueId, setPosterValueId] = useState<string | null>(null);
   const [detailValueId, setDetailValueId] = useState<string | null>(null);
+  const [focusValueId, setFocusValueId] = useState<string | null>(null);
 
-  const handleValueSelect = useCallback(async (valueId: string) => {
-    const hasPoster = await checkValuePosterExists(valueId);
+  useEffect(() => {
+    const valueId = searchParams.get("value");
 
-    if (hasPoster) {
-      setDetailValueId(null);
-      setPosterValueId(valueId);
+    if (!valueId || !getValueGuideById(valueId)) {
       return;
     }
 
-    setPosterValueId(null);
-    setDetailValueId(valueId);
-  }, []);
+    const mapSection = document.getElementById("die-bubbles");
 
-  const handleClosePoster = useCallback(() => {
-    setPosterValueId(null);
+    if (mapSection) {
+      mapSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    setFocusValueId(valueId);
+    setDetailValueId(valueId);
+  }, [searchParams]);
+
+  const handleValueSelect = useCallback((valueId: string) => {
+    setDetailValueId(valueId);
+    setFocusValueId(valueId);
   }, []);
 
   const handleCloseDetail = useCallback(() => {
     setDetailValueId(null);
   }, []);
 
-  const posterValue = posterValueId ? getValueGuideById(posterValueId) : null;
   const detailValue = detailValueId
     ? (getValueGuideById(detailValueId) ?? null)
     : null;
-  const posterSrc = posterValueId ? getValuePosterSrc(posterValueId) : "";
 
   return (
     <div className="overflow-visible">
@@ -71,16 +71,10 @@ export function WaardesPageContent() {
             searchQuery={searchQuery}
             onSearchQueryChange={setSearchQuery}
             onValueSelect={handleValueSelect}
+            focusValueId={focusValueId}
           />
         </section>
       </div>
-
-      <ValuePosterModal
-        open={posterValueId !== null}
-        posterSrc={posterSrc}
-        valueNameAf={posterValue?.nameAf ?? ""}
-        onClose={handleClosePoster}
-      />
 
       <ValueGuideDetailModal value={detailValue} onClose={handleCloseDetail} />
     </div>

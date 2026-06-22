@@ -16,28 +16,14 @@ const STROKE = {
   strokeLinejoin: "round" as const,
 };
 
-function HowItWorksIcon() {
+function HomeIcon() {
   return (
     <svg {...ICON_PROPS}>
+      <path d="M4.5 10.5 12 4.5l7.5 6" {...STROKE} />
       <path
-        d="M9.5 18.5h5M10 21.5h4"
+        d="M6.5 9.5V19a1 1 0 0 0 1 1H10v-5h4v5h2.5a1 1 0 0 0 1-1V9.5"
         {...STROKE}
       />
-      <path
-        d="M12 3.5c-2.8 0-5 2.1-5 4.7 0 1.8 1 3.4 2.5 4.2-.4.9-.9 2.1-1.2 2.8-.2.5.3.8.7.6 1.4-.7 2.6-1.4 3.4-1.9.4.1.9.1 1.3.1 2.8 0 5-2.1 5-4.7s-2.2-4.8-5-4.8Z"
-        {...STROKE}
-      />
-    </svg>
-  );
-}
-
-function ExamplesIcon() {
-  return (
-    <svg {...ICON_PROPS}>
-      <rect x="4" y="4" width="7" height="7" rx="1.5" {...STROKE} />
-      <rect x="13" y="4" width="7" height="7" rx="1.5" {...STROKE} />
-      <rect x="4" y="13" width="7" height="7" rx="1.5" {...STROKE} />
-      <rect x="13" y="13" width="7" height="7" rx="1.5" {...STROKE} />
     </svg>
   );
 }
@@ -55,27 +41,34 @@ function ValuesIcon() {
   );
 }
 
-function PotgooiIcon() {
+function PostersIcon() {
   return (
     <svg {...ICON_PROPS}>
-      <path
-        d="M6 8.5c0-1.4 1.1-2.5 2.5-2.5h7c1.4 0 2.5 1.1 2.5 2.5v5.5c0 2.5-2 4.5-4.5 4.5H10.5c-2.5 0-4.5-2-4.5-4.5V8.5Z"
-        {...STROKE}
-      />
-      <path d="M9 18.5h6" {...STROKE} />
-      <path d="M10.5 21h3" {...STROKE} />
-      <path d="M8.5 11h7M8.5 14h4.5" {...STROKE} />
+      <rect x="4.5" y="5" width="15" height="14" rx="2" {...STROKE} />
+      <path d="M8 9.5h8M8 12.5h6M8 15.5h4" {...STROKE} />
+      <path d="M16.5 4.5 19 7v10.5" {...STROKE} />
     </svg>
   );
 }
 
-export type SiteMenuIconId = "how-it-works" | "examples" | "values" | "potgooi";
+function BubblesIcon() {
+  return (
+    <svg {...ICON_PROPS}>
+      <circle cx="12" cy="12" r="7.5" {...STROKE} />
+      <circle cx="9" cy="11" r="1.2" fill="#000" stroke="none" />
+      <circle cx="14.5" cy="10" r="1" fill="#000" stroke="none" />
+      <circle cx="13" cy="14.5" r="0.9" fill="#000" stroke="none" />
+    </svg>
+  );
+}
+
+export type SiteMenuIconId = "home" | "values" | "posters" | "bubbles";
 
 const MENU_ICONS: Record<SiteMenuIconId, () => ReactElement> = {
-  "how-it-works": HowItWorksIcon,
-  examples: ExamplesIcon,
+  home: HomeIcon,
   values: ValuesIcon,
-  potgooi: PotgooiIcon,
+  posters: PostersIcon,
+  bubbles: BubblesIcon,
 };
 
 export function SiteMenuIcon({ id }: { id: SiteMenuIconId }) {

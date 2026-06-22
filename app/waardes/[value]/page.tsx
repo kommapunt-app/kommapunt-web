@@ -1,37 +1,32 @@
-import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
 import { PageContainer } from "@/components/PageContainer";
 import { ValueGuideDetailView } from "@/components/ValueGuideDetailView";
+import { getValuePageMetadata } from "@/lib/value-page";
 import { getAllValueGuideIds, getValueGuideById } from "@/lib/values-guide";
 
 type WaardePageProps = {
-  params: Promise<{ id: string }>;
+  params: Promise<{ value: string }>;
 };
 
 export async function generateStaticParams() {
-  return getAllValueGuideIds().map((id) => ({ id }));
+  return getAllValueGuideIds().map((value) => ({ value }));
 }
 
-export async function generateMetadata({
-  params,
-}: WaardePageProps): Promise<Metadata> {
-  const { id } = await params;
-  const value = getValueGuideById(id);
+export async function generateMetadata({ params }: WaardePageProps) {
+  const { value: valueId } = await params;
+  const value = getValueGuideById(valueId);
 
   if (!value) {
-    return { title: "Waarde nie gevind — Komma" };
+    return { title: "Waarde nie gevind | KommaPunt" };
   }
 
-  return {
-    title: `${value.nameAf} — Bubbles Bib — Komma`,
-    description: value.definitionAf,
-  };
+  return getValuePageMetadata(value);
 }
 
 export default async function WaardeDetailPage({ params }: WaardePageProps) {
-  const { id } = await params;
-  const value = getValueGuideById(id);
+  const { value: valueId } = await params;
+  const value = getValueGuideById(valueId);
 
   if (!value) {
     notFound();

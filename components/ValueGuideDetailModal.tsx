@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect } from "react";
 import { ValueTensionDiagram } from "@/components/ValueTensionDiagram";
+import { hasValuePoster } from "@/data/value-posters";
+import { getValuePageUrl } from "@/lib/value-page";
 import {
   VALUE_GUIDE_DETAIL_LABELS,
   getCategoryById,
@@ -135,12 +137,22 @@ export function ValueGuideDetailModal({
             </p>
           </section>
 
-          <Link
-            href={`/waardes/${value.id}`}
-            className="inline-flex rounded-full border-4 border-komma-black bg-white px-4 py-2 text-sm font-extrabold shadow-[3px_3px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_#FF1493]"
-          >
-            Lees volledige bladsy →
-          </Link>
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            {hasValuePoster(value.id) ? (
+              <Link
+                href={`/plakkate?poster=${value.id}`}
+                className="inline-flex w-full items-center justify-center rounded-full border-4 border-komma-black bg-komma-yellow px-6 py-3.5 text-base font-extrabold shadow-[4px_4px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:bg-komma-pink hover:text-white hover:shadow-[5px_5px_0_0_#000] sm:w-auto sm:px-8"
+              >
+                🖼️ Bekyk Waardeplakkaat
+              </Link>
+            ) : null}
+            <Link
+              href={getValuePageUrl(value.id)}
+              className="inline-flex w-full items-center justify-center rounded-full border-4 border-komma-black bg-white px-6 py-3 text-sm font-extrabold shadow-[3px_3px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_#FF1493] sm:w-auto sm:px-4 sm:py-2"
+            >
+              Open volledige waarde-blad
+            </Link>
+          </div>
         </div>
       </div>
     </div>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { getBubbleFontSize } from "@/lib/bubbles";
+import { getValuePageUrl } from "@/lib/value-page";
 import { VALUE_GUIDE, VALUE_GUIDE_DETAIL_LABELS, type ValueConflict } from "@/lib/values-guide";
 
 interface ValueTensionDiagramProps {
@@ -14,7 +15,7 @@ function resolveValueHref(name: string): string | undefined {
   const match = VALUE_GUIDE.find(
     (entry) => entry.nameAf.toLowerCase() === name.toLowerCase(),
   );
-  return match ? `/waardes/${match.id}` : undefined;
+  return match ? getValuePageUrl(match.id) : undefined;
 }
 
 function TensionBubble({

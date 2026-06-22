@@ -188,6 +188,7 @@ function MobileMapGroupButton({
 interface ValueMapCanvasProps {
   values: ValueGuideEntry[];
   highlightedIds?: Set<string>;
+  focusedValueId?: string | null;
   onValueSelect: (valueId: string) => void;
   emptyMessage: string;
   positionById: Map<string, { left: number; top: number }>;
@@ -203,6 +204,7 @@ interface ValueMapCanvasProps {
 function ValueMapCanvas({
   values,
   highlightedIds,
+  focusedValueId = null,
   onValueSelect,
   emptyMessage,
   positionById,
@@ -299,11 +301,13 @@ function ValueMapCanvas({
             }
 
             const isHighlighted = highlightedIds?.has(value.id) ?? false;
+            const isFocused = focusedValueId === value.id;
 
             return (
               <div
                 key={value.id}
-                className="absolute z-30 -translate-x-1/2 -translate-y-1/2"
+                id={`value-bubble-${value.id}`}
+                className="absolute z-30 -translate-x-1/2 -translate-y-1/2 scroll-mt-32"
                 style={{
                   left: `${position.left}%`,
                   top: `${position.top}%`,
@@ -313,6 +317,7 @@ function ValueMapCanvas({
                   label={value.nameAf}
                   size="map-value"
                   highlighted={isHighlighted}
+                  active={isFocused}
                   onClick={() => onValueSelect(value.id)}
                   animationDelayMs={index * 18}
                 />
@@ -328,6 +333,7 @@ function ValueMapCanvas({
 interface BubblesValueAxisMapProps {
   values: ValueGuideEntry[];
   highlightedIds?: Set<string>;
+  focusedValueId?: string | null;
   onValueSelect: (valueId: string) => void;
   emptyMessage?: string;
   selectedCategoryId?: BubbleCategoryId | null;
@@ -338,6 +344,7 @@ interface BubblesValueAxisMapProps {
 export function BubblesValueAxisMap({
   values,
   highlightedIds,
+  focusedValueId = null,
   onValueSelect,
   emptyMessage = "Kies \u2019n groep hier bo om waardes op die kaart te sien.",
   selectedCategoryId = null,
@@ -364,6 +371,7 @@ export function BubblesValueAxisMap({
   const canvasProps: ValueMapCanvasProps = {
     values,
     highlightedIds,
+    focusedValueId,
     onValueSelect,
     emptyMessage,
     positionById,

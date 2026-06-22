@@ -8,6 +8,7 @@ import type { ValueGuideEntry } from "@/lib/values-guide";
 interface BubblesValueQuadrantListProps {
   values: ValueGuideEntry[];
   highlightedIds?: Set<string>;
+  focusedValueId?: string | null;
   onValueSelect: (valueId: string) => void;
   emptyMessage?: string;
 }
@@ -15,6 +16,7 @@ interface BubblesValueQuadrantListProps {
 export function BubblesValueQuadrantList({
   values,
   highlightedIds,
+  focusedValueId = null,
   onValueSelect,
   emptyMessage = "Kies \u2019n groep hier bo om waardes op die kaart te sien.",
 }: BubblesValueQuadrantListProps) {
@@ -60,17 +62,20 @@ export function BubblesValueQuadrantList({
             <ul className="space-y-2">
               {quadrantValues.map((value) => {
                 const isHighlighted = highlightedIds?.has(value.id) ?? false;
+                const isFocused = focusedValueId === value.id;
 
                 return (
-                  <li key={value.id}>
+                  <li key={value.id} id={`value-bubble-${value.id}`}>
                     <button
                       type="button"
                       onClick={() => onValueSelect(value.id)}
                       className={[
                         "w-full rounded-xl border-4 border-komma-black px-4 py-3.5 text-left shadow-[3px_3px_0_0_#000] transition-all active:translate-y-0.5 active:shadow-[2px_2px_0_0_#000]",
-                        isHighlighted
-                          ? "bg-komma-yellow ring-4 ring-komma-pink ring-offset-2 ring-offset-white"
-                          : "bg-[#F5F5F0] hover:-translate-y-0.5 hover:bg-white hover:shadow-[4px_4px_0_0_#FF1493]",
+                        isFocused
+                          ? "scale-[1.01] border-komma-pink bg-komma-yellow shadow-[5px_5px_0_0_#FF1493]"
+                          : isHighlighted
+                            ? "bg-komma-yellow ring-4 ring-komma-pink ring-offset-2 ring-offset-white"
+                            : "bg-[#F5F5F0] hover:-translate-y-0.5 hover:bg-white hover:shadow-[4px_4px_0_0_#FF1493]",
                       ].join(" ")}
                     >
                       <span className="block text-base font-extrabold text-komma-black">

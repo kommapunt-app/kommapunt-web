@@ -4,7 +4,7 @@ import { useEffect, useId, useState } from "react";
 import { SiteMenuIcon } from "@/components/SiteMenuIcons";
 import { SITE_MENU_ITEMS } from "@/lib/navigation";
 
-export function SiteMenu() {
+export function SiteMenu({ className = "" }: { className?: string }) {
   const [open, setOpen] = useState(false);
   const menuId = useId();
 
@@ -37,7 +37,7 @@ export function SiteMenu() {
     <>
       <button
         type="button"
-        className="flex size-12 shrink-0 items-center justify-center rounded-full border-4 border-komma-black bg-white transition-transform hover:scale-105 active:scale-95"
+        className={`flex size-12 shrink-0 items-center justify-center rounded-full border-4 border-komma-black bg-white transition-transform hover:scale-105 active:scale-95 ${className}`}
         aria-label={open ? "Sluit menu" : "Open menu"}
         aria-expanded={open}
         aria-controls={menuId}

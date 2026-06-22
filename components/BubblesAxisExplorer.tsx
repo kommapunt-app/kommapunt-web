@@ -1,12 +1,14 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { BubbleCategoryIcon } from "@/components/BubbleCategoryIcon";
 import { BubblesValueAxisMap } from "@/components/BubblesValueAxisMap";
 import { BubblesValueQuadrantList } from "@/components/BubblesValueQuadrantList";
 import { BUBBLE_CATEGORIES, type BubbleCategoryId } from "@/lib/bubbles";
 import {
   VALUE_GUIDE,
+  getValueGuideById,
+  getValueGuideBubbleCategory,
   groupValuesGuideByBubbleCategory,
   searchValueGuide,
 } from "@/lib/values-guide";
@@ -15,6 +17,7 @@ interface BubblesAxisExplorerProps {
   searchQuery: string;
   onSearchQueryChange: (query: string) => void;
   onValueSelect: (valueId: string) => void;
+  focusValueId?: string | null;
 }
 
 const GROUPED_VALUES = groupValuesGuideByBubbleCategory(VALUE_GUIDE);
@@ -23,9 +26,40 @@ export function BubblesAxisExplorer({
   searchQuery,
   onSearchQueryChange,
   onValueSelect,
+  focusValueId = null,
 }: BubblesAxisExplorerProps) {
   const [selectedCategoryId, setSelectedCategoryId] =
     useState<BubbleCategoryId | null>(null);
+
+  useEffect(() => {
+    if (!focusValueId) {
+      return;
+    }
+
+    const value = getValueGuideById(focusValueId);
+
+    if (!value) {
+      return;
+    }
+
+    const categoryId = getValueGuideBubbleCategory(value);
+
+    if (categoryId) {
+      setSelectedCategoryId(categoryId);
+    }
+
+    const scrollTimer = window.setTimeout(() => {
+      document.getElementById(`value-bubble-${focusValueId}`)?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "center",
+      });
+    }, 350);
+
+    return () => {
+      window.clearTimeout(scrollTimer);
+    };
+  }, [focusValueId]);
 
   const normalizedQuery = searchQuery.trim();
   const isSearchActive = normalizedQuery.length > 0;
@@ -172,6 +206,7 @@ export function BubblesAxisExplorer({
           <BubblesValueAxisMap
             values={axisValues}
             highlightedIds={highlightedIds}
+            focusedValueId={focusValueId}
             onValueSelect={onValueSelect}
             emptyMessage={emptyMessage}
             selectedCategoryId={selectedCategoryId}
@@ -182,6 +217,7 @@ export function BubblesAxisExplorer({
             <BubblesValueQuadrantList
               values={axisValues}
               highlightedIds={highlightedIds}
+              focusedValueId={focusValueId}
               onValueSelect={onValueSelect}
               emptyMessage={mobileEmptyMessage}
             />
