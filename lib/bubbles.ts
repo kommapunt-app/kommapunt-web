@@ -73,6 +73,14 @@ export const BUBBLE_LIBRARY: BubbleValue[] = [
     category: "ek-identiteit",
   },
   {
+    id: "openheid",
+    nameAf: "Wees oopkop",
+    nameEn: "Openness",
+    descriptionAf:
+      "Die bereidheid om nuwe idees, perspektiewe en ervarings te oorweeg sonder om te vinnig te oordeel.",
+    category: "ek-identiteit",
+  },
+  {
     id: "familie",
     nameAf: "Familie",
     nameEn: "Family",

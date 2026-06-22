@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "generate:value-posters": "node scripts/generate-value-poster-map.mjs",
+    "prebuild": "node scripts/generate-value-poster-map.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.2",

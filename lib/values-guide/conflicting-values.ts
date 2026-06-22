@@ -186,6 +186,21 @@ export const CONFLICTING_VALUES: Record<string, ValueConflict[]> = {
     { name: "Dissipline", reason: "Nuuskierigheid spring; dissipline volg plan." },
     { name: "Tradisie", reason: "Nuuskierigheid vra nuwe vrae; tradisie hou aan antwoorde." },
   ],
+  "aanpasbaarheid": [
+    { name: "Stabiliteit", reason: "Aanpasbaarheid buig; stabiliteit hou vas." },
+    { name: "Doelgerigtheid", reason: "Aanpasbaarheid pas aan; doelgerigtheid hou koers." },
+    { name: "Toewyding", reason: "Aanpasbaarheid verander; toewyding bly." },
+  ],
+  "ontdekking": [
+    { name: "Stabiliteit", reason: "Ontdekking soek nuut; stabiliteit hou vas." },
+    { name: "Dissipline", reason: "Ontdekking verken; dissipline voltooi." },
+    { name: "Fokus", reason: "Ontdekking versprei; fokus kies een ding." },
+  ],
+  "openheid": [
+    { name: "Sekerheid", reason: "Oopkopheid oorweeg die nuut; sekerheid sluit vinnig." },
+    { name: "Tradisie", reason: "Oopkopheid ondersoek; tradisie beskerm die beproefde." },
+    { name: "Dissipline", reason: "Oopkopheid bly oop; dissipline kies en voltooi." },
+  ],
   "determination": [
     { name: "Vrede", reason: "Vasberadenheid hou aan; vrede laat los." },
     { name: "Buigsaamheid", reason: "Vasberadenheid hou koers; buigsaamheid pas aan." },

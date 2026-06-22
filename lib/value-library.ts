@@ -133,6 +133,26 @@ export const VALUE_LIBRARY: ValueLibraryEntry[] = [
     ],
   },
   {
+    id: "openheid",
+    nameAf: "Wees oopkop",
+    nameEn: "Openness",
+    category: "ek-identiteit",
+    shortMeaningAf:
+      "Om nuwe idees en perspektiewe te oorweeg sonder vinnige oordeel.",
+    definitionAf:
+      "Die bereidheid om nuwe idees, perspektiewe en ervarings te oorweeg sonder om te vinnig te oordeel.",
+    whenBigAf:
+      "Jy luister, ondersoek en oorweeg voordat jy sluit. Jy bly nuuskierig sonder om jou grense te verloor.",
+    strengthAf: "Jy leer vinnig, verbind oor verskille en bly veerkragtig in onbekende ruimtes.",
+    dangerAf:
+      "Jy kan besluite uitstel of fokus verloor as alles eindelose oorweging word.",
+    questionsAf: [
+      "Waar sluit ek te vinnig af oor iets wat ek nie verstaan nie?",
+      "Watter nuwe perspektief verdien 'n regte gehoor?",
+      "Gebruik ek oopkopheid om te groei – of om verbintenis te vermy?",
+    ],
+  },
+  {
     id: "familie",
     nameAf: "Familie",
     nameEn: "Family",

@@ -415,6 +415,54 @@ const VALUE_GUIDE_ENTRIES: ValueGuideEntryInput[] = [
     reflectionQuestionAf: "Watter vraag moet ek vandag vra om dieper te verstaan?",
   },
   {
+    id: "aanpasbaarheid",
+    nameAf: "Aanpasbaarheid",
+    nameEn: "Adaptability",
+    category: "growth",
+    definitionAf:
+      "Aanpasbaarheid is die vermoë om buigsaam te wees en doeltreffend te reageer op verandering, uitdagings en nuwe omstandighede.",
+    significanceAf:
+      "Die lewe verander voortdurend. Aanpasbaarheid help jou om uitdagings te hanteer en geleenthede te gryp sodat jy kan aanhou groei.",
+    healthyExpressionAf:
+      "Jy bly kalm en oop vir verandering, pas jou benadering aan wanneer nodig, en sien uitdagings as geleenthede.",
+    overdoneRiskAf:
+      "As jy te wispelturig raak, verander jy planne sonder rigting. Dan word oppervlakkigheid en gebrek aan toewyding 'n valkuil.",
+    reflectionQuestionAf:
+      "Waar in my lewe kan ek meer buigsaam wees – sonder om my rigting of waardes te verloor?",
+  },
+  {
+    id: "ontdekking",
+    nameAf: "Ontdekking",
+    nameEn: "Discovery",
+    category: "growth",
+    definitionAf:
+      "Ontdekking is die begeerte om die onbekende te verken, nuwe dinge te sien en diepte te vind waar ander net verbygaan.",
+    significanceAf:
+      "Ontdekking breek roetine, verbreed perspektief en hou jou nuuskierig en lewendig. Dit bring vars insigte en inspireer kreatiewe denke.",
+    healthyExpressionAf:
+      "Jy vra vrae, verken nuwe idees en plekke, en bly oop vir verrassing sonder om jou ankers te verloor.",
+    overdoneRiskAf:
+      "As jy net nuut soek sonder om af te rond, raak jy rusteloos en oorweldig. Dan word ontdekking ontsnapping van fokus.",
+    reflectionQuestionAf:
+      "Wat nuuts is ek bereid om te ontdek wat my kan help om te groei en my wêreld te verruim?",
+  },
+  {
+    id: "openheid",
+    nameAf: "Wees oopkop",
+    nameEn: "Openness",
+    category: "growth",
+    definitionAf:
+      "Die bereidheid om nuwe idees, perspektiewe en ervarings te oorweeg sonder om te vinnig te oordeel.",
+    significanceAf:
+      "Oopkopheid help jou leer, verbind en groei in onbekende ruimtes. Dit hou jou denke vars en veerkragtig.",
+    healthyExpressionAf:
+      "Jy luister, ondersoek en oorweeg voordat jy sluit. Jy bly nuuskierig sonder om jou grense te verloor.",
+    overdoneRiskAf:
+      "As jy alles moet oorweeg, uitstel jy besluite en verloor fokus. Dan word oopheid ontsnapping van verbintenis.",
+    reflectionQuestionAf:
+      "Gebruik ek oopkopheid om te verstaan en te groei – of om van fokus en dieper toewyding te ontsnap?",
+  },
+  {
     id: "determination",
     nameAf: "Vasberadenheid",
     nameEn: "Determination",
