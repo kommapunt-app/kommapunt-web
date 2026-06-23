@@ -20,6 +20,7 @@ interface ExplorerBubbleProps {
   animationDelayMs?: number;
   ariaLabel?: string;
   interactive?: boolean;
+  pulsing?: boolean;
 }
 
 const sizeClasses: Record<ExplorerBubbleSize, string> = {
@@ -45,6 +46,7 @@ export function ExplorerBubble({
   animationDelayMs = 0,
   ariaLabel,
   interactive = true,
+  pulsing = false,
 }: ExplorerBubbleProps) {
   const lines = formatBubbleLabel(label).slice(0, 2);
   const fontSizeClass = size === "value" ? getBubbleFontSize(label) : "";
@@ -61,6 +63,7 @@ export function ExplorerBubble({
     highlighted
       ? "ring-4 ring-komma-pink ring-offset-2 ring-offset-komma-yellow"
       : "",
+    pulsing ? "value-map-focus-pulse" : "",
     dimmed ? "opacity-40 saturate-50" : "",
     className,
   ]

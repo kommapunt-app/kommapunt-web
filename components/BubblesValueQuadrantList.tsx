@@ -1,14 +1,22 @@
 "use client";
 
 import { useMemo } from "react";
+import { ValueMapFocusLabel } from "@/components/ValueMapFocusLabel";
 import { groupValuesByQuadrant } from "@/lib/axis-bubble-layout";
 import { BUBBLES_AXIS_QUADRANTS } from "@/lib/bubbles-bib";
+import { hasValuePoster } from "@/data/value-posters";
 import type { ValueGuideEntry } from "@/lib/values-guide";
+import {
+  getBubbleCategoryById,
+  getValueGuideBubbleCategory,
+} from "@/lib/values-guide";
 
 interface BubblesValueQuadrantListProps {
   values: ValueGuideEntry[];
   highlightedIds?: Set<string>;
   focusedValueId?: string | null;
+  pulsingValueId?: string | null;
+  showFocusLabel?: boolean;
   onValueSelect: (valueId: string) => void;
   emptyMessage?: string;
 }
@@ -17,6 +25,8 @@ export function BubblesValueQuadrantList({
   values,
   highlightedIds,
   focusedValueId = null,
+  pulsingValueId = null,
+  showFocusLabel = false,
   onValueSelect,
   emptyMessage = "Kies \u2019n groep hier bo om waardes op die kaart te sien.",
 }: BubblesValueQuadrantListProps) {
@@ -63,28 +73,50 @@ export function BubblesValueQuadrantList({
               {quadrantValues.map((value) => {
                 const isHighlighted = highlightedIds?.has(value.id) ?? false;
                 const isFocused = focusedValueId === value.id;
+                const isPulsing = pulsingValueId === value.id;
+                const bubbleCategory = getBubbleCategoryById(
+                  getValueGuideBubbleCategory(value),
+                );
+                const hasPoster = hasValuePoster(value.id);
 
                 return (
                   <li key={value.id} id={`value-bubble-${value.id}`}>
-                    <button
-                      type="button"
-                      onClick={() => onValueSelect(value.id)}
-                      className={[
-                        "w-full rounded-xl border-4 border-komma-black px-4 py-3.5 text-left shadow-[3px_3px_0_0_#000] transition-all active:translate-y-0.5 active:shadow-[2px_2px_0_0_#000]",
-                        isFocused
-                          ? "scale-[1.01] border-komma-pink bg-komma-yellow shadow-[5px_5px_0_0_#FF1493]"
-                          : isHighlighted
-                            ? "bg-komma-yellow ring-4 ring-komma-pink ring-offset-2 ring-offset-white"
-                            : "bg-[#F5F5F0] hover:-translate-y-0.5 hover:bg-white hover:shadow-[4px_4px_0_0_#FF1493]",
-                      ].join(" ")}
-                    >
-                      <span className="block text-base font-extrabold text-komma-black">
-                        {value.nameAf}
-                      </span>
-                      <span className="mt-0.5 block text-sm font-semibold text-komma-black/55">
-                        {value.nameEn}
-                      </span>
-                    </button>
+                    <div className="relative">
+                      {showFocusLabel && isPulsing ? (
+                        <div className="mb-2 flex justify-center">
+                          <ValueMapFocusLabel nameAf={value.nameAf} />
+                        </div>
+                      ) : null}
+
+                      <button
+                        type="button"
+                        onClick={() => onValueSelect(value.id)}
+                        className={[
+                          "w-full rounded-xl border-4 border-komma-black px-4 py-3.5 text-left shadow-[3px_3px_0_0_#000] transition-all active:translate-y-0.5 active:shadow-[2px_2px_0_0_#000]",
+                          isPulsing ? "value-map-focus-pulse" : "",
+                          isFocused
+                            ? "scale-[1.01] border-komma-pink bg-komma-yellow shadow-[5px_5px_0_0_#FF1493]"
+                            : isHighlighted
+                              ? "bg-komma-yellow ring-4 ring-komma-pink ring-offset-2 ring-offset-white"
+                              : "bg-[#F5F5F0] hover:-translate-y-0.5 hover:bg-white hover:shadow-[4px_4px_0_0_#FF1493]",
+                        ].join(" ")}
+                      >
+                        <span className="block text-base font-extrabold text-komma-black">
+                          {value.nameAf}
+                        </span>
+                        <span className="mt-0.5 block text-sm font-semibold text-komma-black/55">
+                          {value.nameEn}
+                        </span>
+                        <span className="mt-1 block text-xs font-bold text-komma-black/45">
+                          {bubbleCategory?.label}
+                        </span>
+                        <span className="mt-2 block text-[10px] font-extrabold uppercase tracking-wide text-komma-pink">
+                          {hasPoster
+                            ? "Tik om plakkaat te sien"
+                            : "Tik om meer te sien"}
+                        </span>
+                      </button>
+                    </div>
                   </li>
                 );
               })}

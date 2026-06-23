@@ -4,6 +4,8 @@ import { useMemo } from "react";
 import Image from "next/image";
 import { BubbleCategoryIcon } from "@/components/BubbleCategoryIcon";
 import { ExplorerBubble } from "@/components/ExplorerBubble";
+import { ValueMapBubbleTooltip } from "@/components/ValueMapBubbleTooltip";
+import { ValueMapFocusLabel } from "@/components/ValueMapFocusLabel";
 import {
   AXIS_ICON_PATHS,
   BUBBLES_AXIS_QUADRANTS,
@@ -15,6 +17,10 @@ import {
   type BubbleCategoryId,
 } from "@/lib/bubbles";
 import type { ValueGuideEntry } from "@/lib/values-guide";
+import {
+  getBubbleCategoryById,
+  getValueGuideBubbleCategory,
+} from "@/lib/values-guide";
 
 const AXIS_ENDPOINTS = {
   stabiliteit: {
@@ -189,6 +195,8 @@ interface ValueMapCanvasProps {
   values: ValueGuideEntry[];
   highlightedIds?: Set<string>;
   focusedValueId?: string | null;
+  pulsingValueId?: string | null;
+  showFocusLabel?: boolean;
   onValueSelect: (valueId: string) => void;
   emptyMessage: string;
   positionById: Map<string, { left: number; top: number }>;
@@ -205,6 +213,8 @@ function ValueMapCanvas({
   values,
   highlightedIds,
   focusedValueId = null,
+  pulsingValueId = null,
+  showFocusLabel = false,
   onValueSelect,
   emptyMessage,
   positionById,
@@ -302,22 +312,38 @@ function ValueMapCanvas({
 
             const isHighlighted = highlightedIds?.has(value.id) ?? false;
             const isFocused = focusedValueId === value.id;
+            const isPulsing = pulsingValueId === value.id;
+            const bubbleCategory = getBubbleCategoryById(
+              getValueGuideBubbleCategory(value),
+            );
 
             return (
               <div
                 key={value.id}
                 id={`value-bubble-${value.id}`}
-                className="absolute z-30 -translate-x-1/2 -translate-y-1/2 scroll-mt-32"
+                className="group absolute z-30 -translate-x-1/2 -translate-y-1/2 scroll-mt-32"
                 style={{
                   left: `${position.left}%`,
                   top: `${position.top}%`,
                 }}
               >
+                {showFocusLabel && isPulsing ? (
+                  <ValueMapFocusLabel nameAf={value.nameAf} />
+                ) : null}
+
+                <ValueMapBubbleTooltip
+                  valueId={value.id}
+                  nameAf={value.nameAf}
+                  nameEn={value.nameEn}
+                  groupLabel={bubbleCategory?.label ?? ""}
+                />
+
                 <ExplorerBubble
                   label={value.nameAf}
                   size="map-value"
                   highlighted={isHighlighted}
                   active={isFocused}
+                  pulsing={isPulsing}
                   onClick={() => onValueSelect(value.id)}
                   animationDelayMs={index * 18}
                 />
@@ -334,6 +360,8 @@ interface BubblesValueAxisMapProps {
   values: ValueGuideEntry[];
   highlightedIds?: Set<string>;
   focusedValueId?: string | null;
+  pulsingValueId?: string | null;
+  showFocusLabel?: boolean;
   onValueSelect: (valueId: string) => void;
   emptyMessage?: string;
   selectedCategoryId?: BubbleCategoryId | null;
@@ -345,6 +373,8 @@ export function BubblesValueAxisMap({
   values,
   highlightedIds,
   focusedValueId = null,
+  pulsingValueId = null,
+  showFocusLabel = false,
   onValueSelect,
   emptyMessage = "Kies \u2019n groep hier bo om waardes op die kaart te sien.",
   selectedCategoryId = null,
@@ -372,6 +402,8 @@ export function BubblesValueAxisMap({
     values,
     highlightedIds,
     focusedValueId,
+    pulsingValueId,
+    showFocusLabel,
     onValueSelect,
     emptyMessage,
     positionById,

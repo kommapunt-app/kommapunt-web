@@ -18,6 +18,8 @@ interface BubblesAxisExplorerProps {
   onSearchQueryChange: (query: string) => void;
   onValueSelect: (valueId: string) => void;
   focusValueId?: string | null;
+  pulsingValueId?: string | null;
+  showFocusLabel?: boolean;
 }
 
 const GROUPED_VALUES = groupValuesGuideByBubbleCategory(VALUE_GUIDE);
@@ -27,6 +29,8 @@ export function BubblesAxisExplorer({
   onSearchQueryChange,
   onValueSelect,
   focusValueId = null,
+  pulsingValueId = null,
+  showFocusLabel = false,
 }: BubblesAxisExplorerProps) {
   const [selectedCategoryId, setSelectedCategoryId] =
     useState<BubbleCategoryId | null>(null);
@@ -54,7 +58,7 @@ export function BubblesAxisExplorer({
         block: "center",
         inline: "center",
       });
-    }, 350);
+    }, 450);
 
     return () => {
       window.clearTimeout(scrollTimer);
@@ -207,6 +211,8 @@ export function BubblesAxisExplorer({
             values={axisValues}
             highlightedIds={highlightedIds}
             focusedValueId={focusValueId}
+            pulsingValueId={pulsingValueId}
+            showFocusLabel={showFocusLabel}
             onValueSelect={onValueSelect}
             emptyMessage={emptyMessage}
             selectedCategoryId={selectedCategoryId}
@@ -218,6 +224,8 @@ export function BubblesAxisExplorer({
               values={axisValues}
               highlightedIds={highlightedIds}
               focusedValueId={focusValueId}
+              pulsingValueId={pulsingValueId}
+              showFocusLabel={showFocusLabel}
               onValueSelect={onValueSelect}
               emptyMessage={mobileEmptyMessage}
             />

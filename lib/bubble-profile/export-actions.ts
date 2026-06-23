@@ -1,12 +1,15 @@
 import type { RefObject } from "react";
 import {
+  copyProfileUrl,
+  PROFILE_SHARE_UNSUPPORTED_MESSAGE,
+  shareProfileUrl,
+} from "@/lib/profile-sharing";
+import {
   BUBBLE_EXPORT_FILENAME,
   downloadBlob,
   exportBubbleVisualAsPng,
   IPHONE_PHOTOS_FALLBACK_HELPER,
   saveProfileImageToPhotos,
-  shareBubbleVisual,
-  SHARE_UNSUPPORTED_MESSAGE,
 } from "@/lib/share-bubbles";
 
 export type SaveToPhotosResult = {
@@ -51,23 +54,21 @@ export async function saveBubbleVisualToPhotos(
   };
 }
 
-export async function shareBubbleVisualFromRef(
-  exportRef: RefObject<HTMLElement | null>,
-  photoUrl?: string | null,
-): Promise<"shared" | "unsupported"> {
-  const element = exportRef.current;
+export async function shareBubbleProfileUrl(
+  profileId: string,
+  personName: string,
+): Promise<"shared" | "unsupported" | "copied"> {
+  const result = await shareProfileUrl(profileId, personName);
 
-  if (!element) {
-    throw new Error("Kon nie jou Bubble-profiel vind nie.");
+  if (result === "shared" || result === "cancelled") {
+    return "shared";
   }
 
-  const blob = await exportBubbleVisualAsPng(element, photoUrl);
-  const result = await shareBubbleVisual(blob);
+  const copied = await copyProfileUrl(profileId);
 
-  if (result === "unsupported") {
-    downloadBlob(blob, BUBBLE_EXPORT_FILENAME);
-    throw new Error(SHARE_UNSUPPORTED_MESSAGE);
+  if (copied) {
+    return "copied";
   }
 
-  return result;
+  throw new Error(PROFILE_SHARE_UNSUPPORTED_MESSAGE);
 }

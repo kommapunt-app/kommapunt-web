@@ -47,6 +47,28 @@ html {
   animation: bubble-pop-in 0.28s ease-out both;
 }
 
+@keyframes value-map-focus-pulse {
+  0%,
+  100% {
+    transform: scale(1.05);
+    box-shadow:
+      0 0 0 4px #ff1493,
+      5px 5px 0 0 #ff1493;
+  }
+  50% {
+    transform: scale(1.12);
+    box-shadow:
+      0 0 0 10px rgba(255, 20, 147, 0.2),
+      6px 6px 0 0 #ff1493;
+  }
+}
+
+.value-map-focus-pulse {
+  animation: value-map-focus-pulse 1s ease-in-out 3 forwards;
+  border-color: #ff1493 !important;
+  background-color: var(--color-komma-yellow) !important;
+}
+
 .explorer-level-transition {
   animation: explorer-level-in 0.34s ease-out both;
 }

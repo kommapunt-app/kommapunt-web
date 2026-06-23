@@ -82,6 +82,14 @@ export function hasValuePoster(id: string): boolean {
   return VALUE_POSTER_IDS.includes(id as (typeof VALUE_POSTER_IDS)[number]);
 }
 
+export function getValuePosterById(id: string): ValuePosterEntry | null {
+  if (!hasValuePoster(id)) {
+    return null;
+  }
+
+  return VALUE_POSTERS.find((poster) => poster.id === id) ?? null;
+}
+
 function normalizeSearchText(value: string): string {
   return value
     .trim()

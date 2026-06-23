@@ -109,7 +109,7 @@ export function PosterViewerModal({
               }
               className="inline-flex items-center justify-center rounded-full border-4 border-komma-black bg-white px-5 py-2.5 text-sm font-extrabold shadow-[3px_3px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:bg-komma-yellow hover:shadow-[4px_4px_0_0_#FF1493] sm:text-base"
             >
-              📍 Sien op die Waardekaart
+              📍 Sien waar die waarde inpas
             </Link>
           </div>
 

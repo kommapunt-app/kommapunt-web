@@ -2,9 +2,18 @@
 
 import { Button } from "@/components/Button";
 import { KOMMA_COFFEE_URL } from "@/lib/constants/coffee";
+import {
+  copyProfileUrl,
+  getResultsEmailShareUrl,
+  getResultsProfileShareText,
+  getWhatsAppShareUrl,
+} from "@/lib/profile-sharing";
 
 interface ProfileActionButtonsProps {
   profileSaved: boolean;
+  profileId?: string | null;
+  profileUrl?: string | null;
+  personName?: string | null;
   isBusy: boolean;
   isMobile: boolean;
   onDownload: () => void;
@@ -20,6 +29,9 @@ const unlockedButtonClass = "w-full px-6 py-4 text-base sm:w-auto sm:text-lg";
 
 export function ProfileActionButtons({
   profileSaved,
+  profileId = null,
+  profileUrl = null,
+  personName = null,
   isBusy,
   isMobile,
   onDownload,
@@ -28,7 +40,18 @@ export function ProfileActionButtons({
   saveHelperMessage = null,
 }: ProfileActionButtonsProps) {
   const downloadLabel = isMobile ? "Stoor na Fotos" : "Laai af";
-  const busyLabel = isMobile ? "Besig…" : "Besig…";
+  const busyLabel = "Besig…";
+  const canShareProfile = profileSaved && Boolean(profileId);
+
+  async function handleCopyLink() {
+    if (!profileId) {
+      return;
+    }
+
+    await copyProfileUrl(profileId);
+  }
+
+  const shareText = profileId ? getResultsProfileShareText(profileId) : "";
 
   return (
     <div className="flex w-full max-w-3xl flex-col items-center gap-3">
@@ -40,8 +63,19 @@ export function ProfileActionButtons({
         </p>
       ) : (
         <p className="text-center text-sm font-extrabold text-komma-black sm:text-base">
-          Jou profiel is gestoor. Jy kan nou{" "}
-          {isMobile ? "na Fotos stoor" : "aflaai"}, deel, of ondersteun.
+          {profileUrl ? (
+            <>
+              Jou publieke profiel:{" "}
+              <a
+                href={profileUrl}
+                className="underline decoration-komma-pink decoration-2 underline-offset-2"
+              >
+                {profileUrl.replace("https://", "")}
+              </a>
+            </>
+          ) : (
+            "Jou profiel is gestoor. Jy kan nou aflaai, deel, of ondersteun."
+          )}
         </p>
       )}
 
@@ -57,11 +91,41 @@ export function ProfileActionButtons({
         <Button
           variant="secondary"
           onClick={onShare}
-          disabled={!profileSaved || isBusy}
-          className={profileSaved ? unlockedButtonClass : lockedButtonClass}
+          disabled={!canShareProfile || isBusy}
+          className={canShareProfile ? unlockedButtonClass : lockedButtonClass}
         >
           Deel
         </Button>
+
+        {canShareProfile ? (
+          <>
+            <Button
+              variant="secondary"
+              onClick={handleCopyLink}
+              disabled={isBusy}
+              className={unlockedButtonClass}
+            >
+              Kopieer skakel
+            </Button>
+
+            <Button
+              href={getWhatsAppShareUrl(shareText)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={unlockedButtonClass}
+            >
+              WhatsApp
+            </Button>
+
+            <Button
+              href={getResultsEmailShareUrl(personName ?? "My", profileId!)}
+              variant="secondary"
+              className={unlockedButtonClass}
+            >
+              E-pos
+            </Button>
+          </>
+        ) : null}
 
         {profileSaved ? (
           <Button

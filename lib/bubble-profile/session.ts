@@ -1,4 +1,7 @@
-import type { BubbleProfileContact } from "@/lib/bubble-profile/types";
+import type {
+  BubbleProfileContact,
+  StoredBubbleProfile,
+} from "@/lib/bubble-profile/types";
 import { STORAGE_KEY_BUBBLE_PROFILE } from "@/lib/bubble-profile/types";
 import {
   isValidAgeGroup,
@@ -6,19 +9,9 @@ import {
 } from "@/lib/bubble-profile/demographics";
 import { isValidEmail } from "@/lib/share-leads";
 
-export function loadBubbleProfileFromSession(): BubbleProfileContact | null {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
+function parseStoredProfile(raw: string): StoredBubbleProfile | null {
   try {
-    const raw = sessionStorage.getItem(STORAGE_KEY_BUBBLE_PROFILE);
-
-    if (!raw) {
-      return null;
-    }
-
-    const parsed = JSON.parse(raw) as Partial<BubbleProfileContact>;
+    const parsed = JSON.parse(raw) as Partial<StoredBubbleProfile>;
 
     if (
       !parsed.name?.trim() ||
@@ -32,18 +25,38 @@ export function loadBubbleProfileFromSession(): BubbleProfileContact | null {
       return null;
     }
 
-    return {
+    const profile: StoredBubbleProfile = {
       name: parsed.name.trim(),
       email: parsed.email.trim(),
       ageGroup: parsed.ageGroup,
       province: parsed.province,
     };
+
+    if (typeof parsed.profileId === "string" && parsed.profileId.trim()) {
+      profile.profileId = parsed.profileId.trim();
+    }
+
+    return profile;
   } catch {
     return null;
   }
 }
 
-export function saveBubbleProfileToSession(contact: BubbleProfileContact) {
+export function loadBubbleProfileFromSession(): StoredBubbleProfile | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const raw = sessionStorage.getItem(STORAGE_KEY_BUBBLE_PROFILE);
+
+  if (!raw) {
+    return null;
+  }
+
+  return parseStoredProfile(raw);
+}
+
+export function saveBubbleProfileToSession(contact: StoredBubbleProfile) {
   sessionStorage.setItem(STORAGE_KEY_BUBBLE_PROFILE, JSON.stringify(contact));
 }
 

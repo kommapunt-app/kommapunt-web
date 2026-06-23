@@ -16,6 +16,10 @@ export type BubbleProfileContact = {
   province: ProvinceOption;
 };
 
+export type StoredBubbleProfile = BubbleProfileContact & {
+  profileId?: string;
+};
+
 export type BubbleProfileRecord = BubbleProfileContact & {
   rankedValues: RankedValueRecord[];
   top5Values: string[];

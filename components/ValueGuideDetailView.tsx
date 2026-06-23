@@ -103,7 +103,7 @@ export function ValueGuideDetailView({ value }: ValueGuideDetailViewProps) {
             href={getValueMapUrl(value.id)}
             className="inline-flex items-center justify-center rounded-full border-4 border-komma-black bg-white px-6 py-3 text-base font-extrabold shadow-[4px_4px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:bg-komma-yellow hover:shadow-[5px_5px_0_0_#FF1493]"
           >
-            📍 Sien op die Waardekaart
+            📍 Sien waar die waarde inpas
           </Link>
 
           {hasValuePoster(value.id) ? (

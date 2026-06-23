@@ -22,7 +22,11 @@ interface BubbleProfileGateModalProps {
   onClose: () => void;
   onSaved: (
     contact: BubbleProfileContact,
-    result?: { serverSynced: boolean; serverMessage?: string },
+    result?: {
+      serverSynced: boolean;
+      serverMessage?: string;
+      profileId?: string;
+    },
   ) => void;
   rankedBubbles: RankedBubbleResult[];
   initialContact?: BubbleProfileContact | null;
@@ -102,6 +106,7 @@ export function BubbleProfileGateModal({
       onSaved(result.contact, {
         serverSynced: result.serverSynced,
         serverMessage: result.serverMessage,
+        profileId: result.profileId,
       });
     } catch (error) {
       console.error("[BubbleProfileGateModal] save failed", error);

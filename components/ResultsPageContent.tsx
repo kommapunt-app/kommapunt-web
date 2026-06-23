@@ -15,11 +15,12 @@ import { ReflectionSection } from "@/components/ReflectionSection";
 import {
   downloadBubbleVisual,
   saveBubbleVisualToPhotos,
-  shareBubbleVisualFromRef,
+  shareBubbleProfileUrl,
 } from "@/lib/bubble-profile/export-actions";
 import { loadBubbleProfileFromSession } from "@/lib/bubble-profile/session";
 import { STORAGE_KEY_BUBBLE_PROFILE } from "@/lib/bubble-profile/types";
 import type { BubbleProfileContact } from "@/lib/bubble-profile/types";
+import { getPublicProfileUrl } from "@/lib/site-url";
 import { clearKommaSession, loadResultsFromStorage, type RankedBubbleResult } from "@/lib/results";
 import { TOTAL_FLOW_STEPS } from "@/lib/constants";
 import { useMobileViewport } from "@/lib/use-mobile-viewport";
@@ -32,6 +33,7 @@ export function ResultsPageContent() {
   const [profileContact, setProfileContact] = useState<BubbleProfileContact | null>(
     null,
   );
+  const [profileId, setProfileId] = useState<string | null>(null);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [isActionBusy, setIsActionBusy] = useState(false);
@@ -51,6 +53,7 @@ export function ResultsPageContent() {
     }
     setResults(loadResultsFromStorage());
     setProfileContact(savedProfile);
+    setProfileId(savedProfile?.profileId ?? null);
     setProfileModalOpen(savedProfile === null);
     setHydrated(true);
   }, []);
@@ -85,9 +88,14 @@ export function ResultsPageContent() {
 
   function handleProfileSaved(
     contact: BubbleProfileContact,
-    result?: { serverSynced: boolean; serverMessage?: string },
+    result?: {
+      serverSynced: boolean;
+      serverMessage?: string;
+      profileId?: string;
+    },
   ) {
     setProfileContact(contact);
+    setProfileId(result?.profileId ?? null);
     setProfileModalOpen(false);
     setActionError(null);
     setSyncWarning(
@@ -125,7 +133,10 @@ export function ResultsPageContent() {
   }
 
   async function handleShare() {
-    if (!profileContact) {
+    if (!profileContact || !profileId) {
+      setActionError(
+        "Geen publieke skakel beskikbaar nie. Probeer weer om jou profiel te stoor.",
+      );
       return;
     }
 
@@ -134,7 +145,11 @@ export function ResultsPageContent() {
     setIsActionBusy(true);
 
     try {
-      await shareBubbleVisualFromRef(exportRef, photoUrl);
+      const result = await shareBubbleProfileUrl(profileId, profileContact.name);
+
+      if (result === "copied") {
+        setSaveHelperMessage("Skakel gekopieer na knipbord.");
+      }
     } catch (error) {
       setActionError(
         error instanceof Error
@@ -221,6 +236,9 @@ export function ResultsPageContent() {
           <div className="mb-6 flex justify-center sm:mb-8">
             <ProfileActionButtons
               profileSaved={profileSaved}
+              profileId={profileId}
+              profileUrl={profileId ? getPublicProfileUrl(profileId) : null}
+              personName={profileContact?.name ?? null}
               isBusy={isActionBusy}
               isMobile={isMobile}
               onDownload={handleDownload}
