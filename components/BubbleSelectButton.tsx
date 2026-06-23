@@ -5,6 +5,7 @@ import type { BubbleValue } from "@/lib/bubbles";
 import { getBubbleFontSize } from "@/lib/bubbles";
 import { BubbleInfoPopover } from "./BubbleInfoPopover";
 import { BubbleLabel } from "./BubbleLabel";
+import { BubbleSelectModal } from "./BubbleSelectModal";
 
 interface BubbleSelectButtonProps {
   bubble: BubbleValue;
@@ -134,7 +135,7 @@ export function BubbleSelectButton({
   }, [infoOpen, isMobileViewport, onInfoClose, supportsHover]);
 
   useEffect(() => {
-    if (!infoOpen) {
+    if (!infoOpen || isMobileViewport) {
       return;
     }
 
@@ -146,32 +147,20 @@ export function BubbleSelectButton({
     window.addEventListener("scroll", handleScroll, true);
 
     return () => window.removeEventListener("scroll", handleScroll, true);
-  }, [infoOpen, onInfoClose]);
-
-  useEffect(() => {
-    if (!infoOpen || !isMobileViewport) {
-      return;
-    }
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        onInfoClose();
-        setAwaitingSelection(false);
-      }
-    }
-
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [infoOpen, isMobileViewport, onInfoClose]);
 
   function handleSelectClick() {
-    if (selectionDisabled) {
-      onAtLimitAttempt?.();
-      return;
-    }
-
     if (!supportsHover) {
+      if (isMobileViewport) {
+        onInfoOpen();
+        return;
+      }
+
+      if (selectionDisabled) {
+        onAtLimitAttempt?.();
+        return;
+      }
+
       if (!infoOpen) {
         onInfoOpen();
         setAwaitingSelection(true);
@@ -181,6 +170,11 @@ export function BubbleSelectButton({
       onInfoClose();
       setAwaitingSelection(false);
       onToggle(bubble.id);
+      return;
+    }
+
+    if (selectionDisabled) {
+      onAtLimitAttempt?.();
       return;
     }
 
@@ -204,18 +198,35 @@ export function BubbleSelectButton({
     setAwaitingSelection(false);
   }
 
+  function handleModalSelect() {
+    onInfoClose();
+    setAwaitingSelection(false);
+    onToggle(bubble.id);
+  }
+
   return (
     <div ref={wrapperRef} className="relative flex flex-col items-center">
-      {infoOpen && (
+      {infoOpen && isMobileViewport ? (
+        <BubbleSelectModal
+          open
+          bubble={bubble}
+          selected={selected}
+          selectionDisabled={selectionDisabled}
+          onSelect={handleModalSelect}
+          onCancel={handleInfoClose}
+          onAtLimitAttempt={onAtLimitAttempt}
+        />
+      ) : null}
+
+      {infoOpen && !isMobileViewport ? (
         <BubbleInfoPopover
           bubble={bubble}
           id={tooltipId}
           placement={placement}
-          mobile={isMobileViewport}
           onClose={handleInfoClose}
           anchorRef={wrapperRef}
         />
-      )}
+      ) : null}
 
       {!supportsHover && (
         <button
@@ -243,7 +254,7 @@ export function BubbleSelectButton({
         }}
         aria-pressed={selected}
         aria-disabled={selectionDisabled}
-        aria-describedby={infoOpen ? tooltipId : undefined}
+        aria-describedby={infoOpen && !isMobileViewport ? tooltipId : undefined}
         aria-label={`${selected ? "Verwyder" : "Kies"} ${bubble.nameAf}`}
         className={`relative flex size-[6.25rem] shrink-0 items-center justify-center rounded-full border-4 px-2 font-bold transition-all duration-200 sm:size-[6.75rem] sm:px-2.5 ${
           selectionDisabled
@@ -276,11 +287,6 @@ export function BubbleSelectButton({
         </p>
       )}
 
-      {!supportsHover && infoOpen && awaitingSelection && isMobileViewport && (
-        <p className="mt-2 w-28 text-center text-[10px] font-semibold leading-tight text-komma-black/55">
-          Tik weer om te kies
-        </p>
-      )}
     </div>
   );
 }
