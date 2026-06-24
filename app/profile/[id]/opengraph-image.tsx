@@ -3,11 +3,13 @@ import { rankedRecordsToResults } from "@/lib/bubble-profile/from-records";
 import { fetchPublicBubbleProfile } from "@/lib/bubble-profile/public-profile";
 import {
   getAbsoluteProfileImageUrl,
-  getProfileImage,
+  getUploadedProfileImageUrl,
   KOMMA_PUNT_MARK_SRC,
   PROFILE_CARD_INTRO_TEXT,
   PROFILE_CARD_QUOTE,
   PROFILE_CARD_TITLE,
+  PROFILE_CENTER_FALLBACK_SRC,
+  PROFILE_OG_LOGO_IMAGE,
   PROFILE_OG_TITLE,
 } from "@/lib/profile-card";
 import { SITE_URL } from "@/lib/site-url";
@@ -58,6 +60,32 @@ function truncateLabel(label: string, maxLength: number): string {
   return `${trimmed.slice(0, maxLength - 1).trimEnd()}…`;
 }
 
+function renderLogoFallbackImage(logoUrl: string) {
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "#F5DD00",
+      }}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={logoUrl}
+        alt={PROFILE_OG_LOGO_IMAGE.alt}
+        width={PROFILE_OG_LOGO_IMAGE.width}
+        height={PROFILE_OG_LOGO_IMAGE.height}
+        style={{
+          objectFit: "contain",
+        }}
+      />
+    </div>
+  );
+}
+
 type ProfileOgImageProps = {
   params: Promise<{ id: string }>;
 };
@@ -66,33 +94,13 @@ export default async function ProfileOgImage({ params }: ProfileOgImageProps) {
   const { id } = await params;
   const profile = await fetchPublicBubbleProfile(id);
   const outfitBold = await loadOutfitBold();
-  const logoUrl = `${SITE_URL}${KOMMA_PUNT_MARK_SRC}`;
+  const logoMarkUrl = `${SITE_URL}${PROFILE_CENTER_FALLBACK_SRC}`;
+  const footerLogoUrl = `${SITE_URL}${KOMMA_PUNT_MARK_SRC}`;
 
-  if (!profile) {
-    return new ImageResponse(
-      (
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: "#F5DD00",
-            color: "#000000",
-            fontFamily: "Outfit",
-            fontSize: 48,
-            fontWeight: 800,
-          }}
-        >
-          {PROFILE_OG_TITLE}
-        </div>
-      ),
-      {
-        ...size,
-        fonts: [{ name: "Outfit", data: outfitBold, style: "normal", weight: 800 }],
-      },
-    );
+  if (!profile || !getUploadedProfileImageUrl(profile.profileImageUrl)) {
+    return new ImageResponse(renderLogoFallbackImage(logoMarkUrl), {
+      ...size,
+    });
   }
 
   const rankedBubbles = rankedRecordsToResults(profile.rankedValues).slice(0, 5);
@@ -275,7 +283,7 @@ export default async function ProfileOgImage({ params }: ProfileOgImageProps) {
 
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={logoUrl}
+                src={footerLogoUrl}
                 alt="KommaPunt"
                 width={220}
                 height={52}

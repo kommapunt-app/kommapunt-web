@@ -12,6 +12,7 @@ export type RankedValueRecord = {
 export type BubbleProfileContact = {
   name: string;
   email: string;
+  dateOfBirth: string;
   ageGroup: AgeGroup;
   province: ProvinceOption;
 };
@@ -30,6 +31,7 @@ export type BubbleProfileRecord = BubbleProfileContact & {
 export type BubbleProfileRequest = {
   name: string;
   email: string;
+  dateOfBirth: string;
   ageGroup: AgeGroup;
   province: ProvinceOption;
   rankedValues: RankedValueRecord[];
@@ -42,6 +44,7 @@ export type BubbleProfileRequest = {
 export type BubbleProfileApiPayload = {
   name: string;
   email: string;
+  date_of_birth: string;
   age_group: AgeGroup;
   province: ProvinceOption;
   ranked_values: RankedValueRecord[];

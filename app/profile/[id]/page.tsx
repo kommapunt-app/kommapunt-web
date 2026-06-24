@@ -4,7 +4,11 @@ import { Header } from "@/components/Header";
 import { PageContainer } from "@/components/PageContainer";
 import { PublicProfilePageContent } from "@/components/PublicProfilePageContent";
 import { fetchPublicBubbleProfile } from "@/lib/bubble-profile/public-profile";
-import { PROFILE_OG_DESCRIPTION, PROFILE_OG_TITLE } from "@/lib/profile-card";
+import {
+  getProfileOpenGraphImages,
+  PROFILE_OG_DESCRIPTION,
+  PROFILE_OG_TITLE,
+} from "@/lib/profile-card";
 import { getPublicProfileUrl } from "@/lib/site-url";
 
 type ProfilePageProps = {
@@ -25,7 +29,7 @@ export async function generateMetadata({
   }
 
   const url = getPublicProfileUrl(id);
-  const ogImagePath = `/profile/${id}/opengraph-image`;
+  const images = getProfileOpenGraphImages(profile, id);
 
   return {
     title: `${PROFILE_OG_TITLE} | KommaPunt`,
@@ -37,20 +41,18 @@ export async function generateMetadata({
       siteName: "KommaPunt",
       locale: "af_ZA",
       type: "website",
-      images: [
-        {
-          url: ogImagePath,
-          width: 1200,
-          height: 630,
-          alt: PROFILE_OG_TITLE,
-        },
-      ],
+      images,
     },
     twitter: {
       card: "summary_large_image",
       title: PROFILE_OG_TITLE,
       description: PROFILE_OG_DESCRIPTION,
-      images: [ogImagePath],
+      images: images.map((image) => ({
+        url: image.url,
+        width: image.width,
+        height: image.height,
+        alt: image.alt,
+      })),
     },
   };
 }

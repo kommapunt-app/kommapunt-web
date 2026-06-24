@@ -2,14 +2,14 @@
 
 import { useEffect, useState, type RefObject } from "react";
 import { Button } from "@/components/Button";
+import { DateOfBirthField } from "@/components/DateOfBirthField";
 import { persistBubbleProfile } from "@/lib/bubble-profile/persist";
+import { PROVINCE_OPTIONS } from "@/lib/bubble-profile/demographics";
 import {
-  AGE_GROUP_OPTIONS,
-  PROVINCE_OPTIONS,
-} from "@/lib/bubble-profile/demographics";
-import {
-  validateBubbleProfileContact,
-} from "@/lib/bubble-profile/session";
+  inputClassName,
+  selectClassName,
+} from "@/lib/bubble-profile/form-styles";
+import { buildBubbleProfileContact } from "@/lib/bubble-profile/session";
 import type { BubbleProfileContact } from "@/lib/bubble-profile/types";
 import { downloadBubbleVisual } from "@/lib/bubble-profile/export-actions";
 import type { RankedBubbleResult } from "@/lib/results";
@@ -23,11 +23,6 @@ interface ShareBubblesModalProps {
   onSaved?: (contact: BubbleProfileContact) => void;
 }
 
-const inputClassName =
-  "w-full rounded-2xl border-4 border-komma-black bg-white px-4 py-3 text-base font-semibold shadow-[3px_3px_0_0_#000] outline-none transition-shadow placeholder:text-komma-black/40 focus:shadow-[4px_4px_0_0_#FF1493] sm:px-5 sm:py-3.5";
-
-const selectClassName = `${inputClassName} appearance-none pr-12`;
-
 export function ShareBubblesModal({
   open,
   onClose,
@@ -38,7 +33,7 @@ export function ShareBubblesModal({
 }: ShareBubblesModalProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [ageGroup, setAgeGroup] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
   const [province, setProvince] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -68,7 +63,7 @@ export function ShareBubblesModal({
     if (!open) {
       setName("");
       setEmail("");
-      setAgeGroup("");
+      setDateOfBirth("");
       setProvince("");
       setErrorMessage(null);
       setIsSubmitting(false);
@@ -79,29 +74,22 @@ export function ShareBubblesModal({
     event.preventDefault();
     setErrorMessage(null);
 
-    const contact = {
+    const contactResult = buildBubbleProfileContact({
       name,
       email,
-      ageGroup: ageGroup as BubbleProfileContact["ageGroup"],
+      dateOfBirth,
       province: province as BubbleProfileContact["province"],
-    };
+    });
 
-    const validationError = validateBubbleProfileContact(contact);
-
-    if (validationError) {
-      setErrorMessage(validationError);
+    if ("error" in contactResult) {
+      setErrorMessage(contactResult.error);
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      const savedContact: BubbleProfileContact = {
-        name: contact.name.trim(),
-        email: contact.email.trim(),
-        ageGroup: contact.ageGroup,
-        province: contact.province,
-      };
+      const savedContact = contactResult.contact;
 
       await persistBubbleProfile(rankedBubbles, savedContact);
       onSaved?.(savedContact);
@@ -208,26 +196,12 @@ export function ShareBubblesModal({
                 />
               </div>
 
-              <div>
-                <label htmlFor="share-age" className="mb-1.5 block text-sm font-extrabold">
-                  Ouderdom
-                </label>
-                <select
-                  id="share-age"
-                  required
-                  value={ageGroup}
-                  onChange={(event) => setAgeGroup(event.target.value)}
-                  className={selectClassName}
-                >
-                  <option value="" disabled>
-                    Kies
-                  </option>
-                  {AGE_GROUP_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
+              <div className="sm:col-span-2">
+                <DateOfBirthField
+                  id="share-date-of-birth"
+                  value={dateOfBirth}
+                  onChange={setDateOfBirth}
+                />
               </div>
 
               <div className="sm:col-span-2">

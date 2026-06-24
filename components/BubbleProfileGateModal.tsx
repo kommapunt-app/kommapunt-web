@@ -2,17 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/Button";
+import { DateOfBirthField } from "@/components/DateOfBirthField";
 import { persistBubbleProfile } from "@/lib/bubble-profile/persist";
-import {
-  AGE_GROUP_OPTIONS,
-  PROVINCE_OPTIONS,
-} from "@/lib/bubble-profile/demographics";
+import { PROVINCE_OPTIONS } from "@/lib/bubble-profile/demographics";
 import {
   inputClassName,
   selectClassName,
 } from "@/lib/bubble-profile/form-styles";
 import {
-  validateBubbleProfileContact,
+  buildBubbleProfileContact,
 } from "@/lib/bubble-profile/session";
 import type { BubbleProfileContact } from "@/lib/bubble-profile/types";
 import type { RankedBubbleResult } from "@/lib/results";
@@ -41,7 +39,7 @@ export function BubbleProfileGateModal({
 }: BubbleProfileGateModalProps) {
   const [name, setName] = useState(initialContact?.name ?? "");
   const [email, setEmail] = useState(initialContact?.email ?? "");
-  const [ageGroup, setAgeGroup] = useState(initialContact?.ageGroup ?? "");
+  const [dateOfBirth, setDateOfBirth] = useState(initialContact?.dateOfBirth ?? "");
   const [province, setProvince] = useState(initialContact?.province ?? "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -78,29 +76,22 @@ export function BubbleProfileGateModal({
     event.preventDefault();
     setErrorMessage(null);
 
-    const contact = {
+    const contactResult = buildBubbleProfileContact({
       name,
       email,
-      ageGroup: ageGroup as BubbleProfileContact["ageGroup"],
+      dateOfBirth,
       province: province as BubbleProfileContact["province"],
-    };
+    });
 
-    const validationError = validateBubbleProfileContact(contact);
-
-    if (validationError) {
-      setErrorMessage(validationError);
+    if ("error" in contactResult) {
+      setErrorMessage(contactResult.error);
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      const savedContact: BubbleProfileContact = {
-        name: contact.name.trim(),
-        email: contact.email.trim(),
-        ageGroup: contact.ageGroup,
-        province: contact.province,
-      };
+      const savedContact = contactResult.contact;
 
       const result = await persistBubbleProfile(rankedBubbles, savedContact);
       onSaved(result.contact, {
@@ -211,26 +202,12 @@ export function BubbleProfileGateModal({
                 />
               </div>
 
-              <div>
-                <label htmlFor="gate-age" className="mb-1.5 block text-sm font-extrabold">
-                  Ouderdom
-                </label>
-                <select
-                  id="gate-age"
-                  required
-                  value={ageGroup}
-                  onChange={(event) => setAgeGroup(event.target.value)}
-                  className={selectClassName}
-                >
-                  <option value="" disabled>
-                    Kies
-                  </option>
-                  {AGE_GROUP_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
+              <div className="sm:col-span-2">
+                <DateOfBirthField
+                  id="gate-date-of-birth"
+                  value={dateOfBirth}
+                  onChange={setDateOfBirth}
+                />
               </div>
 
               <div className="sm:col-span-2">

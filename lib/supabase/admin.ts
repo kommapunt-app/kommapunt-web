@@ -77,6 +77,7 @@ export type BubbleProfileInsertRecord = {
   name: string;
   email: string;
   age_group: string;
+  date_of_birth: string | null;
   race: string | null;
   province: string;
   ranked_values: BubbleProfileRequest["rankedValues"];
@@ -96,6 +97,7 @@ export async function insertBubbleProfile(
       name: record.name,
       email: record.email,
       age_group: record.age_group,
+      date_of_birth: record.date_of_birth,
       race: record.race?.trim() ? record.race : "",
       province: record.province,
       ranked_values: record.ranked_values,

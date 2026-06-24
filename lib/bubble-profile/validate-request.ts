@@ -1,3 +1,4 @@
+import { deriveAgeGroupFromDateOfBirth, isValidDateOfBirth } from "@/lib/bubble-profile/date-of-birth";
 import {
   isValidAgeGroup,
   isValidProvince,
@@ -58,7 +59,7 @@ export function validateBubbleProfileRequest(
   const payload = body as BubbleProfileBody;
   const name = typeof payload.name === "string" ? payload.name.trim() : "";
   const email = typeof payload.email === "string" ? payload.email.trim() : "";
-  const ageGroupRaw = payload.age_group ?? payload.ageGroup;
+  const dateOfBirthRaw = payload.date_of_birth ?? payload.dateOfBirth;
   const province = payload.province;
   const rankedValues = payload.ranked_values ?? payload.rankedValues;
   const top5Values = payload.top_5_values ?? payload.top5Values;
@@ -69,8 +70,8 @@ export function validateBubbleProfileRequest(
     !name ||
     !email ||
     !isValidEmail(email) ||
-    typeof ageGroupRaw !== "string" ||
-    !isValidAgeGroup(ageGroupRaw) ||
+    typeof dateOfBirthRaw !== "string" ||
+    !isValidDateOfBirth(dateOfBirthRaw) ||
     typeof province !== "string" ||
     !isValidProvince(province) ||
     !isValidRankedValues(rankedValues) ||
@@ -81,10 +82,18 @@ export function validateBubbleProfileRequest(
     return null;
   }
 
+  const dateOfBirth = dateOfBirthRaw.trim();
+  const ageGroup = deriveAgeGroupFromDateOfBirth(dateOfBirth);
+
+  if (!ageGroup || !isValidAgeGroup(ageGroup)) {
+    return null;
+  }
+
   return {
     name,
     email,
-    ageGroup: ageGroupRaw,
+    dateOfBirth,
+    ageGroup,
     province,
     rankedValues,
     top5Values,

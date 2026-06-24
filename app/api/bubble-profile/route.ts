@@ -27,6 +27,7 @@ export async function POST(request: Request) {
       name: payload.name,
       email: payload.email,
       age_group: payload.ageGroup,
+      date_of_birth: payload.dateOfBirth,
       race: "",
       province: payload.province,
       ranked_values: payload.rankedValues,

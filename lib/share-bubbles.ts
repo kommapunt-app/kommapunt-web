@@ -1,9 +1,11 @@
 import { toPng } from "html-to-image";
-import { PROFILE_CENTER_FALLBACK_SRC } from "@/lib/profile-card";
+import {
+  PROFILE_CENTER_FALLBACK_SRC,
+  PROFILE_SHARE_HEADLINE,
+  PROFILE_SHARE_TAGLINE,
+} from "@/lib/profile-card";
 
-import { PROFILE_CARD_INTRO_TEXT, PROFILE_SHARE_TAGLINE } from "@/lib/profile-card";
-
-export const KOMMA_SHARE_CAPTION = `${PROFILE_CARD_INTRO_TEXT}
+export const KOMMA_SHARE_CAPTION = `${PROFILE_SHARE_HEADLINE}
 
 ${PROFILE_SHARE_TAGLINE}`;
 

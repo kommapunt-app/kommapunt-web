@@ -1,7 +1,7 @@
 import { getPublicProfileUrl } from "@/lib/site-url";
 import {
-  PROFILE_CARD_INTRO_TEXT,
   PROFILE_OG_TITLE,
+  PROFILE_SHARE_HEADLINE,
   PROFILE_SHARE_TAGLINE,
 } from "@/lib/profile-card";
 
@@ -9,7 +9,7 @@ export const PROFILE_SHARE_UNSUPPORTED_MESSAGE =
   "Direkte deel werk nie op hierdie browser nie. Gebruik eerder Kopieer skakel.";
 
 export function getProfileShareText(profileId: string): string {
-  return `${PROFILE_CARD_INTRO_TEXT}
+  return `${PROFILE_SHARE_HEADLINE}
 
 ${PROFILE_SHARE_TAGLINE}
 
