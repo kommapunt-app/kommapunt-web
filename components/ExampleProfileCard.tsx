@@ -1,6 +1,6 @@
 "use client";
 
-import { TopFiveBubbleVisual } from "@/components/TopFiveBubbleVisual";
+import { ProfileBubbleCluster } from "@/components/ProfileBubbleCluster";
 import type { ExampleProfile } from "@/lib/example-profiles";
 
 interface ExampleProfileCardProps {
@@ -16,19 +16,7 @@ export function ExampleProfileCard({ profile }: ExampleProfileCardProps) {
         {profile.name}
       </h3>
 
-      <TopFiveBubbleVisual
-        rankedBubbles={profile.rankedBubbles}
-        photoUrl={profile.photoSrc || null}
-        ariaLabel={`${profile.name} se top 5 Bubbles`}
-        className="max-w-none"
-        colorScheme="demo"
-        frameless
-        centerCircleOffsetY={-30}
-        centerImageScale={profile.centerImageScale}
-        centerImageOffsetY={profile.centerImageOffsetY}
-        centerImageBackground={profile.centerImageBackground}
-        centerImageFit={profile.centerImageFit}
-      />
+      <ProfileBubbleCluster profile={profile} variant="card" />
 
       <div className="mt-5 flex flex-1 flex-col">
         <h4 className="mb-3 text-sm font-extrabold uppercase tracking-wide text-komma-black/55 sm:text-base">

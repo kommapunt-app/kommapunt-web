@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { TopFiveBubbleVisual } from "@/components/TopFiveBubbleVisual";
+import { ProfileBubbleCluster } from "@/components/ProfileBubbleCluster";
 import {
   EXAMPLE_PROFILE_DISCLAIMER,
   type ExampleProfile,
@@ -71,20 +71,7 @@ export function ExampleProfileModal({ profile, onClose }: ExampleProfileModalPro
           {profile.name}
         </h2>
 
-        <TopFiveBubbleVisual
-          rankedBubbles={profile.rankedBubbles}
-          photoUrl={profile.useCenterAvatar ? null : profile.photoSrc || null}
-          centerCircleFill={profile.useCenterAvatar ? "#D4D4D4" : undefined}
-          ariaLabel={`${profile.name} se top 5 Bubbles`}
-          className="max-w-none"
-          colorScheme="demo"
-          frameless
-          centerCircleOffsetY={-30}
-          centerImageScale={profile.centerImageScale}
-          centerImageOffsetY={profile.centerImageOffsetY}
-          centerImageBackground={profile.centerImageBackground}
-          centerImageFit={profile.centerImageFit}
-        />
+        <ProfileBubbleCluster profile={profile} variant="card" />
 
         <div className="mt-6">
           <h3 className="mb-3 text-sm font-extrabold uppercase tracking-wide text-komma-black/55 sm:text-base">

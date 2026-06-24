@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { ExampleProfileModal } from "@/components/ExampleProfileModal";
-import { TopFiveBubbleVisual } from "@/components/TopFiveBubbleVisual";
+import { ProfileBubbleCluster } from "@/components/ProfileBubbleCluster";
 import {
   getHeroCarouselProfiles,
   HERO_EXAMPLES_DISCLAIMER,
@@ -26,23 +26,7 @@ function CarouselSlide({
       aria-label={`Open ${profile.name} se profiel`}
     >
       <div className="h-full w-full">
-        <TopFiveBubbleVisual
-          rankedBubbles={profile.rankedBubbles}
-          photoUrl={profile.useCenterAvatar ? null : profile.photoSrc || null}
-          centerCircleFill={profile.useCenterAvatar ? "#D4D4D4" : undefined}
-          ariaLabel={`${profile.name} se top 5 Bubbles`}
-          className="max-w-none"
-          colorScheme="demo"
-          frameless
-          animationPreset="heroFloat"
-          clusterOffsetY={-18}
-          centerCircleOffsetY={10}
-          valueBubblePositionAdjustments={[{ index: 3, cx: -10 }]}
-          centerImageScale={profile.centerImageScale}
-          centerImageOffsetY={profile.centerImageOffsetY}
-          centerImageBackground={profile.centerImageBackground}
-          centerImageFit={profile.centerImageFit}
-        />
+        <ProfileBubbleCluster profile={profile} variant="hero-carousel" />
       </div>
     </button>
   );
