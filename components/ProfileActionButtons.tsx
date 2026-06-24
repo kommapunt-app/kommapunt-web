@@ -1,12 +1,15 @@
 "use client";
 
 import { Button } from "@/components/Button";
+import {
+  ProfileActionButtonLabel,
+} from "@/components/profile/ProfileActionIcons";
 import { KOMMA_COFFEE_URL } from "@/lib/constants/coffee";
 import {
   copyProfileShareText,
-  getEmailShareUrl,
   getProfileShareText,
   getWhatsAppShareUrl,
+  openEmailShare,
 } from "@/lib/profile-sharing";
 
 interface ProfileActionButtonsProps {
@@ -31,7 +34,6 @@ export function ProfileActionButtons({
   profileSaved,
   profileId = null,
   profileUrl = null,
-  personName = null,
   isBusy,
   isMobile,
   onDownload,
@@ -49,6 +51,14 @@ export function ProfileActionButtons({
     }
 
     await copyProfileShareText(profileId);
+  }
+
+  function handleEmailShare() {
+    if (!profileId) {
+      return;
+    }
+
+    openEmailShare(profileId);
   }
 
   const shareText = profileId ? getProfileShareText(profileId) : "";
@@ -85,7 +95,13 @@ export function ProfileActionButtons({
           disabled={!profileSaved || isBusy}
           className={profileSaved ? unlockedButtonClass : lockedButtonClass}
         >
-          {isBusy ? busyLabel : downloadLabel}
+          {isBusy ? (
+            busyLabel
+          ) : (
+            <ProfileActionButtonLabel icon="download" tone="light">
+              {downloadLabel}
+            </ProfileActionButtonLabel>
+          )}
         </Button>
 
         <Button
@@ -94,7 +110,9 @@ export function ProfileActionButtons({
           disabled={!canShareProfile || isBusy}
           className={canShareProfile ? unlockedButtonClass : lockedButtonClass}
         >
-          Deel
+          <ProfileActionButtonLabel icon="share" tone="dark">
+            Deel
+          </ProfileActionButtonLabel>
         </Button>
 
         {canShareProfile ? (
@@ -105,7 +123,9 @@ export function ProfileActionButtons({
               disabled={isBusy}
               className={unlockedButtonClass}
             >
-              Kopieer skakel
+              <ProfileActionButtonLabel icon="link" tone="dark">
+                Kopieer skakel
+              </ProfileActionButtonLabel>
             </Button>
 
             <Button
@@ -114,15 +134,19 @@ export function ProfileActionButtons({
               rel="noopener noreferrer"
               className={unlockedButtonClass}
             >
-              WhatsApp
+              <ProfileActionButtonLabel icon="whatsapp" tone="light">
+                WhatsApp
+              </ProfileActionButtonLabel>
             </Button>
 
             <Button
-              href={getEmailShareUrl(profileId!)}
               variant="secondary"
+              onClick={handleEmailShare}
               className={unlockedButtonClass}
             >
-              E-pos
+              <ProfileActionButtonLabel icon="email" tone="dark">
+                E-pos
+              </ProfileActionButtonLabel>
             </Button>
           </>
         ) : null}
@@ -134,11 +158,15 @@ export function ProfileActionButtons({
             rel="noopener noreferrer"
             className={unlockedButtonClass}
           >
-            Koop KommaPunt koffie
+            <ProfileActionButtonLabel icon="coffee" tone="light">
+              Koop KommaPunt ’n koffie
+            </ProfileActionButtonLabel>
           </Button>
         ) : (
           <Button disabled className={lockedButtonClass}>
-            Koop KommaPunt koffie
+            <ProfileActionButtonLabel icon="coffee" tone="light">
+              Koop KommaPunt ’n koffie
+            </ProfileActionButtonLabel>
           </Button>
         )}
       </div>

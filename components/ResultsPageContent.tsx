@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { BubbleProfileGateModal } from "@/components/BubbleProfileGateModal";
 import { BubblesHeader } from "@/components/BubblesHeader";
 import { Button } from "@/components/Button";
-import { FullFeedbackModal } from "@/components/FullFeedbackModal";
 import { KommaPuntProfileCard } from "@/components/KommaPuntProfileCard";
 import { LockedProfilePlaceholder } from "@/components/LockedProfilePlaceholder";
 import { PageContainer } from "@/components/PageContainer";
@@ -39,7 +38,6 @@ export function ResultsPageContent() {
   );
   const [profileId, setProfileId] = useState<string | null>(null);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
-  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [isActionBusy, setIsActionBusy] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const [saveHelperMessage, setSaveHelperMessage] = useState<string | null>(null);
@@ -327,21 +325,14 @@ export function ResultsPageContent() {
             <>
               <div className="mb-14 flex justify-center sm:mb-16">
                 <Button
+                  href="/premium"
                   variant="secondary"
-                  onClick={() => setFeedbackOpen(true)}
-                  className="w-full max-w-3xl px-8 py-4 text-base sm:text-lg"
+                  className="w-full max-w-3xl px-6 py-4 text-sm leading-snug sm:px-8 sm:text-base lg:text-lg"
                 >
-                  Volledige terugvoer
+                  Kry toegang tot baie meer: Bubbles Bib, Brille, Blaaie en
+                  Pille!
                 </Button>
               </div>
-
-              <FullFeedbackModal
-                open={feedbackOpen}
-                onClose={() => setFeedbackOpen(false)}
-                rankedBubbles={results}
-                exportRef={exportRef}
-                photoUrl={photoUrl}
-              />
 
               <section className="relative z-0 mb-14 sm:mb-16">
                 <h2 className="mb-6 text-2xl font-extrabold tracking-tight sm:mb-8 sm:text-3xl">

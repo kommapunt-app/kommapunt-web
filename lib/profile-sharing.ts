@@ -27,10 +27,18 @@ export function getWhatsAppShareUrl(text: string): string {
 }
 
 export function getEmailShareUrl(profileId: string): string {
-  const subject = `${PROFILE_OG_TITLE} | KommaPunt`;
+  const subject = PROFILE_OG_TITLE;
   const body = getProfileShareText(profileId);
 
   return `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+export function openEmailShare(profileId: string): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.location.href = getEmailShareUrl(profileId);
 }
 
 /** @deprecated Use getEmailShareUrl(profileId) */

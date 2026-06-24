@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import { Button } from "@/components/Button";
+import { ProfileActionButtonLabel } from "@/components/profile/ProfileActionIcons";
 import {
   canUseNativeShare,
   copyProfileShareText,
-  getEmailShareUrl,
   getProfileShareText,
   getWhatsAppShareUrl,
+  openEmailShare,
   PROFILE_SHARE_UNSUPPORTED_MESSAGE,
   shareProfileUrl,
 } from "@/lib/profile-sharing";
@@ -20,7 +21,6 @@ interface ProfileShareActionsProps {
 
 export function ProfileShareActions({
   profileId,
-  personName,
   compact = false,
 }: ProfileShareActionsProps) {
   const [isBusy, setIsBusy] = useState(false);
@@ -29,7 +29,6 @@ export function ProfileShareActions({
 
   const shareText = getProfileShareText(profileId);
   const whatsAppUrl = getWhatsAppShareUrl(shareText);
-  const emailUrl = getEmailShareUrl(profileId);
   const showNativeShare = canUseNativeShare();
 
   async function handleCopyLink() {
@@ -77,6 +76,10 @@ export function ProfileShareActions({
     }
   }
 
+  function handleEmailShare() {
+    openEmailShare(profileId);
+  }
+
   const buttonClass = compact
     ? "w-full px-5 py-3 text-sm sm:w-auto sm:text-base"
     : "w-full px-6 py-4 text-base sm:w-auto sm:text-lg";
@@ -89,7 +92,9 @@ export function ProfileShareActions({
           disabled={isBusy}
           className={buttonClass}
         >
-          Kopieer skakel
+          <ProfileActionButtonLabel icon="link" tone="light">
+            Kopieer skakel
+          </ProfileActionButtonLabel>
         </Button>
 
         <Button
@@ -98,15 +103,19 @@ export function ProfileShareActions({
           rel="noopener noreferrer"
           className={buttonClass}
         >
-          WhatsApp
+          <ProfileActionButtonLabel icon="whatsapp" tone="light">
+            WhatsApp
+          </ProfileActionButtonLabel>
         </Button>
 
         <Button
-          href={emailUrl}
           variant="secondary"
+          onClick={handleEmailShare}
           className={buttonClass}
         >
-          E-pos
+          <ProfileActionButtonLabel icon="email" tone="dark">
+            E-pos
+          </ProfileActionButtonLabel>
         </Button>
 
         {showNativeShare ? (
@@ -116,7 +125,9 @@ export function ProfileShareActions({
             disabled={isBusy}
             className={buttonClass}
           >
-            Deel
+            <ProfileActionButtonLabel icon="share" tone="dark">
+              Deel
+            </ProfileActionButtonLabel>
           </Button>
         ) : null}
       </div>
