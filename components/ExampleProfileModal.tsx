@@ -80,6 +80,10 @@ export function ExampleProfileModal({ profile, onClose }: ExampleProfileModalPro
           colorScheme="demo"
           frameless
           centerCircleOffsetY={-30}
+          centerImageScale={profile.centerImageScale}
+          centerImageOffsetY={profile.centerImageOffsetY}
+          centerImageBackground={profile.centerImageBackground}
+          centerImageFit={profile.centerImageFit}
         />
 
         <div className="mt-6">

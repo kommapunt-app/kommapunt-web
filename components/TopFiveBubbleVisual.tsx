@@ -202,6 +202,14 @@ interface TopFiveBubbleVisualProps {
   centerCircleOffsetY?: number;
   /** Per-bubble layout nudges without changing the base cluster. */
   valueBubblePositionAdjustments?: ValueBubblePositionAdjustment[];
+  /** Zoom centre photo to fill the circle (1 = default). */
+  centerImageScale?: number;
+  /** Vertical nudge for centre photo (negative moves up). */
+  centerImageOffsetY?: number;
+  /** Solid fill behind transparent centre logos. */
+  centerImageBackground?: string;
+  /** `cover` crops to fill; `contain` fits logo inside the circle. */
+  centerImageFit?: "cover" | "contain";
   /** Landing hero only — grey centre avatar instead of KommaPunt logo */
   centerCircleFill?: string;
   defaultCenterImageSrc?: string;
@@ -421,6 +429,11 @@ function CenterProfileImage({
   photoDiameter,
   clipId,
   src,
+  imageScale = 1,
+  imageOffsetX = 0,
+  imageOffsetY = 0,
+  imageFit = "cover",
+  backgroundFill,
 }: {
   cx: number;
   cy: number;
@@ -428,17 +441,30 @@ function CenterProfileImage({
   photoDiameter: number;
   clipId: string;
   src: string;
+  imageScale?: number;
+  imageOffsetX?: number;
+  imageOffsetY?: number;
+  imageFit?: "cover" | "contain";
+  backgroundFill?: string;
 }) {
+  const scaledSize = photoDiameter * imageScale;
+  const imageX = cx - scaledSize / 2 + imageOffsetX;
+  const imageY = cy - scaledSize / 2 + imageOffsetY;
+  const preserveAspectRatio =
+    imageFit === "contain" ? "xMidYMid meet" : "xMidYMid slice";
+
   return (
     <g clipPath={`url(#${clipId})`}>
-      <circle cx={cx} cy={cy} r={photoRadius} fill={KOMMA_WHITE} />
+      {backgroundFill ? (
+        <circle cx={cx} cy={cy} r={photoRadius} fill={backgroundFill} />
+      ) : null}
       <image
         href={src}
-        x={cx - photoRadius}
-        y={cy - photoRadius}
-        width={photoDiameter}
-        height={photoDiameter}
-        preserveAspectRatio="xMidYMid slice"
+        x={imageX}
+        y={imageY}
+        width={scaledSize}
+        height={scaledSize}
+        preserveAspectRatio={preserveAspectRatio}
       />
     </g>
   );
@@ -495,6 +521,10 @@ export function TopFiveBubbleVisual({
   animationPreset = "default",
   centerCircleOffsetY = 0,
   valueBubblePositionAdjustments,
+  centerImageScale = 1,
+  centerImageOffsetY = 0,
+  centerImageBackground,
+  centerImageFit = "cover",
   centerCircleFill,
   defaultCenterImageSrc = PROFILE_CENTER_FALLBACK_SRC,
   photoUploadEnabled = false,
@@ -649,6 +679,10 @@ export function TopFiveBubbleVisual({
               photoDiameter={photoDiameter}
               clipId={clipId}
               src={centerImageSrc}
+              imageScale={centerImageScale}
+              imageOffsetY={centerImageOffsetY}
+              imageFit={centerImageFit}
+              backgroundFill={centerImageBackground}
             />
           )}
 

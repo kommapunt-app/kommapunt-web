@@ -32,6 +32,14 @@ export type ExampleProfile = {
   rankedBubbles: RankedBubbleResult[];
   /** Landing hero "Jy" slide — grey avatar centre instead of a photo. */
   useCenterAvatar?: boolean;
+  /** Zoom centre photo/logo to fill the circle edge-to-edge. */
+  centerImageScale?: number;
+  /** Vertical nudge for centre photo/logo (negative moves up). */
+  centerImageOffsetY?: number;
+  /** Solid fill behind transparent centre logos. */
+  centerImageBackground?: string;
+  /** `cover` crops to fill; `contain` fits logo inside the circle. */
+  centerImageFit?: "cover" | "contain";
 };
 
 function buildPlaceholderRankedBubbles(
@@ -100,6 +108,8 @@ export const EXAMPLE_PROFILES: ExampleProfile[] = [
     id: "rassie-erasmus",
     name: "Rassie Erasmus*",
     photoSrc: "/example-profiles/rassie-erasmus.png",
+    centerImageScale: 1.08,
+    centerImageOffsetY: -5,
     bubbleNamesAf: [
       "Prestasie",
       "Dissipline",
@@ -113,6 +123,7 @@ export const EXAMPLE_PROFILES: ExampleProfile[] = [
     id: "steve-jobs",
     name: "Steve Jobs*",
     photoSrc: "/example-profiles/steve-jobs.png",
+    centerImageScale: 1.1,
     bubbleNamesAf: [
       "Vernuwing",
       "Kreatiwiteit",
@@ -126,6 +137,9 @@ export const EXAMPLE_PROFILES: ExampleProfile[] = [
     id: "afriforum",
     name: "AfriForum*",
     photoSrc: "/example-profiles/afriforum.png",
+    centerImageBackground: "#FFFFFF",
+    centerImageFit: "contain" as const,
+    centerImageScale: 0.825,
     bubbleNamesAf: [
       "Kultuur & identiteit",
       "Vryheid",
@@ -152,6 +166,7 @@ export const EXAMPLE_PROFILES: ExampleProfile[] = [
     id: "mk",
     name: "MK (uMkhonto we Sizwe)*",
     photoSrc: "/example-profiles/mk.png",
+    centerImageScale: 1.26,
     bubbleNamesAf: [
       "Geregtigheid",
       "Gemeenskap",

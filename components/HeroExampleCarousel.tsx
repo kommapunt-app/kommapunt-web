@@ -38,6 +38,10 @@ function CarouselSlide({
           clusterOffsetY={-18}
           centerCircleOffsetY={10}
           valueBubblePositionAdjustments={[{ index: 3, cx: -10 }]}
+          centerImageScale={profile.centerImageScale}
+          centerImageOffsetY={profile.centerImageOffsetY}
+          centerImageBackground={profile.centerImageBackground}
+          centerImageFit={profile.centerImageFit}
         />
       </div>
     </button>

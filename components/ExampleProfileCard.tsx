@@ -24,6 +24,10 @@ export function ExampleProfileCard({ profile }: ExampleProfileCardProps) {
         colorScheme="demo"
         frameless
         centerCircleOffsetY={-30}
+        centerImageScale={profile.centerImageScale}
+        centerImageOffsetY={profile.centerImageOffsetY}
+        centerImageBackground={profile.centerImageBackground}
+        centerImageFit={profile.centerImageFit}
       />
 
       <div className="mt-5 flex flex-1 flex-col">
