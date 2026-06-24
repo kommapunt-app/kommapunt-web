@@ -2,7 +2,11 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { formatBubbleLabel } from "@/lib/bubble-label";
-import { PROFILE_CARD_CENTER_LOGO_SRC } from "@/lib/profile-card";
+import {
+  getProfileImage,
+  PROFILE_CENTER_FALLBACK_SRC,
+  getUploadedProfileImageUrl,
+} from "@/lib/profile-card";
 import type { RankedBubbleResult } from "@/lib/results";
 
 const VIEWBOX_WIDTH = 1000;
@@ -382,30 +386,31 @@ function useResolvedProfileImageUrl(photoUrl: string | null | undefined) {
   return photoUrl;
 }
 
-function CenterLogoImage({
+function CenterProfileImage({
   cx,
   cy,
-  r,
+  photoRadius,
+  photoDiameter,
+  clipId,
   src,
 }: {
   cx: number;
   cy: number;
-  r: number;
+  photoRadius: number;
+  photoDiameter: number;
+  clipId: string;
   src: string;
 }) {
-  const inset = r * 0.18;
-  const imageSize = (r - inset) * 2;
-
   return (
-    <g>
-      <circle cx={cx} cy={cy} r={r} fill={KOMMA_WHITE} />
+    <g clipPath={`url(#${clipId})`}>
+      <circle cx={cx} cy={cy} r={photoRadius} fill={KOMMA_WHITE} />
       <image
         href={src}
-        x={cx - r + inset}
-        y={cy - r + inset}
-        width={imageSize}
-        height={imageSize}
-        preserveAspectRatio="xMidYMid meet"
+        x={cx - photoRadius}
+        y={cy - photoRadius}
+        width={photoDiameter}
+        height={photoDiameter}
+        preserveAspectRatio="xMidYMid slice"
       />
     </g>
   );
@@ -461,13 +466,16 @@ export function TopFiveBubbleVisual({
   clusterOffsetY = 0,
   animationPreset = "default",
   centerCircleFill,
-  defaultCenterImageSrc = PROFILE_CARD_CENTER_LOGO_SRC,
+  defaultCenterImageSrc = PROFILE_CENTER_FALLBACK_SRC,
   photoUploadEnabled = false,
   onPhotoChange,
 }: TopFiveBubbleVisualProps) {
   const clipId = useId().replace(/:/g, "");
   const photoInputRef = useRef<HTMLInputElement>(null);
-  const resolvedPhotoUrl = useResolvedProfileImageUrl(photoUrl);
+  const uploadedImageUrl = getUploadedProfileImageUrl(photoUrl);
+  const resolvedUploadedImageUrl = useResolvedProfileImageUrl(uploadedImageUrl);
+  const centerImageSrc = getProfileImage(resolvedUploadedImageUrl);
+  const hasUserUploadedPhoto = Boolean(uploadedImageUrl && resolvedUploadedImageUrl);
   const topFive = rankedBubbles.slice(0, 5);
   const strokeWidth = compact ? 5 : 8;
   const photoRadius = CENTER.r - strokeWidth / 2;
@@ -575,24 +583,7 @@ export function TopFiveBubbleVisual({
         </g>
 
         <g>
-          {resolvedPhotoUrl ? (
-            <g clipPath={`url(#${clipId})`}>
-              <circle
-                cx={CENTER.cx}
-                cy={CENTER.cy}
-                r={photoRadius}
-                fill={KOMMA_WHITE}
-              />
-              <image
-                href={resolvedPhotoUrl}
-                x={CENTER.cx - photoRadius}
-                y={CENTER.cy - photoRadius}
-                width={photoDiameter}
-                height={photoDiameter}
-                preserveAspectRatio="xMidYMid slice"
-              />
-            </g>
-          ) : centerCircleFill ? (
+          {centerCircleFill && !uploadedImageUrl ? (
             <DefaultCenterAvatar
               cx={CENTER.cx}
               cy={CENTER.cy}
@@ -600,11 +591,13 @@ export function TopFiveBubbleVisual({
               fill={centerCircleFill}
             />
           ) : (
-            <CenterLogoImage
+            <CenterProfileImage
               cx={CENTER.cx}
               cy={CENTER.cy}
-              r={CENTER.r}
-              src={defaultCenterImageSrc}
+              photoRadius={photoRadius}
+              photoDiameter={photoDiameter}
+              clipId={clipId}
+              src={centerImageSrc}
             />
           )}
 
@@ -651,7 +644,7 @@ export function TopFiveBubbleVisual({
                 width: `${CENTER_WIDTH_PCT}%`,
               }}
             >
-              {resolvedPhotoUrl ? (
+              {hasUserUploadedPhoto ? (
                 <button
                   type="button"
                   onClick={openPhotoPicker}

@@ -16,7 +16,10 @@ export const PROFILE_CARD_FINGERPRINT_SRC = "/profile-fingerprint.png";
 
 export const PROFILE_CARD_QR_CODE_SRC = "/profile-card-qr-sticker.png";
 
-export const PROFILE_CARD_CENTER_LOGO_SRC = KOMMA_PUNT_MARK_SRC;
+export const PROFILE_CENTER_FALLBACK_SRC = "/komma-logo-mark.png";
+
+/** @deprecated Use PROFILE_CENTER_FALLBACK_SRC */
+export const PROFILE_CARD_CENTER_LOGO_SRC = PROFILE_CENTER_FALLBACK_SRC;
 
 export const PROFILE_CARD_INTRO_TEXT =
   "My KommaPunt Bubbles wys wat vir my gewig dra.";
@@ -29,16 +32,66 @@ export const PROFILE_OG_DESCRIPTION =
 export const PROFILE_SHARE_TAGLINE =
   "KommaPunt: ’n gesprek oor standpunte en hoe ons daar beland.";
 
+export type ProfileImageSource = {
+  profileImageUrl?: string | null;
+  profile_image_url?: string | null;
+};
+
+function isValidProfileImageUrl(value: string): boolean {
+  return (
+    value.startsWith("https://") ||
+    value.startsWith("http://") ||
+    value.startsWith("blob:") ||
+    value.startsWith("data:image/") ||
+    value.startsWith("/")
+  );
+}
+
+export function getProfileImage(
+  profile?: ProfileImageSource | string | null,
+): string {
+  if (typeof profile === "string") {
+    const trimmed = profile.trim();
+
+    if (trimmed && isValidProfileImageUrl(trimmed)) {
+      return trimmed;
+    }
+
+    return PROFILE_CENTER_FALLBACK_SRC;
+  }
+
+  const url = (
+    profile?.profileImageUrl ??
+    profile?.profile_image_url ??
+    ""
+  ).trim();
+
+  if (url && isValidProfileImageUrl(url)) {
+    return url;
+  }
+
+  return PROFILE_CENTER_FALLBACK_SRC;
+}
+
+export function getAbsoluteProfileImageUrl(
+  profile: ProfileImageSource | string | null | undefined,
+  siteUrl: string,
+): string {
+  const src = getProfileImage(profile);
+  return src.startsWith("/") ? `${siteUrl}${src}` : src;
+}
+
 export function getProfileIntroText(): string {
   return PROFILE_CARD_INTRO_TEXT;
 }
 
-export function getProfileImageUrl(
+/** Returns only a user-uploaded image URL, or null when absent. */
+export function getUploadedProfileImageUrl(
   profileImageUrl?: string | null,
 ): string | null {
   const trimmed = profileImageUrl?.trim();
 
-  if (!trimmed) {
+  if (!trimmed || trimmed === PROFILE_CENTER_FALLBACK_SRC) {
     return null;
   }
 
@@ -54,9 +107,16 @@ export function getProfileImageUrl(
   return null;
 }
 
-/** @deprecated Use getProfileImageUrl */
+/** @deprecated Use getUploadedProfileImageUrl or getProfileImage */
+export function getProfileImageUrl(
+  profileImageUrl?: string | null,
+): string | null {
+  return getUploadedProfileImageUrl(profileImageUrl);
+}
+
+/** @deprecated Use getProfileImage */
 export function getProfilePhotoUrl(
   profileImageUrl?: string | null,
 ): string | null {
-  return getProfileImageUrl(profileImageUrl);
+  return getUploadedProfileImageUrl(profileImageUrl);
 }

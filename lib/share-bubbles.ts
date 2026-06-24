@@ -1,5 +1,5 @@
 import { toPng } from "html-to-image";
-import { PROFILE_CARD_CENTER_LOGO_SRC } from "@/lib/profile-card";
+import { PROFILE_CENTER_FALLBACK_SRC } from "@/lib/profile-card";
 
 import { PROFILE_CARD_INTRO_TEXT, PROFILE_SHARE_TAGLINE } from "@/lib/profile-card";
 
@@ -123,7 +123,7 @@ async function prepareSvgImagesForExport(
     const originalHref =
       svgImage.getAttribute("href") ?? svgImage.getAttribute("xlink:href");
 
-    if (!originalHref || originalHref === PROFILE_CARD_CENTER_LOGO_SRC) {
+    if (!originalHref || originalHref === PROFILE_CENTER_FALLBACK_SRC) {
       return;
     }
 

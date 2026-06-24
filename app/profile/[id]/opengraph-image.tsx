@@ -2,6 +2,8 @@ import { ImageResponse } from "next/og";
 import { rankedRecordsToResults } from "@/lib/bubble-profile/from-records";
 import { fetchPublicBubbleProfile } from "@/lib/bubble-profile/public-profile";
 import {
+  getAbsoluteProfileImageUrl,
+  getProfileImage,
   KOMMA_PUNT_MARK_SRC,
   PROFILE_CARD_INTRO_TEXT,
   PROFILE_CARD_QUOTE,
@@ -94,9 +96,7 @@ export default async function ProfileOgImage({ params }: ProfileOgImageProps) {
   }
 
   const rankedBubbles = rankedRecordsToResults(profile.rankedValues).slice(0, 5);
-  const centerImage = profile.profileImageUrl?.startsWith("http")
-    ? profile.profileImageUrl
-    : logoUrl;
+  const centerImage = getAbsoluteProfileImageUrl(profile, SITE_URL);
 
   return new ImageResponse(
     (
