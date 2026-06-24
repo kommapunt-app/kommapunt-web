@@ -1,7 +1,9 @@
+import { extractYearFromDateOfBirth } from "@/lib/bubble-profile/date-of-birth";
 import {
-  deriveAgeGroupFromDateOfBirth,
-  validateDateOfBirth,
-} from "@/lib/bubble-profile/date-of-birth";
+  deriveAgeGroupFromYearOfBirth,
+  getDefaultYearOfBirth,
+  validateYearOfBirth,
+} from "@/lib/bubble-profile/year-of-birth";
 import {
   isValidAgeGroup,
   isValidProvince,
@@ -19,6 +21,7 @@ function parseStoredProfile(raw: string): StoredBubbleProfile | null {
   try {
     const parsed = JSON.parse(raw) as Partial<StoredBubbleProfile> & {
       dateOfBirth?: string;
+      yearOfBirth?: number;
     };
 
     if (
@@ -31,16 +34,20 @@ function parseStoredProfile(raw: string): StoredBubbleProfile | null {
       return null;
     }
 
-    const dateOfBirth = parsed.dateOfBirth?.trim() ?? "";
+    const yearFromField = parsed.yearOfBirth;
+    const yearFromLegacyDate = parsed.dateOfBirth?.trim()
+      ? extractYearFromDateOfBirth(parsed.dateOfBirth.trim())
+      : null;
+    const yearOfBirth = yearFromField ?? yearFromLegacyDate;
 
-    if (dateOfBirth) {
-      const dateError = validateDateOfBirth(dateOfBirth);
+    if (yearOfBirth !== null && yearOfBirth !== undefined) {
+      const yearError = validateYearOfBirth(yearOfBirth);
 
-      if (dateError) {
+      if (yearError) {
         return null;
       }
 
-      const ageGroup = deriveAgeGroupFromDateOfBirth(dateOfBirth);
+      const ageGroup = deriveAgeGroupFromYearOfBirth(yearOfBirth);
 
       if (!ageGroup) {
         return null;
@@ -49,7 +56,7 @@ function parseStoredProfile(raw: string): StoredBubbleProfile | null {
       const profile: StoredBubbleProfile = {
         name: parsed.name.trim(),
         email: parsed.email.trim(),
-        dateOfBirth,
+        yearOfBirth,
         ageGroup,
         province: parsed.province,
       };
@@ -70,7 +77,7 @@ function parseStoredProfile(raw: string): StoredBubbleProfile | null {
     const legacyProfile: StoredBubbleProfile = {
       name: parsed.name.trim(),
       email: parsed.email.trim(),
-      dateOfBirth: "",
+      yearOfBirth: getDefaultYearOfBirth(),
       ageGroup:
         legacyAgeGroup === LEGACY_AGE_GROUP_55_PLUS
           ? "65+"
@@ -125,14 +132,19 @@ export function buildBubbleProfileContact(
     return { error: "Voer 'n geldige e-posadres in." };
   }
 
-  const dateOfBirth = contact.dateOfBirth?.trim() ?? "";
-  const dateError = validateDateOfBirth(dateOfBirth);
+  const yearOfBirth = contact.yearOfBirth;
 
-  if (dateError) {
-    return { error: dateError };
+  if (yearOfBirth === undefined || yearOfBirth === null) {
+    return { error: "Kies jou geboortajaar." };
   }
 
-  const ageGroup = deriveAgeGroupFromDateOfBirth(dateOfBirth);
+  const yearError = validateYearOfBirth(yearOfBirth);
+
+  if (yearError) {
+    return { error: yearError };
+  }
+
+  const ageGroup = deriveAgeGroupFromYearOfBirth(yearOfBirth);
 
   if (!ageGroup) {
     return { error: "Jy moet minstens 13 jaar oud wees." };
@@ -146,7 +158,7 @@ export function buildBubbleProfileContact(
     contact: {
       name: contact.name.trim(),
       email: contact.email.trim(),
-      dateOfBirth,
+      yearOfBirth,
       ageGroup,
       province: contact.province,
     },

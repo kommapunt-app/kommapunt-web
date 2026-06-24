@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/Button";
-import { DateOfBirthField } from "@/components/DateOfBirthField";
+import { YearOfBirthField } from "@/components/YearOfBirthField";
+import { getDefaultYearOfBirth } from "@/lib/bubble-profile/year-of-birth";
 import { persistBubbleProfile } from "@/lib/bubble-profile/persist";
 import { PROVINCE_OPTIONS } from "@/lib/bubble-profile/demographics";
 import {
@@ -39,7 +40,9 @@ export function BubbleProfileGateModal({
 }: BubbleProfileGateModalProps) {
   const [name, setName] = useState(initialContact?.name ?? "");
   const [email, setEmail] = useState(initialContact?.email ?? "");
-  const [dateOfBirth, setDateOfBirth] = useState(initialContact?.dateOfBirth ?? "");
+  const [yearOfBirth, setYearOfBirth] = useState(
+    initialContact?.yearOfBirth ?? getDefaultYearOfBirth(),
+  );
   const [province, setProvince] = useState(initialContact?.province ?? "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -79,7 +82,7 @@ export function BubbleProfileGateModal({
     const contactResult = buildBubbleProfileContact({
       name,
       email,
-      dateOfBirth,
+      yearOfBirth,
       province: province as BubbleProfileContact["province"],
     });
 
@@ -203,10 +206,10 @@ export function BubbleProfileGateModal({
               </div>
 
               <div className="sm:col-span-2">
-                <DateOfBirthField
-                  id="gate-date-of-birth"
-                  value={dateOfBirth}
-                  onChange={setDateOfBirth}
+                <YearOfBirthField
+                  id="gate-year-of-birth"
+                  value={yearOfBirth}
+                  onChange={setYearOfBirth}
                 />
               </div>
 

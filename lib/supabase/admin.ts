@@ -77,6 +77,7 @@ export type BubbleProfileInsertRecord = {
   name: string;
   email: string;
   age_group: string;
+  year_of_birth: number | null;
   date_of_birth: string | null;
   race: string | null;
   province: string;
@@ -97,6 +98,7 @@ export async function insertBubbleProfile(
       name: record.name,
       email: record.email,
       age_group: record.age_group,
+      year_of_birth: record.year_of_birth,
       date_of_birth: record.date_of_birth,
       race: record.race?.trim() ? record.race : "",
       province: record.province,
