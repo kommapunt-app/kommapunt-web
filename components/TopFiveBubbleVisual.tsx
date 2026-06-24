@@ -3,9 +3,9 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { formatBubbleLabel } from "@/lib/bubble-label";
 import {
-  getProfileImage,
-  PROFILE_CENTER_FALLBACK_SRC,
+  getProfileCenterImageSrc,
   getUploadedProfileImageUrl,
+  PROFILE_CENTER_FALLBACK_SRC,
 } from "@/lib/profile-card";
 import type { RankedBubbleResult } from "@/lib/results";
 
@@ -474,16 +474,19 @@ export function TopFiveBubbleVisual({
   const photoInputRef = useRef<HTMLInputElement>(null);
   const trimmedPhotoUrl = photoUrl?.trim() || null;
   const uploadedImageUrl = getUploadedProfileImageUrl(photoUrl);
-  const displayImageCandidate = uploadedImageUrl ?? trimmedPhotoUrl;
-  const resolvedDisplayImageUrl = useResolvedProfileImageUrl(displayImageCandidate);
-  const centerImageSrc =
-    resolvedDisplayImageUrl != null
-      ? getProfileImage(resolvedDisplayImageUrl)
-      : displayImageCandidate?.startsWith("blob:") ||
-          displayImageCandidate?.startsWith("data:image/")
-        ? getProfileImage(displayImageCandidate)
-        : PROFILE_CENTER_FALLBACK_SRC;
-  const hasUserUploadedPhoto = Boolean(uploadedImageUrl && resolvedDisplayImageUrl);
+  const staticImageCandidate =
+    !uploadedImageUrl &&
+    trimmedPhotoUrl?.startsWith("/") &&
+    trimmedPhotoUrl !== PROFILE_CENTER_FALLBACK_SRC
+      ? trimmedPhotoUrl
+      : null;
+  const validatedStaticImageUrl = useResolvedProfileImageUrl(staticImageCandidate);
+  const centerImageSrc = uploadedImageUrl
+    ? getProfileCenterImageSrc(uploadedImageUrl)
+    : validatedStaticImageUrl
+      ? getProfileCenterImageSrc(validatedStaticImageUrl)
+      : PROFILE_CENTER_FALLBACK_SRC;
+  const hasUserUploadedPhoto = Boolean(uploadedImageUrl);
   const topFive = rankedBubbles.slice(0, 5);
   const strokeWidth = compact ? 5 : 8;
   const photoRadius = CENTER.r - strokeWidth / 2;

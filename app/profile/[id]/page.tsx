@@ -6,7 +6,8 @@ import { PublicProfilePageContent } from "@/components/PublicProfilePageContent"
 import { fetchPublicBubbleProfile } from "@/lib/bubble-profile/public-profile";
 import {
   getProfileOpenGraphImages,
-  PROFILE_OG_DESCRIPTION,
+  PROFILE_OG_SHARE_DESCRIPTION,
+  PROFILE_OG_SHARE_TITLE,
   PROFILE_OG_TITLE,
 } from "@/lib/profile-card";
 import { getPublicProfileUrl } from "@/lib/site-url";
@@ -29,14 +30,14 @@ export async function generateMetadata({
   }
 
   const url = getPublicProfileUrl(id);
-  const images = getProfileOpenGraphImages(profile, id);
+  const images = getProfileOpenGraphImages();
 
   return {
     title: `${PROFILE_OG_TITLE} | KommaPunt`,
-    description: PROFILE_OG_DESCRIPTION,
+    description: PROFILE_OG_SHARE_DESCRIPTION,
     openGraph: {
-      title: PROFILE_OG_TITLE,
-      description: PROFILE_OG_DESCRIPTION,
+      title: PROFILE_OG_SHARE_TITLE,
+      description: PROFILE_OG_SHARE_DESCRIPTION,
       url,
       siteName: "KommaPunt",
       locale: "af_ZA",
@@ -45,8 +46,8 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: PROFILE_OG_TITLE,
-      description: PROFILE_OG_DESCRIPTION,
+      title: PROFILE_OG_SHARE_TITLE,
+      description: PROFILE_OG_SHARE_DESCRIPTION,
       images: images.map((image) => ({
         url: image.url,
         width: image.width,

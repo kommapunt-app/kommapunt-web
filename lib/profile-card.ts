@@ -27,9 +27,18 @@ export const PROFILE_CARD_INTRO_TEXT =
 export const PROFILE_SHARE_HEADLINE =
   "My KommaPunt Bubbles wys wat belangrik is vir my.";
 
+export const PROFILE_SHARE_TAGLINE =
+  "KommaPunt: ’n gesprek oor standpunte en hoe ons daar beland.";
+
 export const PROFILE_OG_TITLE = "My KommaPunt Bubbles";
 
-export const PROFILE_OG_DESCRIPTION = `${PROFILE_SHARE_HEADLINE} KommaPunt: ’n gesprek oor standpunte en hoe ons daar beland.`;
+/** Open Graph / WhatsApp share title for profile links. */
+export const PROFILE_OG_SHARE_TITLE = PROFILE_SHARE_HEADLINE;
+
+/** Open Graph / WhatsApp share description for profile links. */
+export const PROFILE_OG_SHARE_DESCRIPTION = PROFILE_SHARE_TAGLINE;
+
+export const PROFILE_OG_DESCRIPTION = `${PROFILE_SHARE_HEADLINE} ${PROFILE_SHARE_TAGLINE}`;
 
 export const PROFILE_OG_IMAGE_ALT = "KommaPunt Logo";
 
@@ -45,9 +54,6 @@ export const PROFILE_OG_CARD_IMAGE = {
   height: 630,
   alt: PROFILE_OG_TITLE,
 } as const;
-
-export const PROFILE_SHARE_TAGLINE =
-  "KommaPunt: ’n gesprek oor standpunte en hoe ons daar beland.";
 
 export type ProfileImageSource = {
   profileImageUrl?: string | null;
@@ -124,26 +130,33 @@ export function getUploadedProfileImageUrl(
   return null;
 }
 
-export function getProfileOpenGraphImages(
-  profile: ProfileImageSource,
-  profileId: string,
-): Array<{
+/** Centre circle image for profile cards — user upload when present, logo otherwise. */
+export function getProfileCenterImageSrc(photoUrl?: string | null): string {
+  const uploaded = getUploadedProfileImageUrl(photoUrl);
+
+  if (uploaded) {
+    return uploaded;
+  }
+
+  const trimmed = photoUrl?.trim();
+
+  if (
+    trimmed &&
+    trimmed.startsWith("/") &&
+    trimmed !== PROFILE_CENTER_FALLBACK_SRC
+  ) {
+    return trimmed;
+  }
+
+  return PROFILE_CENTER_FALLBACK_SRC;
+}
+
+export function getProfileOpenGraphImages(): Array<{
   url: string;
   width: number;
   height: number;
   alt: string;
 }> {
-  if (getUploadedProfileImageUrl(profile.profileImageUrl ?? profile.profile_image_url)) {
-    return [
-      {
-        url: `/profile/${profileId}/opengraph-image`,
-        width: PROFILE_OG_CARD_IMAGE.width,
-        height: PROFILE_OG_CARD_IMAGE.height,
-        alt: PROFILE_OG_CARD_IMAGE.alt,
-      },
-    ];
-  }
-
   return [
     {
       url: PROFILE_OG_LOGO_IMAGE.url,

@@ -101,7 +101,7 @@ export async function shareProfileUrl(
 
   try {
     await navigator.share({
-      title: PROFILE_OG_TITLE,
+      title: PROFILE_SHARE_HEADLINE,
       text,
     });
     return "shared";
