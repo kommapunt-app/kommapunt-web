@@ -73,11 +73,13 @@ export function ExampleProfileModal({ profile, onClose }: ExampleProfileModalPro
 
         <TopFiveBubbleVisual
           rankedBubbles={profile.rankedBubbles}
-          photoUrl={profile.photoSrc || null}
+          photoUrl={profile.useCenterAvatar ? null : profile.photoSrc || null}
+          centerCircleFill={profile.useCenterAvatar ? "#D4D4D4" : undefined}
           ariaLabel={`${profile.name} se top 5 Bubbles`}
           className="max-w-none"
           colorScheme="demo"
           frameless
+          centerCircleOffsetY={-30}
         />
 
         <div className="mt-6">

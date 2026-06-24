@@ -23,6 +23,7 @@ export function ExampleProfileCard({ profile }: ExampleProfileCardProps) {
         className="max-w-none"
         colorScheme="demo"
         frameless
+        centerCircleOffsetY={-30}
       />
 
       <div className="mt-5 flex flex-1 flex-col">

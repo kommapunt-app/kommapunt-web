@@ -1,15 +1,23 @@
 import { getValueGuideById } from "@/lib/values-guide";
+import {
+  getValuePosterFullSrc,
+  getValuePosterThumbnailSrc,
+} from "@/lib/value-poster-images";
 
 export type ValuePosterEntry = {
   id: string;
   name_af: string;
   name_en: string;
-  image_url: string;
+  /** Original full-resolution poster for modal and download. */
+  full_image_url: string;
+  /** Optimized thumbnail for gallery grids. */
+  thumbnail_url: string;
 };
 
 /**
- * Add a poster: upload `public/value-posters/{id}.png` and append the id here.
- * Names and group are filled automatically from the value guide.
+ * Add a poster: upload `public/value-posters/{id}.png` (full resolution) and
+ * optionally `public/value-posters/thumbs/{id}.png` (gallery thumbnail).
+ * Append the id here; names are filled from the value guide.
  */
 export const VALUE_POSTER_IDS = [
   "aanpasbaarheid",
@@ -68,7 +76,8 @@ function buildPosterEntry(id: string): ValuePosterEntry {
     id,
     name_af: value.nameAf,
     name_en: value.nameEn,
-    image_url: `/value-posters/${id}.png`,
+    full_image_url: getValuePosterFullSrc(id),
+    thumbnail_url: getValuePosterThumbnailSrc(id),
   };
 }
 

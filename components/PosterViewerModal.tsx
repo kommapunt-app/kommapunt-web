@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { PosterModalImage } from "@/components/PosterModalImage";
 import type { ValuePosterEntry } from "@/data/value-posters";
 import { trackEvent } from "@/lib/analytics";
+import { downloadValuePoster } from "@/lib/value-poster-images";
 import { getValueMapUrl } from "@/lib/value-map-navigation";
 import { getValuePageUrl } from "@/lib/value-page";
 
@@ -18,6 +20,8 @@ export function PosterViewerModal({
   poster,
   onClose,
 }: PosterViewerModalProps) {
+  const [isDownloading, setIsDownloading] = useState(false);
+
   useEffect(() => {
     if (!open) {
       return;
@@ -44,6 +48,20 @@ export function PosterViewerModal({
   }
 
   const downloadName = `${poster.id}-bubbleblad.png`;
+
+  async function handleDownload() {
+    setIsDownloading(true);
+
+    try {
+      await downloadValuePoster(poster!.full_image_url, downloadName);
+      trackEvent({
+        name: "poster_downloaded",
+        posterId: poster!.id,
+      });
+    } finally {
+      setIsDownloading(false);
+    }
+  }
 
   return (
     <div className="fixed inset-0 z-[100] flex flex-col sm:items-center sm:justify-center sm:p-6">
@@ -80,13 +98,11 @@ export function PosterViewerModal({
           </button>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-2 py-3 sm:px-4 sm:py-4">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={poster.image_url}
+        <div className="flex min-h-0 flex-1 items-start justify-center overflow-y-auto px-2 py-3 sm:px-4 sm:py-4">
+          <PosterModalImage
+            src={poster.full_image_url}
             alt={`${poster.name_af} Bubbleblad`}
-            className="mx-auto block h-auto w-full max-w-full shadow-[6px_6px_0_0_#000] sm:shadow-[8px_8px_0_0_#000]"
-            draggable={false}
+            className="shadow-[6px_6px_0_0_#000] sm:shadow-[8px_8px_0_0_#000]"
           />
         </div>
 
@@ -113,19 +129,14 @@ export function PosterViewerModal({
             </Link>
           </div>
 
-          <a
-            href={poster.image_url}
-            download={downloadName}
-            onClick={() =>
-              trackEvent({
-                name: "poster_downloaded",
-                posterId: poster.id,
-              })
-            }
-            className="inline-flex items-center justify-center rounded-full border-4 border-komma-black bg-komma-yellow px-5 py-2.5 text-sm font-extrabold shadow-[3px_3px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_#FF1493] sm:text-base"
+          <button
+            type="button"
+            onClick={handleDownload}
+            disabled={isDownloading}
+            className="inline-flex items-center justify-center rounded-full border-4 border-komma-black bg-komma-yellow px-5 py-2.5 text-sm font-extrabold shadow-[3px_3px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_#FF1493] disabled:cursor-not-allowed disabled:opacity-60 sm:text-base"
           >
-            Laai af
-          </a>
+            {isDownloading ? "Besig…" : "Laai af"}
+          </button>
         </div>
       </div>
     </div>

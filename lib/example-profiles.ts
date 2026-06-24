@@ -30,7 +30,26 @@ export type ExampleProfile = {
   photoSrc: string;
   bubbleNamesAf: string[];
   rankedBubbles: RankedBubbleResult[];
+  /** Landing hero "Jy" slide — grey avatar centre instead of a photo. */
+  useCenterAvatar?: boolean;
 };
+
+function buildPlaceholderRankedBubbles(
+  labels: readonly string[],
+): RankedBubbleResult[] {
+  return labels.map((nameAf, index) => ({
+    id: `hero-placeholder-${index + 1}`,
+    rank: index + 1,
+    score: labels.length - index,
+    bubble: {
+      id: `hero-placeholder-${index + 1}`,
+      nameAf,
+      nameEn: `Your value #${index + 1}`,
+      descriptionAf: "Jou eie waarde.",
+      category: "ek-identiteit",
+    },
+  }));
+}
 
 function resolveBubble(nameAf: string): BubbleValue {
   const fromLibrary = BUBBLE_LIBRARY.find((bubble) => bubble.nameAf === nameAf);
@@ -147,21 +166,32 @@ export const EXAMPLE_PROFILES: ExampleProfile[] = [
   rankedBubbles: buildRankedBubbles(profile.bubbleNamesAf),
 }));
 
-export const SAMPLE_HERO_PROFILE: ExampleProfile = {
-  id: "sample-user",
+export const HERO_USER_PROFILE: ExampleProfile = {
+  id: "jy",
   name: "Jy",
   photoSrc: "",
-  bubbleNamesAf: ["Familie", "Vryheid", "Prestasie", "Waarheid", "Geloof"],
-  rankedBubbles: buildRankedBubbles([
-    "Familie",
-    "Vryheid",
-    "Prestasie",
-    "Waarheid",
-    "Geloof",
+  useCenterAvatar: true,
+  bubbleNamesAf: [
+    "Jou waarde #1",
+    "Jou waarde #2",
+    "Jou waarde #3",
+    "Jou waarde #4",
+    "Jou waarde #5",
+  ],
+  rankedBubbles: buildPlaceholderRankedBubbles([
+    "Jou waarde #1",
+    "Jou waarde #2",
+    "Jou waarde #3",
+    "Jou waarde #4",
+    "Jou waarde #5",
   ]),
 };
 
+/** @deprecated Use HERO_USER_PROFILE */
+export const SAMPLE_HERO_PROFILE = HERO_USER_PROFILE;
+
 export const HERO_CAROUSEL_PROFILE_IDS = [
+  "jy",
   "julius-malema",
   "rassie-erasmus",
   "steve-jobs",
@@ -170,9 +200,15 @@ export const HERO_CAROUSEL_PROFILE_IDS = [
   "mk",
 ] as const;
 
+export function getHeroCarouselProfiles(): ExampleProfile[] {
+  return HERO_CAROUSEL_PROFILE_IDS.map((id) => getExampleProfileById(id)).filter(
+    (profile): profile is ExampleProfile => profile !== undefined,
+  );
+}
+
 export function getExampleProfileById(id: string): ExampleProfile | undefined {
-  if (id === SAMPLE_HERO_PROFILE.id) {
-    return SAMPLE_HERO_PROFILE;
+  if (id === HERO_USER_PROFILE.id) {
+    return HERO_USER_PROFILE;
   }
 
   return EXAMPLE_PROFILES.find((profile) => profile.id === id);

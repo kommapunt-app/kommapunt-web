@@ -1,17 +1,18 @@
 "use client";
 
 import { useEffect } from "react";
+import { PosterModalImage } from "@/components/PosterModalImage";
 
 interface ValuePosterModalProps {
   open: boolean;
-  posterSrc: string;
+  fullSrc: string;
   valueNameAf: string;
   onClose: () => void;
 }
 
 export function ValuePosterModal({
   open,
-  posterSrc,
+  fullSrc,
   valueNameAf,
   onClose,
 }: ValuePosterModalProps) {
@@ -66,13 +67,11 @@ export function ValuePosterModal({
           </button>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-2 py-3 sm:px-4 sm:py-4">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={posterSrc}
+        <div className="flex min-h-0 flex-1 items-start justify-center overflow-y-auto px-2 py-3 sm:px-4 sm:py-4">
+          <PosterModalImage
+            src={fullSrc}
             alt={`${valueNameAf} Bubbleblad`}
-            className="mx-auto block h-auto w-full max-w-full shadow-[6px_6px_0_0_#000] sm:shadow-[8px_8px_0_0_#000]"
-            draggable={false}
+            className="shadow-[6px_6px_0_0_#000] sm:shadow-[8px_8px_0_0_#000]"
           />
         </div>
       </div>

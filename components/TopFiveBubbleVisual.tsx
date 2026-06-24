@@ -20,7 +20,6 @@ const FRAME_BORDER = {
 
 const CENTER = { cx: 500, cy: 360, r: 135 };
 const CENTER_LEFT_PCT = (CENTER.cx / VIEWBOX_WIDTH) * 100;
-const CENTER_TOP_PCT = (CENTER.cy / VIEWBOX_HEIGHT) * 100;
 const CENTER_WIDTH_PCT = ((CENTER.r * 2) / VIEWBOX_WIDTH) * 100;
 
 const VALUE_BUBBLES = [
@@ -164,6 +163,31 @@ function getVisualLabelLayout(
   };
 }
 
+interface ValueBubblePositionAdjustment {
+  index: number;
+  cx?: number;
+  cy?: number;
+}
+
+function getValueBubblePosition(
+  index: number,
+  adjustments?: ValueBubblePositionAdjustment[],
+) {
+  const layout = VALUE_BUBBLES[index];
+
+  if (!layout) {
+    return null;
+  }
+
+  const adjustment = adjustments?.find((item) => item.index === index);
+
+  return {
+    cx: layout.cx + (adjustment?.cx ?? 0),
+    cy: layout.cy + (adjustment?.cy ?? 0),
+    r: layout.r,
+  };
+}
+
 interface TopFiveBubbleVisualProps {
   rankedBubbles: RankedBubbleResult[];
   photoUrl?: string | null;
@@ -174,6 +198,10 @@ interface TopFiveBubbleVisualProps {
   frameless?: boolean;
   clusterOffsetY?: number;
   animationPreset?: "default" | "heroFloat";
+  /** Vertical offset for centre profile circle only (negative moves up). */
+  centerCircleOffsetY?: number;
+  /** Per-bubble layout nudges without changing the base cluster. */
+  valueBubblePositionAdjustments?: ValueBubblePositionAdjustment[];
   /** Landing hero only — grey centre avatar instead of KommaPunt logo */
   centerCircleFill?: string;
   defaultCenterImageSrc?: string;
@@ -465,6 +493,8 @@ export function TopFiveBubbleVisual({
   frameless = false,
   clusterOffsetY = 0,
   animationPreset = "default",
+  centerCircleOffsetY = 0,
+  valueBubblePositionAdjustments,
   centerCircleFill,
   defaultCenterImageSrc = PROFILE_CENTER_FALLBACK_SRC,
   photoUploadEnabled = false,
@@ -491,6 +521,8 @@ export function TopFiveBubbleVisual({
   const strokeWidth = compact ? 5 : 8;
   const photoRadius = CENTER.r - strokeWidth / 2;
   const photoDiameter = photoRadius * 2;
+  const centerCy = CENTER.cy + centerCircleOffsetY;
+  const centerTopPct = (centerCy / VIEWBOX_HEIGHT) * 100;
 
   const frameBorder = frameless
     ? null
@@ -559,7 +591,7 @@ export function TopFiveBubbleVisual({
 
         <defs>
           <clipPath id={clipId}>
-            <circle cx={CENTER.cx} cy={CENTER.cy} r={photoRadius} />
+            <circle cx={CENTER.cx} cy={centerCy} r={photoRadius} />
           </clipPath>
         </defs>
 
@@ -572,13 +604,21 @@ export function TopFiveBubbleVisual({
             }
 
             const colors = getBubbleColors(index, colorScheme);
+            const position = getValueBubblePosition(
+              index,
+              valueBubblePositionAdjustments,
+            );
+
+            if (!position) {
+              return null;
+            }
 
             return (
               <ValueBubble
                 key={item.id}
-                cx={VALUE_BUBBLES[index]!.cx}
-                cy={VALUE_BUBBLES[index]!.cy}
-                r={VALUE_BUBBLES[index]!.r}
+                cx={position.cx}
+                cy={position.cy}
+                r={position.r}
                 label={item.bubble.nameAf}
                 floatValues={bubble.floatValues}
                 dur={bubble.dur}
@@ -597,14 +637,14 @@ export function TopFiveBubbleVisual({
           {centerCircleFill && !uploadedImageUrl ? (
             <DefaultCenterAvatar
               cx={CENTER.cx}
-              cy={CENTER.cy}
+              cy={centerCy}
               r={CENTER.r}
               fill={centerCircleFill}
             />
           ) : (
             <CenterProfileImage
               cx={CENTER.cx}
-              cy={CENTER.cy}
+              cy={centerCy}
               photoRadius={photoRadius}
               photoDiameter={photoDiameter}
               clipId={clipId}
@@ -614,7 +654,7 @@ export function TopFiveBubbleVisual({
 
           <circle
             cx={CENTER.cx + 3}
-            cy={CENTER.cy + 2}
+            cy={centerCy + 2}
             r={CENTER.r}
             fill="none"
             stroke="#000"
@@ -623,7 +663,7 @@ export function TopFiveBubbleVisual({
           />
           <circle
             cx={CENTER.cx}
-            cy={CENTER.cy}
+            cy={centerCy}
             r={CENTER.r}
             fill="none"
             stroke="#000"
@@ -651,7 +691,7 @@ export function TopFiveBubbleVisual({
               className="pointer-events-auto absolute -translate-x-1/2 -translate-y-1/2"
               style={{
                 left: `${CENTER_LEFT_PCT}%`,
-                top: `${CENTER_TOP_PCT}%`,
+                top: `${centerTopPct}%`,
                 width: `${CENTER_WIDTH_PCT}%`,
               }}
             >

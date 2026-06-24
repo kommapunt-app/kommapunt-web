@@ -17,7 +17,6 @@ interface ValueGuideDetailViewProps {
 export function ValueGuideDetailView({ value }: ValueGuideDetailViewProps) {
   const bubbleCategoryId = getValueGuideBubbleCategory(value);
   const bubbleCategory = getBubbleCategoryById(bubbleCategoryId);
-  const posterImageUrl = `/value-posters/${value.id}.png`;
 
   return (
     <article>
@@ -42,10 +41,7 @@ export function ValueGuideDetailView({ value }: ValueGuideDetailViewProps) {
 
       <div className="space-y-5">
         {hasValuePoster(value.id) ? (
-          <ValuePagePoster
-            valueNameAf={value.nameAf}
-            imageUrl={posterImageUrl}
-          />
+          <ValuePagePoster valueId={value.id} valueNameAf={value.nameAf} />
         ) : null}
 
         <section className="rounded-2xl border-4 border-komma-black bg-[#F3F1EC] p-5 sm:p-6">

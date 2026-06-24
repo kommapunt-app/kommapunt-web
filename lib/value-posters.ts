@@ -1,7 +1,16 @@
+import {
+  getValuePosterFullSrc,
+  getValuePosterThumbnailSrc,
+} from "@/lib/value-poster-images";
+
 const posterExistenceCache = new Map<string, boolean>();
 
 export function getValuePosterSrc(valueId: string): string {
-  return `/value-posters/${valueId}.png`;
+  return getValuePosterFullSrc(valueId);
+}
+
+export function getValuePosterThumbSrc(valueId: string): string {
+  return getValuePosterThumbnailSrc(valueId);
 }
 
 export function checkValuePosterExists(valueId: string): Promise<boolean> {
@@ -24,6 +33,6 @@ export function checkValuePosterExists(valueId: string): Promise<boolean> {
       resolve(false);
     };
 
-    image.src = getValuePosterSrc(valueId);
+    image.src = getValuePosterFullSrc(valueId);
   });
 }

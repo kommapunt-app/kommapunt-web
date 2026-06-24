@@ -3,6 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PosterViewerModal } from "@/components/PosterViewerModal";
+import { PosterThumbnailImage } from "@/components/PosterThumbnailImage";
 import {
   type ValuePosterEntry,
   VALUE_POSTERS,
@@ -125,13 +126,11 @@ function PosterCard({
       className="group overflow-hidden rounded-[1.5rem] border-4 border-komma-black bg-white text-left shadow-[4px_4px_0_0_#000] transition-all hover:-translate-y-1 hover:border-komma-pink hover:shadow-[6px_6px_0_0_#FF1493]"
     >
       <div className="flex items-center justify-center bg-[#F5F5F0] p-3 sm:p-4">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={poster.image_url}
+        <PosterThumbnailImage
+          thumbnailSrc={poster.thumbnail_url}
+          fullSrc={poster.full_image_url}
           alt={`${poster.name_af} Bubbleblad`}
           className="aspect-[3/4] w-full max-w-[280px] object-contain transition-transform duration-300 group-hover:scale-[1.02]"
-          loading="lazy"
-          draggable={false}
         />
       </div>
 

@@ -1,5 +1,4 @@
 import { HeroExampleCarousel } from "./HeroExampleCarousel";
-import { HeroMainProfile } from "./HeroMainProfile";
 import { HeroQuoteCard } from "./HeroQuoteCard";
 import { PageContainer } from "@/components/PageContainer";
 
@@ -47,12 +46,8 @@ export function Hero() {
             </div>
           </div>
 
-          <div className="relative flex w-full flex-col items-center gap-12 lg:min-h-[46rem] lg:items-end lg:gap-0 lg:pb-20 xl:min-h-[48rem]">
+          <div className="relative flex w-full flex-col items-center lg:min-h-[46rem] lg:items-end lg:pb-20 xl:min-h-[48rem]">
             <div className="w-full lg:absolute lg:-top-[20px] lg:right-0 lg:w-full xl:-top-[28px]">
-              <HeroMainProfile />
-            </div>
-
-            <div className="w-full max-w-[540px] lg:absolute lg:right-0 lg:top-[calc(26.5rem-80px)] lg:max-w-none lg:pr-4 xl:top-[calc(29.5rem-80px)]">
               <HeroExampleCarousel />
             </div>
           </div>
