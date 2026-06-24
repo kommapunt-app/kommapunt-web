@@ -1,39 +1,41 @@
 import { getPublicProfileUrl } from "@/lib/site-url";
-import { KOMMA_SHARE_CAPTION } from "@/lib/share-bubbles";
+import {
+  PROFILE_CARD_INTRO_TEXT,
+  PROFILE_OG_TITLE,
+  PROFILE_SHARE_TAGLINE,
+} from "@/lib/profile-card";
 
 export const PROFILE_SHARE_UNSUPPORTED_MESSAGE =
   "Direkte deel werk nie op hierdie browser nie. Gebruik eerder Kopieer skakel.";
 
-export function getProfileShareCaption(name: string): string {
-  return `${name} se Komma. Bubbles profiel.
+export function getProfileShareText(profileId: string): string {
+  return `${PROFILE_CARD_INTRO_TEXT}
 
-Komma. 'n Gesprek oor standpunte en hoe ons daar beland.`;
+${PROFILE_SHARE_TAGLINE}
+
+Ontdek jou eie Bubbles:
+${getPublicProfileUrl(profileId)}`;
 }
 
+/** @deprecated Use getProfileShareText(profileId) */
 export function getResultsProfileShareText(profileId: string): string {
-  return `${KOMMA_SHARE_CAPTION}\n\n${getPublicProfileUrl(profileId)}`;
-}
-
-export function getProfileShareText(name: string, profileId: string): string {
-  return `${getProfileShareCaption(name)}\n\n${getPublicProfileUrl(profileId)}`;
+  return getProfileShareText(profileId);
 }
 
 export function getWhatsAppShareUrl(text: string): string {
   return `https://wa.me/?text=${encodeURIComponent(text)}`;
 }
 
-export function getEmailShareUrl(name: string, profileId: string): string {
-  const subject = `${name} se Bubbles | KommaPunt`;
-  const body = getProfileShareText(name, profileId);
+export function getEmailShareUrl(profileId: string): string {
+  const subject = `${PROFILE_OG_TITLE} | KommaPunt`;
+  const body = getProfileShareText(profileId);
 
   return `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
-export function getResultsEmailShareUrl(name: string, profileId: string): string {
-  const subject = `${name} se Bubbles | KommaPunt`;
-  const body = getResultsProfileShareText(profileId);
-
-  return `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+/** @deprecated Use getEmailShareUrl(profileId) */
+export function getResultsEmailShareUrl(_name: string, profileId: string): string {
+  return getEmailShareUrl(profileId);
 }
 
 export async function copyTextToClipboard(text: string): Promise<boolean> {
@@ -67,8 +69,13 @@ export async function copyTextToClipboard(text: string): Promise<boolean> {
   }
 }
 
+export async function copyProfileShareText(profileId: string): Promise<boolean> {
+  return copyTextToClipboard(getProfileShareText(profileId));
+}
+
+/** @deprecated Use copyProfileShareText(profileId) */
 export async function copyProfileUrl(profileId: string): Promise<boolean> {
-  return copyTextToClipboard(getPublicProfileUrl(profileId));
+  return copyProfileShareText(profileId);
 }
 
 export function canUseNativeShare(): boolean {
@@ -77,20 +84,17 @@ export function canUseNativeShare(): boolean {
 
 export async function shareProfileUrl(
   profileId: string,
-  name: string,
 ): Promise<"shared" | "unsupported" | "cancelled"> {
   if (!canUseNativeShare()) {
     return "unsupported";
   }
 
-  const url = getPublicProfileUrl(profileId);
-  const text = getProfileShareCaption(name);
+  const text = getProfileShareText(profileId);
 
   try {
     await navigator.share({
-      title: `${name} se Bubbles | KommaPunt`,
+      title: PROFILE_OG_TITLE,
       text,
-      url,
     });
     return "shared";
   } catch (error) {

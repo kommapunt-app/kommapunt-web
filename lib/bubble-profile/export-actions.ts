@@ -1,6 +1,6 @@
 import type { RefObject } from "react";
 import {
-  copyProfileUrl,
+  copyProfileShareText,
   PROFILE_SHARE_UNSUPPORTED_MESSAGE,
   shareProfileUrl,
 } from "@/lib/profile-sharing";
@@ -56,15 +56,14 @@ export async function saveBubbleVisualToPhotos(
 
 export async function shareBubbleProfileUrl(
   profileId: string,
-  personName: string,
 ): Promise<"shared" | "unsupported" | "copied"> {
-  const result = await shareProfileUrl(profileId, personName);
+  const result = await shareProfileUrl(profileId);
 
   if (result === "shared" || result === "cancelled") {
     return "shared";
   }
 
-  const copied = await copyProfileUrl(profileId);
+  const copied = await copyProfileShareText(profileId);
 
   if (copied) {
     return "copied";

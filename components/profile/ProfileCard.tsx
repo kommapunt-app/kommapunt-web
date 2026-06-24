@@ -46,7 +46,7 @@ export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
             {personName}
           </h2>
           <p className="mt-3 text-sm font-semibold leading-snug text-komma-black/75 sm:text-base">
-            {getProfileIntroText(personName)}
+            {getProfileIntroText()}
           </p>
         </header>
 

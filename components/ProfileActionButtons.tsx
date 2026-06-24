@@ -3,9 +3,9 @@
 import { Button } from "@/components/Button";
 import { KOMMA_COFFEE_URL } from "@/lib/constants/coffee";
 import {
-  copyProfileUrl,
-  getResultsEmailShareUrl,
-  getResultsProfileShareText,
+  copyProfileShareText,
+  getEmailShareUrl,
+  getProfileShareText,
   getWhatsAppShareUrl,
 } from "@/lib/profile-sharing";
 
@@ -48,10 +48,10 @@ export function ProfileActionButtons({
       return;
     }
 
-    await copyProfileUrl(profileId);
+    await copyProfileShareText(profileId);
   }
 
-  const shareText = profileId ? getResultsProfileShareText(profileId) : "";
+  const shareText = profileId ? getProfileShareText(profileId) : "";
 
   return (
     <div className="flex w-full max-w-3xl flex-col items-center gap-3">
@@ -118,7 +118,7 @@ export function ProfileActionButtons({
             </Button>
 
             <Button
-              href={getResultsEmailShareUrl(personName ?? "My", profileId!)}
+              href={getEmailShareUrl(profileId!)}
               variant="secondary"
               className={unlockedButtonClass}
             >

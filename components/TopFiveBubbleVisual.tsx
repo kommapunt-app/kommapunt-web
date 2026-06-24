@@ -170,6 +170,8 @@ interface TopFiveBubbleVisualProps {
   frameless?: boolean;
   clusterOffsetY?: number;
   animationPreset?: "default" | "heroFloat";
+  /** Landing hero only — grey centre avatar instead of KommaPunt logo */
+  centerCircleFill?: string;
   defaultCenterImageSrc?: string;
   photoUploadEnabled?: boolean;
   onPhotoChange?: (url: string | null) => void;
@@ -431,6 +433,7 @@ export function TopFiveBubbleVisual({
   frameless = false,
   clusterOffsetY = 0,
   animationPreset = "default",
+  centerCircleFill,
   defaultCenterImageSrc = PROFILE_CARD_CENTER_LOGO_SRC,
   photoUploadEnabled = false,
   onPhotoChange,
@@ -561,6 +564,13 @@ export function TopFiveBubbleVisual({
                 preserveAspectRatio="xMidYMid slice"
               />
             </g>
+          ) : centerCircleFill ? (
+            <DefaultCenterAvatar
+              cx={CENTER.cx}
+              cy={CENTER.cy}
+              r={CENTER.r}
+              fill={centerCircleFill}
+            />
           ) : (
             <CenterLogoImage
               cx={CENTER.cx}

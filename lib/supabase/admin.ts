@@ -121,6 +121,7 @@ export type BubbleProfilePublicRow = {
   top_5_values: string[];
   top_10_values: string[];
   scores: Record<string, number> | null;
+  photo_url: string | null;
 };
 
 export async function getBubbleProfileById(
@@ -130,7 +131,9 @@ export async function getBubbleProfileById(
 
   const { data, error } = await supabase
     .from("bubble_profiles")
-    .select("id, name, ranked_values, top_5_values, top_10_values, scores")
+    .select(
+      "id, name, ranked_values, top_5_values, top_10_values, scores, photo_url",
+    )
     .eq("id", id)
     .maybeSingle();
 
@@ -140,6 +143,27 @@ export async function getBubbleProfileById(
   }
 
   return data;
+}
+
+export async function updateBubbleProfilePhoto(
+  id: string,
+  photoUrl: string,
+): Promise<boolean> {
+  const supabase = getSupabaseAdmin();
+
+  const { data, error } = await supabase
+    .from("bubble_profiles")
+    .update({ photo_url: photoUrl })
+    .eq("id", id)
+    .select("id")
+    .maybeSingle();
+
+  if (error) {
+    console.error("[updateBubbleProfilePhoto] Supabase update error", error);
+    throw error;
+  }
+
+  return data !== null;
 }
 
 type ProfileComparisonRow = {

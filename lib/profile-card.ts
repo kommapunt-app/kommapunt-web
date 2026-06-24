@@ -18,10 +18,19 @@ export const PROFILE_CARD_QR_CODE_SRC = "/profile-card-qr-sticker.png";
 
 export const PROFILE_CARD_CENTER_LOGO_SRC = KOMMA_PUNT_MARK_SRC;
 
-export function getProfileIntroText(name: string): string {
-  const firstName = name.trim().split(/\s+/)[0] || name.trim();
+export const PROFILE_CARD_INTRO_TEXT =
+  "My KommaPunt Bubbles wys wat vir my gewig dra.";
 
-  return `Hier is wat vir ${firstName} die meeste gewig dra.`;
+export const PROFILE_OG_TITLE = "My KommaPunt Bubbles";
+
+export const PROFILE_OG_DESCRIPTION =
+  "My KommaPunt Bubbles wys wat vir my gewig dra. KommaPunt: ’n gesprek oor standpunte en hoe ons daar beland.";
+
+export const PROFILE_SHARE_TAGLINE =
+  "KommaPunt: ’n gesprek oor standpunte en hoe ons daar beland.";
+
+export function getProfileIntroText(): string {
+  return PROFILE_CARD_INTRO_TEXT;
 }
 
 export function getProfilePhotoUrl(

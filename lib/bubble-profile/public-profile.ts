@@ -11,6 +11,7 @@ export type PublicBubbleProfile = {
   top5Values: string[];
   top10Values: string[];
   scores: Record<string, number> | null;
+  photoUrl: string | null;
 };
 
 export function isValidProfileId(id: string): boolean {
@@ -37,5 +38,6 @@ export async function fetchPublicBubbleProfile(
     top5Values: row.top_5_values,
     top10Values: row.top_10_values,
     scores: row.scores,
+    photoUrl: row.photo_url,
   };
 }

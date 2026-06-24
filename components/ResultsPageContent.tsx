@@ -18,6 +18,7 @@ import {
   shareBubbleProfileUrl,
 } from "@/lib/bubble-profile/export-actions";
 import { loadBubbleProfileFromSession } from "@/lib/bubble-profile/session";
+import { uploadProfilePhotoFromUrl } from "@/lib/bubble-profile/profile-photo";
 import { STORAGE_KEY_BUBBLE_PROFILE } from "@/lib/bubble-profile/types";
 import type { BubbleProfileContact } from "@/lib/bubble-profile/types";
 import { getPublicProfileUrl } from "@/lib/site-url";
@@ -65,6 +66,33 @@ export function ResultsPageContent() {
       }
     };
   }, [photoUrl]);
+
+  useEffect(() => {
+    if (!profileId || !photoUrl) {
+      return;
+    }
+
+    let cancelled = false;
+
+    async function syncProfilePhoto() {
+      try {
+        await uploadProfilePhotoFromUrl(profileId!, photoUrl!);
+      } catch (error) {
+        if (!cancelled) {
+          console.error("[bubble-profile] photo sync failed", error);
+        }
+      }
+    }
+
+    const timer = window.setTimeout(() => {
+      void syncProfilePhoto();
+    }, 400);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [photoUrl, profileId]);
 
   function handlePhotoChange(url: string | null) {
     setPhotoUrl((current) => {
@@ -145,7 +173,7 @@ export function ResultsPageContent() {
     setIsActionBusy(true);
 
     try {
-      const result = await shareBubbleProfileUrl(profileId, profileContact.name);
+      const result = await shareBubbleProfileUrl(profileId);
 
       if (result === "copied") {
         setSaveHelperMessage("Skakel gekopieer na knipbord.");

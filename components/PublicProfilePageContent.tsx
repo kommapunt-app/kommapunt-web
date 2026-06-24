@@ -2,11 +2,11 @@
 
 import { ProfileQrCode } from "@/components/ProfileQrCode";
 import { ProfileShareActions } from "@/components/ProfileShareActions";
+import { ProfileCard } from "@/components/profile/ProfileCard";
 import { RankedBubbleListItem } from "@/components/RankedBubbleListItem";
-import { TopFiveBubbleVisual } from "@/components/TopFiveBubbleVisual";
 import { rankedRecordsToResults } from "@/lib/bubble-profile/from-records";
 import type { PublicBubbleProfile } from "@/lib/bubble-profile/public-profile";
-import { KOMMA_PUNT_MARK_SRC, PROFILE_CARD_TITLE } from "@/lib/profile-card";
+import { getProfilePhotoUrl } from "@/lib/profile-card";
 import { formatBubbleScore } from "@/lib/results";
 import { getPublicProfileUrl } from "@/lib/site-url";
 
@@ -19,28 +19,17 @@ export function PublicProfilePageContent({
 }: PublicProfilePageContentProps) {
   const rankedResults = rankedRecordsToResults(profile.rankedValues);
   const topTen = rankedResults.slice(0, 10);
-  const topFive = rankedResults.slice(0, 5);
   const profileUrl = getPublicProfileUrl(profile.id);
+  const photoUrl = getProfilePhotoUrl(profile.photoUrl);
 
   return (
     <div className="mx-auto max-w-3xl">
-      <div className="mb-8 text-center sm:mb-10">
-        <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-komma-black/55 sm:text-sm">
-          {PROFILE_CARD_TITLE}
-        </p>
-        <h1 className="mt-2 text-4xl font-extrabold tracking-tight sm:text-5xl">
-          {profile.name}
-        </h1>
-        <p className="mt-3 text-base font-semibold text-komma-black/75 sm:text-lg">
-          Hier is wat vir {profile.name.split(" ")[0]} die meeste gewig dra.
-        </p>
-      </div>
-
-      <div className="mb-8 overflow-visible rounded-[2rem] border-4 border-komma-black bg-komma-yellow p-5 shadow-[6px_6px_0_0_#FF1493] sm:mb-10 sm:p-7">
-        <h2 className="mb-4 text-center text-xl font-extrabold sm:text-2xl">
-          Top 5 Bubbles
-        </h2>
-        <TopFiveBubbleVisual rankedBubbles={topFive} />
+      <div className="mb-8 sm:mb-10">
+        <ProfileCard
+          personName={profile.name}
+          rankedBubbles={rankedResults}
+          photoUrl={photoUrl}
+        />
       </div>
 
       <div className="mb-8 flex flex-col items-center gap-6 sm:mb-10">
@@ -90,16 +79,8 @@ export function PublicProfilePageContent({
         </ul>
       </section>
 
-      <footer className="flex flex-col items-center gap-4 border-t-4 border-komma-black pt-8 sm:pt-10">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={KOMMA_PUNT_MARK_SRC}
-          alt="KommaPunt"
-          width={512}
-          height={120}
-          className="block h-8 w-auto object-contain sm:h-9"
-        />
-        <p className="max-w-md text-center text-sm font-semibold leading-relaxed text-komma-black/70">
+      <footer className="border-t-4 border-komma-black pt-8 sm:pt-10">
+        <p className="mx-auto max-w-md text-center text-sm font-semibold leading-relaxed text-komma-black/70">
           Komma. &apos;n Gesprek oor standpunte en hoe ons daar beland.
         </p>
       </footer>

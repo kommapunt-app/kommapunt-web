@@ -1,8 +1,11 @@
 import { toPng } from "html-to-image";
+import { PROFILE_CARD_CENTER_LOGO_SRC } from "@/lib/profile-card";
 
-export const KOMMA_SHARE_CAPTION = `My Komma. Bubbles wys wat vir my gewig dra.
+import { PROFILE_CARD_INTRO_TEXT, PROFILE_SHARE_TAGLINE } from "@/lib/profile-card";
 
-Komma. 'n Gesprek oor standpunte en hoe ons daar beland.`;
+export const KOMMA_SHARE_CAPTION = `${PROFILE_CARD_INTRO_TEXT}
+
+${PROFILE_SHARE_TAGLINE}`;
 
 export const SHARE_UNSUPPORTED_MESSAGE =
   "Direkte deel werk nie op hierdie browser nie. Laai eerder die prent af en deel dit op WhatsApp.";
@@ -72,15 +75,23 @@ async function prepareSvgImagesForExport(
   const svgImages = element.querySelectorAll("image");
   const restores: Array<() => void> = [];
 
-  if (!photoUrl || !photoUrl.startsWith("blob:")) {
+  if (!photoUrl) {
     return () => {};
   }
 
-  let dataUrl: string;
+  let dataUrl: string | null = null;
 
-  try {
-    dataUrl = await blobUrlToDataUrl(photoUrl);
-  } catch {
+  if (photoUrl.startsWith("data:image/")) {
+    dataUrl = photoUrl;
+  } else if (photoUrl.startsWith("blob:")) {
+    try {
+      dataUrl = await blobUrlToDataUrl(photoUrl);
+    } catch {
+      return () => {};
+    }
+  }
+
+  if (!dataUrl) {
     return () => {};
   }
 
@@ -89,8 +100,12 @@ async function prepareSvgImagesForExport(
     const originalHref =
       svgImage.getAttribute("href") ?? svgImage.getAttribute("xlink:href");
 
-    svgImage.setAttribute("href", dataUrl);
-    svgImage.setAttributeNS("http://www.w3.org/1999/xlink", "href", dataUrl);
+    if (!originalHref || originalHref === PROFILE_CARD_CENTER_LOGO_SRC) {
+      return;
+    }
+
+    svgImage.setAttribute("href", dataUrl!);
+    svgImage.setAttributeNS("http://www.w3.org/1999/xlink", "href", dataUrl!);
 
     restores.push(() => {
       if (originalHref) {

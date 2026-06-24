@@ -4,6 +4,7 @@ import { Header } from "@/components/Header";
 import { PageContainer } from "@/components/PageContainer";
 import { PublicProfilePageContent } from "@/components/PublicProfilePageContent";
 import { fetchPublicBubbleProfile } from "@/lib/bubble-profile/public-profile";
+import { PROFILE_OG_DESCRIPTION, PROFILE_OG_TITLE } from "@/lib/profile-card";
 import { getPublicProfileUrl } from "@/lib/site-url";
 
 type ProfilePageProps = {
@@ -23,35 +24,33 @@ export async function generateMetadata({
     };
   }
 
-  const title = `${profile.name} se Bubbles | KommaPunt`;
-  const topFiveSummary = profile.top5Values.slice(0, 5).join(", ");
-  const description = `Bekyk ${profile.name} se top Bubbles op KommaPunt: ${topFiveSummary}.`;
   const url = getPublicProfileUrl(id);
+  const ogImagePath = `/profile/${id}/opengraph-image`;
 
   return {
-    title,
-    description,
+    title: `${PROFILE_OG_TITLE} | KommaPunt`,
+    description: PROFILE_OG_DESCRIPTION,
     openGraph: {
-      title,
-      description,
+      title: PROFILE_OG_TITLE,
+      description: PROFILE_OG_DESCRIPTION,
       url,
       siteName: "KommaPunt",
       locale: "af_ZA",
       type: "website",
       images: [
         {
-          url: "/opengraph-image.png",
+          url: ogImagePath,
           width: 1200,
           height: 630,
-          alt: title,
+          alt: PROFILE_OG_TITLE,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title,
-      description,
-      images: ["/opengraph-image.png"],
+      title: PROFILE_OG_TITLE,
+      description: PROFILE_OG_DESCRIPTION,
+      images: [ogImagePath],
     },
   };
 }

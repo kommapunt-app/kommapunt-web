@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/Button";
 import {
   canUseNativeShare,
-  copyProfileUrl,
+  copyProfileShareText,
   getEmailShareUrl,
   getProfileShareText,
   getWhatsAppShareUrl,
@@ -27,9 +27,9 @@ export function ProfileShareActions({
   const [feedback, setFeedback] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const shareText = getProfileShareText(personName, profileId);
+  const shareText = getProfileShareText(profileId);
   const whatsAppUrl = getWhatsAppShareUrl(shareText);
-  const emailUrl = getEmailShareUrl(personName, profileId);
+  const emailUrl = getEmailShareUrl(profileId);
   const showNativeShare = canUseNativeShare();
 
   async function handleCopyLink() {
@@ -38,7 +38,7 @@ export function ProfileShareActions({
     setFeedback(null);
 
     try {
-      const copied = await copyProfileUrl(profileId);
+      const copied = await copyProfileShareText(profileId);
       setFeedback(copied ? "Skakel gekopieer." : "Kon nie skakel kopieer nie.");
     } finally {
       setIsBusy(false);
@@ -51,10 +51,10 @@ export function ProfileShareActions({
     setFeedback(null);
 
     try {
-      const result = await shareProfileUrl(profileId, personName);
+      const result = await shareProfileUrl(profileId);
 
       if (result === "unsupported") {
-        const copied = await copyProfileUrl(profileId);
+        const copied = await copyProfileShareText(profileId);
         setFeedback(
           copied
             ? PROFILE_SHARE_UNSUPPORTED_MESSAGE.replace(
