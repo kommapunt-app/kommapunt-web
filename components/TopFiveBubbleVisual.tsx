@@ -472,10 +472,18 @@ export function TopFiveBubbleVisual({
 }: TopFiveBubbleVisualProps) {
   const clipId = useId().replace(/:/g, "");
   const photoInputRef = useRef<HTMLInputElement>(null);
+  const trimmedPhotoUrl = photoUrl?.trim() || null;
   const uploadedImageUrl = getUploadedProfileImageUrl(photoUrl);
-  const resolvedUploadedImageUrl = useResolvedProfileImageUrl(uploadedImageUrl);
-  const centerImageSrc = getProfileImage(resolvedUploadedImageUrl);
-  const hasUserUploadedPhoto = Boolean(uploadedImageUrl && resolvedUploadedImageUrl);
+  const displayImageCandidate = uploadedImageUrl ?? trimmedPhotoUrl;
+  const resolvedDisplayImageUrl = useResolvedProfileImageUrl(displayImageCandidate);
+  const centerImageSrc =
+    resolvedDisplayImageUrl != null
+      ? getProfileImage(resolvedDisplayImageUrl)
+      : displayImageCandidate?.startsWith("blob:") ||
+          displayImageCandidate?.startsWith("data:image/")
+        ? getProfileImage(displayImageCandidate)
+        : PROFILE_CENTER_FALLBACK_SRC;
+  const hasUserUploadedPhoto = Boolean(uploadedImageUrl && resolvedDisplayImageUrl);
   const topFive = rankedBubbles.slice(0, 5);
   const strokeWidth = compact ? 5 : 8;
   const photoRadius = CENTER.r - strokeWidth / 2;
