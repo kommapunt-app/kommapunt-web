@@ -68,6 +68,15 @@ async function blobUrlToDataUrl(blobUrl: string): Promise<string> {
   });
 }
 
+async function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(blob);
+  });
+}
+
 async function prepareSvgImagesForExport(
   element: HTMLElement,
   photoUrl: string | null | undefined,
@@ -86,6 +95,20 @@ async function prepareSvgImagesForExport(
   } else if (photoUrl.startsWith("blob:")) {
     try {
       dataUrl = await blobUrlToDataUrl(photoUrl);
+    } catch {
+      return () => {};
+    }
+  } else if (
+    photoUrl.startsWith("http://") ||
+    photoUrl.startsWith("https://")
+  ) {
+    try {
+      const response = await fetch(photoUrl);
+      if (!response.ok) {
+        return () => {};
+      }
+
+      dataUrl = await blobToDataUrl(await response.blob());
     } catch {
       return () => {};
     }

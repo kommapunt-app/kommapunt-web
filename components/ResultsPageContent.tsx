@@ -18,7 +18,10 @@ import {
   shareBubbleProfileUrl,
 } from "@/lib/bubble-profile/export-actions";
 import { loadBubbleProfileFromSession } from "@/lib/bubble-profile/session";
-import { uploadProfilePhotoFromUrl } from "@/lib/bubble-profile/profile-photo";
+import {
+  fetchProfileImageUrl,
+  uploadProfilePhotoFromUrl,
+} from "@/lib/bubble-profile/profile-photo";
 import { STORAGE_KEY_BUBBLE_PROFILE } from "@/lib/bubble-profile/types";
 import type { BubbleProfileContact } from "@/lib/bubble-profile/types";
 import { getPublicProfileUrl } from "@/lib/site-url";
@@ -60,8 +63,26 @@ export function ResultsPageContent() {
   }, []);
 
   useEffect(() => {
+    if (!profileId) {
+      return;
+    }
+
+    let cancelled = false;
+
+    void fetchProfileImageUrl(profileId).then((url) => {
+      if (!cancelled && url) {
+        setPhotoUrl(url);
+      }
+    });
+
     return () => {
-      if (photoUrl) {
+      cancelled = true;
+    };
+  }, [profileId]);
+
+  useEffect(() => {
+    return () => {
+      if (photoUrl?.startsWith("blob:")) {
         URL.revokeObjectURL(photoUrl);
       }
     };
@@ -72,11 +93,31 @@ export function ResultsPageContent() {
       return;
     }
 
+    if (
+      !photoUrl.startsWith("blob:") &&
+      !photoUrl.startsWith("data:image/")
+    ) {
+      return;
+    }
+
     let cancelled = false;
 
     async function syncProfilePhoto() {
       try {
-        await uploadProfilePhotoFromUrl(profileId!, photoUrl!);
+        const persistedUrl = await uploadProfilePhotoFromUrl(
+          profileId!,
+          photoUrl!,
+        );
+
+        if (!cancelled && persistedUrl) {
+          setPhotoUrl((current) => {
+            if (current?.startsWith("blob:")) {
+              URL.revokeObjectURL(current);
+            }
+
+            return persistedUrl;
+          });
+        }
       } catch (error) {
         if (!cancelled) {
           console.error("[bubble-profile] photo sync failed", error);
@@ -96,7 +137,7 @@ export function ResultsPageContent() {
 
   function handlePhotoChange(url: string | null) {
     setPhotoUrl((current) => {
-      if (current) {
+      if (current?.startsWith("blob:")) {
         URL.revokeObjectURL(current);
       }
 

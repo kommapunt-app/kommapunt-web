@@ -6,7 +6,7 @@ import { ProfileCard } from "@/components/profile/ProfileCard";
 import { RankedBubbleListItem } from "@/components/RankedBubbleListItem";
 import { rankedRecordsToResults } from "@/lib/bubble-profile/from-records";
 import type { PublicBubbleProfile } from "@/lib/bubble-profile/public-profile";
-import { getProfilePhotoUrl } from "@/lib/profile-card";
+import { getProfileImageUrl } from "@/lib/profile-card";
 import { formatBubbleScore } from "@/lib/results";
 import { getPublicProfileUrl } from "@/lib/site-url";
 
@@ -20,7 +20,7 @@ export function PublicProfilePageContent({
   const rankedResults = rankedRecordsToResults(profile.rankedValues);
   const topTen = rankedResults.slice(0, 10);
   const profileUrl = getPublicProfileUrl(profile.id);
-  const photoUrl = getProfilePhotoUrl(profile.photoUrl);
+  const photoUrl = getProfileImageUrl(profile.profileImageUrl);
 
   return (
     <div className="mx-auto max-w-3xl">

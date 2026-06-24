@@ -94,11 +94,9 @@ export default async function ProfileOgImage({ params }: ProfileOgImageProps) {
   }
 
   const rankedBubbles = rankedRecordsToResults(profile.rankedValues).slice(0, 5);
-  const centerImage =
-    profile.photoUrl?.startsWith("data:image/") ||
-    profile.photoUrl?.startsWith("http")
-      ? profile.photoUrl
-      : logoUrl;
+  const centerImage = profile.profileImageUrl?.startsWith("http")
+    ? profile.profileImageUrl
+    : logoUrl;
 
   return new ImageResponse(
     (

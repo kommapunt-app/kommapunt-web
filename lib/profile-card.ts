@@ -33,12 +33,30 @@ export function getProfileIntroText(): string {
   return PROFILE_CARD_INTRO_TEXT;
 }
 
-export function getProfilePhotoUrl(
-  photoUrl?: string | null,
+export function getProfileImageUrl(
+  profileImageUrl?: string | null,
 ): string | null {
-  if (photoUrl?.trim()) {
-    return photoUrl;
+  const trimmed = profileImageUrl?.trim();
+
+  if (!trimmed) {
+    return null;
+  }
+
+  if (
+    trimmed.startsWith("https://") ||
+    trimmed.startsWith("http://") ||
+    trimmed.startsWith("blob:") ||
+    trimmed.startsWith("data:image/")
+  ) {
+    return trimmed;
   }
 
   return null;
+}
+
+/** @deprecated Use getProfileImageUrl */
+export function getProfilePhotoUrl(
+  profileImageUrl?: string | null,
+): string | null {
+  return getProfileImageUrl(profileImageUrl);
 }

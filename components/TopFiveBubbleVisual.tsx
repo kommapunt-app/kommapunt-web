@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { formatBubbleLabel } from "@/lib/bubble-label";
 import { PROFILE_CARD_CENTER_LOGO_SRC } from "@/lib/profile-card";
 import type { RankedBubbleResult } from "@/lib/results";
@@ -355,6 +355,33 @@ function ValueBubble({
   );
 }
 
+function useResolvedProfileImageUrl(photoUrl: string | null | undefined) {
+  const [loadFailed, setLoadFailed] = useState(false);
+
+  useEffect(() => {
+    setLoadFailed(false);
+
+    if (
+      !photoUrl ||
+      photoUrl.startsWith("blob:") ||
+      photoUrl.startsWith("data:image/")
+    ) {
+      return;
+    }
+
+    const image = new window.Image();
+    image.onload = () => setLoadFailed(false);
+    image.onerror = () => setLoadFailed(true);
+    image.src = photoUrl;
+  }, [photoUrl]);
+
+  if (!photoUrl || loadFailed) {
+    return null;
+  }
+
+  return photoUrl;
+}
+
 function CenterLogoImage({
   cx,
   cy,
@@ -440,6 +467,7 @@ export function TopFiveBubbleVisual({
 }: TopFiveBubbleVisualProps) {
   const clipId = useId().replace(/:/g, "");
   const photoInputRef = useRef<HTMLInputElement>(null);
+  const resolvedPhotoUrl = useResolvedProfileImageUrl(photoUrl);
   const topFive = rankedBubbles.slice(0, 5);
   const strokeWidth = compact ? 5 : 8;
   const photoRadius = CENTER.r - strokeWidth / 2;
@@ -547,7 +575,7 @@ export function TopFiveBubbleVisual({
         </g>
 
         <g>
-          {photoUrl ? (
+          {resolvedPhotoUrl ? (
             <g clipPath={`url(#${clipId})`}>
               <circle
                 cx={CENTER.cx}
@@ -556,7 +584,7 @@ export function TopFiveBubbleVisual({
                 fill={KOMMA_WHITE}
               />
               <image
-                href={photoUrl}
+                href={resolvedPhotoUrl}
                 x={CENTER.cx - photoRadius}
                 y={CENTER.cy - photoRadius}
                 width={photoDiameter}
@@ -623,7 +651,7 @@ export function TopFiveBubbleVisual({
                 width: `${CENTER_WIDTH_PCT}%`,
               }}
             >
-              {photoUrl ? (
+              {resolvedPhotoUrl ? (
                 <button
                   type="button"
                   onClick={openPhotoPicker}
