@@ -2,6 +2,7 @@
 
 import { useId, useRef } from "react";
 import { formatBubbleLabel } from "@/lib/bubble-label";
+import { PROFILE_CARD_CENTER_LOGO_SRC } from "@/lib/profile-card";
 import type { RankedBubbleResult } from "@/lib/results";
 
 const VIEWBOX_WIDTH = 1000;
@@ -64,13 +65,14 @@ const VALUE_BUBBLES = [
 const OFF_WHITE = "#F5F5F0";
 const KOMMA_YELLOW = "#F5DD00";
 const KOMMA_PINK = "#FF1493";
+const KOMMA_WHITE = "#FFFFFF";
 
 const DEMO_BUBBLE_COLORS = [
-  { fill: KOMMA_PINK, text: "#FFFFFF" },
+  { fill: KOMMA_PINK, text: KOMMA_WHITE },
   { fill: KOMMA_YELLOW, text: "#000000" },
-  { fill: OFF_WHITE, text: "#000000" },
+  { fill: KOMMA_WHITE, text: "#000000" },
   { fill: KOMMA_YELLOW, text: "#000000" },
-  { fill: OFF_WHITE, text: "#000000" },
+  { fill: KOMMA_WHITE, text: "#000000" },
 ] as const;
 
 function getLabelFontSize(radius: number): number {
@@ -168,8 +170,7 @@ interface TopFiveBubbleVisualProps {
   frameless?: boolean;
   clusterOffsetY?: number;
   animationPreset?: "default" | "heroFloat";
-  /** Landing hero only — grey centre circle instead of yellow */
-  centerCircleFill?: string;
+  defaultCenterImageSrc?: string;
   photoUploadEnabled?: boolean;
   onPhotoChange?: (url: string | null) => void;
 }
@@ -352,6 +353,35 @@ function ValueBubble({
   );
 }
 
+function CenterLogoImage({
+  cx,
+  cy,
+  r,
+  src,
+}: {
+  cx: number;
+  cy: number;
+  r: number;
+  src: string;
+}) {
+  const inset = r * 0.18;
+  const imageSize = (r - inset) * 2;
+
+  return (
+    <g>
+      <circle cx={cx} cy={cy} r={r} fill={KOMMA_WHITE} />
+      <image
+        href={src}
+        x={cx - r + inset}
+        y={cy - r + inset}
+        width={imageSize}
+        height={imageSize}
+        preserveAspectRatio="xMidYMid meet"
+      />
+    </g>
+  );
+}
+
 function DefaultCenterAvatar({
   cx,
   cy,
@@ -401,7 +431,7 @@ export function TopFiveBubbleVisual({
   frameless = false,
   clusterOffsetY = 0,
   animationPreset = "default",
-  centerCircleFill,
+  defaultCenterImageSrc = PROFILE_CARD_CENTER_LOGO_SRC,
   photoUploadEnabled = false,
   onPhotoChange,
 }: TopFiveBubbleVisualProps) {
@@ -511,14 +541,16 @@ export function TopFiveBubbleVisual({
               />
             );
           })}
+        </g>
 
+        <g>
           {photoUrl ? (
             <g clipPath={`url(#${clipId})`}>
               <circle
                 cx={CENTER.cx}
                 cy={CENTER.cy}
                 r={photoRadius}
-                fill="#FFFFFF"
+                fill={KOMMA_WHITE}
               />
               <image
                 href={photoUrl}
@@ -530,11 +562,11 @@ export function TopFiveBubbleVisual({
               />
             </g>
           ) : (
-            <DefaultCenterAvatar
+            <CenterLogoImage
               cx={CENTER.cx}
               cy={CENTER.cy}
               r={CENTER.r}
-              fill={centerCircleFill ?? KOMMA_YELLOW}
+              src={defaultCenterImageSrc}
             />
           )}
 

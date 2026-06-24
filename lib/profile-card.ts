@@ -15,3 +15,21 @@ export const KOMMA_PUNT_MARK_SRC = "/kommapunt-card-logo.png";
 export const PROFILE_CARD_FINGERPRINT_SRC = "/profile-fingerprint.png";
 
 export const PROFILE_CARD_QR_CODE_SRC = "/profile-card-qr-sticker.png";
+
+export const PROFILE_CARD_CENTER_LOGO_SRC = KOMMA_PUNT_MARK_SRC;
+
+export function getProfileIntroText(name: string): string {
+  const firstName = name.trim().split(/\s+/)[0] || name.trim();
+
+  return `Hier is wat vir ${firstName} die meeste gewig dra.`;
+}
+
+export function getProfilePhotoUrl(
+  photoUrl?: string | null,
+): string | null {
+  if (photoUrl?.trim()) {
+    return photoUrl;
+  }
+
+  return null;
+}
