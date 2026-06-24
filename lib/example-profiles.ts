@@ -22,6 +22,13 @@ const DEMO_ONLY_BUBBLES: Record<string, BubbleValue> = {
     descriptionAf: "Om kultuur en identiteit te koester en te bewaar.",
     category: "ek-identiteit",
   },
+  "sekerheid": {
+    id: "sekerheid",
+    nameAf: "Sekerheid",
+    nameEn: "Security",
+    descriptionAf: "Voorspelbaarheid en om te weet waar jy staan.",
+    category: "orde-stabiliteit",
+  },
 };
 
 export type ExampleProfile = {
@@ -176,6 +183,47 @@ export const EXAMPLE_PROFILES: ExampleProfile[] = [
     ],
     rankedBubbles: [],
   },
+  {
+    id: "donald-trump",
+    name: "Donald Trump*",
+    photoSrc: "/example-profiles/donald-trump.png",
+    bubbleNamesAf: [
+      "Mag / Invloed",
+      "Prestasie",
+      "Gemeenskap",
+      "Vryheid",
+      "Sekerheid",
+    ],
+    rankedBubbles: [],
+  },
+  {
+    id: "cyril-ramaphosa",
+    name: "Cyril Ramaphosa*",
+    photoSrc: "/example-profiles/cyril-ramaphosa.png",
+    centerImageScale: 1.06,
+    bubbleNamesAf: [
+      "Stabiliteit",
+      "Gemeenskap",
+      "Verantwoordelikheid",
+      "Respek",
+      "Sekerheid",
+    ],
+    rankedBubbles: [],
+  },
+  {
+    id: "greta-thunberg",
+    name: "Greta Thunberg*",
+    photoSrc: "/example-profiles/greta-thunberg.png",
+    centerImageScale: 1.06,
+    bubbleNamesAf: [
+      "Verantwoordelikheid",
+      "Integriteit",
+      "Geregtigheid",
+      "Moed",
+      "Gemeenskap",
+    ],
+    rankedBubbles: [],
+  },
 ].map((profile) => ({
   ...profile,
   rankedBubbles: buildRankedBubbles(profile.bubbleNamesAf),
@@ -213,6 +261,9 @@ export const HERO_CAROUSEL_PROFILE_IDS = [
   "afriforum",
   "elon-musk",
   "mk",
+  "donald-trump",
+  "cyril-ramaphosa",
+  "greta-thunberg",
 ] as const;
 
 export function getHeroCarouselProfiles(): ExampleProfile[] {

@@ -16,7 +16,11 @@ const HERO_CAROUSEL_LAYOUT = {
   animationPreset: "heroFloat" as const,
   clusterOffsetY: -18,
   centerCircleOffsetY: 10,
-  valueBubblePositionAdjustments: [{ index: 3, cx: -10 }] as const,
+  valueBubblePositionAdjustments: [
+    { index: 1, cx: -10 },
+    { index: 3, cx: -10 },
+  ] as const,
+  valueBubbleRenderOrder: [1, 0, 2, 3, 4] as const,
 };
 
 export function ProfileBubbleCluster({

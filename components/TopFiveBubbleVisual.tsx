@@ -188,6 +188,24 @@ function getValueBubblePosition(
   };
 }
 
+function getValueBubbleRenderIndices(
+  count: number,
+  renderOrder?: number[],
+): number[] {
+  const defaults = Array.from({ length: count }, (_, index) => index);
+
+  if (!renderOrder?.length) {
+    return defaults;
+  }
+
+  const ordered = renderOrder.filter(
+    (index) => index >= 0 && index < count && defaults.includes(index),
+  );
+  const remaining = defaults.filter((index) => !ordered.includes(index));
+
+  return [...ordered, ...remaining];
+}
+
 interface TopFiveBubbleVisualProps {
   rankedBubbles: RankedBubbleResult[];
   photoUrl?: string | null;
@@ -202,6 +220,8 @@ interface TopFiveBubbleVisualProps {
   centerCircleOffsetY?: number;
   /** Per-bubble layout nudges without changing the base cluster. */
   valueBubblePositionAdjustments?: ValueBubblePositionAdjustment[];
+  /** Paint order for value bubbles (earlier indices render behind later ones). */
+  valueBubbleRenderOrder?: number[];
   /** Zoom centre photo to fill the circle (1 = default). */
   centerImageScale?: number;
   /** Vertical nudge for centre photo (negative moves up). */
@@ -521,6 +541,7 @@ export function TopFiveBubbleVisual({
   animationPreset = "default",
   centerCircleOffsetY = 0,
   valueBubblePositionAdjustments,
+  valueBubbleRenderOrder,
   centerImageScale = 1,
   centerImageOffsetY = 0,
   centerImageBackground,
@@ -548,6 +569,10 @@ export function TopFiveBubbleVisual({
       : PROFILE_CENTER_FALLBACK_SRC;
   const hasUserUploadedPhoto = Boolean(uploadedImageUrl);
   const topFive = rankedBubbles.slice(0, 5);
+  const bubbleRenderIndices = getValueBubbleRenderIndices(
+    topFive.length,
+    valueBubbleRenderOrder,
+  );
   const strokeWidth = compact ? 5 : 8;
   const photoRadius = CENTER.r - strokeWidth / 2;
   const photoDiameter = photoRadius * 2;
@@ -626,7 +651,13 @@ export function TopFiveBubbleVisual({
         </defs>
 
         <g transform={clusterTransform}>
-          {topFive.map((item, index) => {
+          {bubbleRenderIndices.map((index) => {
+            const item = topFive[index];
+
+            if (!item) {
+              return null;
+            }
+
             const bubble = getBubbleMotion(index, animationPreset);
 
             if (!bubble) {
